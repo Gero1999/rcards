@@ -56,5 +56,5 @@ See the package documentation for details on all functions:
 
 ## Contributing
 
-Contributions are welcome! If you have ideas for new games, features, or improvements, please open an issue or submit a pull request. See the [contributing guidelines - yet not available]() for more information.
+Contributions are welcome! If you have ideas for new games, features, or improvements, please open an issue or submit a pull request. See the [contributing guidelines](CONTRIBUTING.md) for more information.
 
