@@ -248,3 +248,27 @@ player_raise_poker <- function(game, player, raise, pot = 1) {
 
 	stop("Invalid raise value. Must be NULL (fold), 0 (call/check), or positive numeric (raise amount).")
 }
+
+# ---- Poker Game Simulation Loop Structure (Pseudocode/Template) ----
+# Main game loop: continues until one player has all points
+# while (number of players with points > 1) {
+#   1. Setup new hand: deal cards, reset pots, post blinds/antes
+#   2. Hand/round loop: continues until all pots are 0 (after forced bet)
+#      while (any pot amount > 0) {
+#         a. For each betting round (pre-flop, flop, turn, river, or draw):
+#            - For each player in turn order:
+#                * If player is eligible (not folded/all-in):
+#                    - Prompt for action (raise, call, fold, all-in)
+#                    - Use player_raise_poker or similar
+#            - After all players acted, check if only one player remains eligible:
+#                * If so, award pot(s) to that player, break hand loop
+#            - If all bets are matched and no more actions, proceed to next round or showdown
+#         b. At showdown (if needed):
+#            - For each pot, determine winner(s) among eligible players
+#            - Distribute pot(s) using determine_poker_winner
+#      }
+#   3. Remove busted players (points == 0)
+#   4. Prepare for next hand
+# }
+# ---- End Poker Game Simulation Loop Structure ----
+
