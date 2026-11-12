@@ -19,6 +19,15 @@ deck <- function(cards = NULL, optional_cards = NULL, language = "en", include_o
     }
   }
   if (!include_optional) optional_cards <- list()
+  if (!is.list(cards) || !all(vapply(cards, inherits, logical(1), "card"))) {
+    stop("cards must be a list of card objects")
+  }
+  if (!is.null(optional_cards) && (!is.list(optional_cards) ||
+      !all(vapply(optional_cards, inherits, logical(1), "card")))) {
+    stop("optional_cards must be a list of card objects")
+  }
+  if (!is.character(language) || length(language) != 1L || is.na(language) ||
+      !nzchar(language)) stop("language must be a nonempty character scalar")
   # Add optional cards if provided
   all_cards <- cards
   if (!is.null(optional_cards) && length(optional_cards) > 0) {
@@ -49,31 +58,20 @@ print.deck <- function(x, ...) {
 #' Shuffle a deck
 #' @param x A deck object.
 #' @param ... Unused arguments.
+#' @return A shuffled deck with preserved metadata.
 #' @export
 shuffle.deck <- function(x, ...) {
-  n <- length(unclass(x))
-  idx <- sample(n)
-  shuffled <- unclass(x)[idx]
-  # preserve attributes
-  attributes(shuffled) <- attributes(x)
-  class(shuffled) <- class(x)
-  shuffled
+  x[sample.int(length(x))]
 }
 
-#' Discard a card at a given index from the deck
+#' Discard cards at specified positions
 #' @param x A deck object.
-#' @param index Card positions to remove.
+#' @param index Unique integer positions to remove; integer(0) removes nothing.
+#' @return A deck without the selected cards.
 #' @export
 discard_card.deck <- function(x, index) {
-  cards <- unclass(x)
-  if (index < 1 || index > length(cards)) stop("Index out of bounds")
-  cards <- cards[-index]
-  # preserve attributes
-  attr(cards, "main_cards") <- attr(x, "main_cards")
-  attr(cards, "optional_cards") <- attr(x, "optional_cards")
-  attr(cards, "language") <- attr(x, "language")
-  class(cards) <- class(x)
-  cards
+  validate_positions(index, length(x))
+  x[setdiff(seq_along(x), index)]
 }
 
 #' Shuffle a deck
@@ -89,3 +87,37 @@ shuffle <- function(x, ...) UseMethod("shuffle")
 #' @return A deck without the selected cards.
 #' @export
 discard_card <- function(x, index) UseMethod("discard_card")
+
+#' Subset a deck while preserving metadata
+#' @param x A deck object.
+#' @param i Card positions to retain.
+#' @param ... Unused arguments.
+#' @param drop Unused; always returns a deck.
+#' @return A deck containing the selected cards.
+#' @export
+`[.deck` <- function(x, i, ..., drop = FALSE) {
+  cards <- as_card_list(x)
+  selected <- if (missing(i)) cards else cards[i]
+  if (any(vapply(selected, is.null, logical(1)))) stop("Index out of bounds")
+  rebuild_deck(selected, attr(x, "optional_cards"), attr(x, "language"))
+}
+
+as_card_list <- function(x) {
+  attributes(x) <- NULL
+  x
+}
+
+rebuild_deck <- function(cards, optional_cards, language) {
+  is_optional <- vapply(cards, function(item) {
+    any(vapply(optional_cards, identical, logical(1), item))
+  }, logical(1))
+  structure(cards, main_cards = cards[!is_optional],
+            optional_cards = cards[is_optional], language = language, class = "deck")
+}
+
+validate_positions <- function(index, n) {
+  if (!is.numeric(index) || anyNA(index) || any(!is.finite(index)) ||
+      any(index != floor(index)) || any(index < 1 | index > n) ||
+      anyDuplicated(index)) stop("Index out of bounds or invalid positions")
+  invisible(index)
+}

@@ -8,7 +8,7 @@ test_that("deck constructor creates correct object", {
 
 test_that("deck print method outputs expected string", {
   d2 <- deck()
-  expect_output(print(d2), "Deck (")
+  expect_output(print(d2), "Deck \\(")
 })
 
 test_that("deck shuffle changes order but preserves cards", {

@@ -11,7 +11,7 @@ take_cards(player, deck, n = 1)
 
 \item{deck}{A deck object}
 
-\item{n}{Number of cards to take (default: 1)}
+\item{n}{Number of cards to take from the top (default: 1). Shuffle first for random draws.}
 }
 \value{
 Updated player object with new hand and updated deck

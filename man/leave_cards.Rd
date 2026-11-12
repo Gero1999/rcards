@@ -11,7 +11,7 @@ leave_cards(player, deck, card_indices)
 
 \item{deck}{A deck object}
 
-\item{card_indices}{Indices of cards in player's hand to leave}
+\item{card_indices}{Unique positions in the hand to return to the bottom of the deck.}
 }
 \value{
 Updated player object with new hand and updated deck

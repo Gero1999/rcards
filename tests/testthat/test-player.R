@@ -11,7 +11,7 @@ test_that("player constructor creates correct object", {
 
 test_that("print.player outputs expected string", {
   p2 <- player()
-  expect_output(print(p2), "Player (")
+  expect_output(print(p2), "Player \\(")
 })
 
 test_that("take_cards adds cards to hand and updates deck", {

@@ -10,7 +10,7 @@ table <- function(decks = list(), points = 0) {
 			decks = decks,
 			points = points
 		),
-		class = "table"
+		class = c("rcards_table", "table")
 	)
 }
 
@@ -18,7 +18,7 @@ table <- function(decks = list(), points = 0) {
 #' @param x A table object.
 #' @param ... Unused arguments.
 #' @export
-print.table <- function(x, ...) {
+print.rcards_table <- function(x, ...) {
 	n_decks <- length(x$decks)
 	cat("Table (", n_decks, " deck(s), points: ", x$points, ")\n", sep = "")
 	invisible(x)

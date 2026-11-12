@@ -11,6 +11,9 @@
 
 \item{...}{Unused arguments.}
 }
+\value{
+A shuffled deck with preserved metadata.
+}
 \description{
 Shuffle a deck
 }
