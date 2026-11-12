@@ -1,11 +1,24 @@
 ##' Deck constructor
 ##'
-##' @param cards List of main card objects to include (an empty deck if NULL)
+##' @param cards List of main card objects to include (French cards if NULL)
 ##' @param optional_cards List of additional card objects to include (e.g., jokers)
 ##' @param language Language for card display (default: "en")
-##' @return An object of class 'deck'
+##' @param include_optional Include optional cards (FALSE by default).
+#' @return An object of class 'deck'
 #' @export
-deck <- function(cards = NULL, optional_cards = NULL, language = "en") {
+deck <- function(cards = NULL, optional_cards = NULL, language = "en", include_optional = FALSE) {
+  if (!is.logical(include_optional) || length(include_optional) != 1L ||
+      is.na(include_optional)) stop("include_optional must be TRUE or FALSE")
+  if (is.null(cards)) {
+    cards <- unlist(lapply(c("Hearts", "Diamonds", "Clubs", "Spades"), function(suit) {
+      lapply(c("A", as.character(2:10), "J", "Q", "K"), card, suit = suit)
+    }), recursive = FALSE)
+    if (is.null(optional_cards)) {
+      optional_cards <- list(card("Joker", "Joker", "Red Joker"),
+                             card("Joker", "Joker", "Black Joker"))
+    }
+  }
+  if (!include_optional) optional_cards <- list()
   # Add optional cards if provided
   all_cards <- cards
   if (!is.null(optional_cards) && length(optional_cards) > 0) {
