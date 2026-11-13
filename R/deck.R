@@ -1,9 +1,10 @@
 ##' Deck constructor
 ##'
-##' @param cards List of main card objects to include (defaults to French deck if NULL)
+##' @param cards List of main card objects to include (an empty deck if NULL)
 ##' @param optional_cards List of additional card objects to include (e.g., jokers)
 ##' @param language Language for card display (default: "en")
 ##' @return An object of class 'deck'
+#' @export
 deck <- function(cards = NULL, optional_cards = NULL, language = "en") {
   # Add optional cards if provided
   all_cards <- cards
@@ -21,6 +22,9 @@ deck <- function(cards = NULL, optional_cards = NULL, language = "en") {
 }
 
 #' Print method for deck
+#' @param x A deck object.
+#' @param ... Unused arguments.
+#' @export
 print.deck <- function(x, ...) {
   n_cards <- length(unclass(x))
   n_optional <- if (is.null(attr(x, "optional_cards"))) 0 else length(attr(x, "optional_cards"))
@@ -30,6 +34,9 @@ print.deck <- function(x, ...) {
 }
 
 #' Shuffle a deck
+#' @param x A deck object.
+#' @param ... Unused arguments.
+#' @export
 shuffle.deck <- function(x, ...) {
   n <- length(unclass(x))
   idx <- sample(n)
@@ -41,6 +48,9 @@ shuffle.deck <- function(x, ...) {
 }
 
 #' Discard a card at a given index from the deck
+#' @param x A deck object.
+#' @param index Card positions to remove.
+#' @export
 discard_card.deck <- function(x, index) {
   cards <- unclass(x)
   if (index < 1 || index > length(cards)) stop("Index out of bounds")
@@ -52,3 +62,17 @@ discard_card.deck <- function(x, index) {
   class(cards) <- class(x)
   cards
 }
+
+#' Shuffle a deck
+#' @param x A deck object.
+#' @param ... Additional method arguments.
+#' @return A shuffled deck.
+#' @export
+shuffle <- function(x, ...) UseMethod("shuffle")
+
+#' Discard cards by position
+#' @param x A deck object.
+#' @param index Card positions to remove.
+#' @return A deck without the selected cards.
+#' @export
+discard_card <- function(x, index) UseMethod("discard_card")

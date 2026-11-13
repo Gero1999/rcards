@@ -4,6 +4,7 @@
 ##' @param table Table object (optional, default: NULL)
 ##' @param decks List of deck objects (default: empty list)
 ##' @return An object of class 'game'
+#' @export
 game <- function(players = list(), table = NULL, decks = list()) {
 	structure(
 		list(
@@ -16,6 +17,9 @@ game <- function(players = list(), table = NULL, decks = list()) {
 }
 
 ##' Print method for game
+#' @param x A game object.
+#' @param ... Unused arguments.
+#' @export
 print.game <- function(x, ...) {
 	n_players <- length(x$players)
 	n_decks <- length(x$decks)

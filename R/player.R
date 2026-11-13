@@ -1,9 +1,11 @@
 #' Player constructor
 #'
+#' @param name Player name.
 #' @param hand List of cards or deck object (default: empty list)
 #' @param role Player role (default: "standard")
 #' @param points Player points (default: 0)
 #' @return An object of class 'player'
+#' @export
 player <- function(name = "Player 1", hand = list(), role = "standard", points = 0) {
 	structure(
 		list(
@@ -17,6 +19,9 @@ player <- function(name = "Player 1", hand = list(), role = "standard", points =
 }
 
 #' Print method for player
+#' @param x A player object.
+#' @param ... Unused arguments.
+#' @export
 print.player <- function(x, ...) {
 	cat("Player (role:", x$role, ", points:", x$points, ", hand size:", length(x$hand), ")\n")
 	invisible(x)
