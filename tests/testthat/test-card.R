@@ -25,3 +25,12 @@ test_that("card custom display is respected", {
 test_that("card handles invalid suit gracefully", {
   expect_error(card("A", "InvalidSuit"), NA)
 })
+
+test_that("card construction needs no global suit symbols", {
+  expect_equal(card("A", "Spades")$symbol, "\u2660")
+  expect_equal(card("1", "Oros")$symbol, "\U0001F4B0")
+  expect_equal(card("A", "Custom")$display, "A")
+  expect_error(card(character(), "Spades"), "value")
+  expect_error(card("A", NA_character_), "suit")
+  expect_error(card("A", "Spades", display = c("a", "b")), "display")
+})
