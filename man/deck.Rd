@@ -4,14 +4,21 @@
 \alias{deck}
 \title{Deck constructor}
 \usage{
-deck(cards = NULL, optional_cards = NULL, language = "en")
+deck(
+  cards = NULL,
+  optional_cards = NULL,
+  language = "en",
+  include_optional = FALSE
+)
 }
 \arguments{
-\item{cards}{List of main card objects to include (an empty deck if NULL)}
+\item{cards}{List of main card objects to include (empty if NULL)}
 
 \item{optional_cards}{List of additional card objects to include (e.g., jokers)}
 
 \item{language}{Language for card display (default: "en")}
+
+\item{include_optional}{Include optional cards (FALSE by default).}
 }
 \value{
 An object of class 'deck'

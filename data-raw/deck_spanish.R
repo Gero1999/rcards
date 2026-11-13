@@ -26,7 +26,7 @@ optional_cards <- unlist(lapply(suits, function(suit) {
 }), recursive = FALSE)
 
 # Create the Spanish deck with optional 8s and 9s
-deck_spanish <- deck(cards = base_cards, optional_cards = optional_cards, language = "es")
+deck_spanish <- deck(cards = base_cards, optional_cards = optional_cards, language = "es", include_optional = TRUE)
 
 # Export the deck using usethis::use_data
 usethis::use_data(deck_spanish, overwrite = TRUE)

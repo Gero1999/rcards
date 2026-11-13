@@ -15,5 +15,6 @@ Depends:
     R (>= 3.5)
 Suggests: 
     roxygen2,
+    usethis,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
