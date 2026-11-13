@@ -2,20 +2,20 @@
 % Please edit documentation in R/poker.R
 \name{determine_poker_winner}
 \alias{determine_poker_winner}
-\title{Define a poker winner based on hand points}
+\title{Award a poker pot}
 \usage{
 determine_poker_winner(game, players = NULL, pot = 1)
 }
 \arguments{
-\item{game}{A game object containing players with hands}
+\item{game}{A game with players and table pots.}
 
-\item{players}{Optional list of player indices to evaluate (default: all players)}
+\item{players}{Optional eligible player indices, intersected with pot eligibility.}
 
-\item{pot}{Index of the pot to consider (default: 1)}
+\item{pot}{Pot index.}
 }
 \value{
-Updated game object with winner(s) awarded pot
+Updated game, with the selected pot emptied.
 }
 \description{
-Define a poker winner based on hand points
+Award a poker pot
 }

@@ -2,22 +2,22 @@
 % Please edit documentation in R/poker.R
 \name{player_raise_poker}
 \alias{player_raise_poker}
-\title{Player raise action in poker (handles raise, call, fold, and side pots)}
+\title{Apply a legacy poker raise, call or fold}
 \usage{
 player_raise_poker(game, player, raise, pot = 1)
 }
 \arguments{
-\item{game}{A game object containing players and table}
+\item{game}{A game with players and table pots.}
 
-\item{player}{A player object, name, or index}
+\item{player}{Player index, name, or object.}
 
-\item{raise}{NULL (fold), 0 (call/check), or numeric (raise amount)}
+\item{raise}{NULL folds, zero calls/checks, positive values raise by that amount.}
 
-\item{pot}{Index of the pot to act on (default: 1)}
+\item{pot}{Pot index.}
 }
 \value{
-Updated game object with action applied, pots and eligibility updated
+Updated game. Use the Hold'em engine for full betting and side-pot rules.
 }
 \description{
-Player raise action in poker (handles raise, call, fold, and side pots)
+Apply a legacy poker raise, call or fold
 }
