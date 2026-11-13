@@ -1,5 +1,13 @@
+test_french_deck <- function(include_optional = FALSE, language = "en") {
+  e <- new.env()
+  data("deck_french", package = "rcards", envir = e)
+  deck(cards = attr(e$deck_french, "main_cards"),
+       optional_cards = attr(e$deck_french, "optional_cards"),
+       language = language, include_optional = include_optional)
+}
+
 test_that("drawing and returning conserves cards and optional metadata", {
-  d <- deck(include_optional = TRUE, language = "es")
+  d <- test_french_deck(include_optional = TRUE, language = "es")
   original <- d
   drawn <- take_cards(player(), d, 54)
   expect_length(drawn$deck, 0)
@@ -12,7 +20,7 @@ test_that("drawing and returning conserves cards and optional metadata", {
 })
 
 test_that("subsetting and shuffling preserve coherent deck attributes", {
-  d <- deck(include_optional = TRUE)
+  d <- test_french_deck(include_optional = TRUE)
   jokers <- d[53:54]
   expect_s3_class(jokers, "deck")
   expect_length(attr(jokers, "main_cards"), 0)
@@ -28,7 +36,7 @@ test_that("subsetting and shuffling preserve coherent deck attributes", {
 
 test_that("draw and return reject invalid input and allow zero cards", {
   p <- player()
-  d <- deck()
+  d <- test_french_deck()
   expect_identical(take_cards(p, d, 0)$deck, d)
   expect_identical(leave_cards(p, d, integer())$deck, d)
   for (n in list(-1, 1.5, NA_real_, Inf, 53, c(1, 2))) {
