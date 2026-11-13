@@ -12,7 +12,7 @@ deck(
 )
 }
 \arguments{
-\item{cards}{List of main card objects to include (French cards if NULL)}
+\item{cards}{List of main card objects to include (empty if NULL)}
 
 \item{optional_cards}{List of additional card objects to include (e.g., jokers)}
 
