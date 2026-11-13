@@ -18,7 +18,7 @@ poker_bot <- function(risk = 0.5, adaptability = 0.2, variation = 0.05,
   if (!is.null(seed)) check_number(seed, "seed", 0, .Machine$integer.max, TRUE)
   structure(list(risk = risk, current_risk = risk, adaptability = adaptability,
     variation = variation, equity_samples = equity_samples, seed = seed,
-    decisions = 0L), class = "poker_bot")
+    decisions = 0L), class = c("poker_bot", "game_controller"))
 }
 
 #' Observe only the acting player's available information

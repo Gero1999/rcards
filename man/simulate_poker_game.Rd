@@ -18,7 +18,8 @@ simulate_poker_game(
 \arguments{
 \item{players}{A list of funded player objects.}
 
-\item{bots}{One poker_bot per seat, or one policy function per seat.}
+\item{bots}{One controller per seat: poker_bot(), policy_player(), or a policy
+function. Simulation uses the shared play() loop and retains controller state.}
 
 \item{hands}{Number of independent hands to simulate (one to 10000).}
 

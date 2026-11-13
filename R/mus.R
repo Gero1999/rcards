@@ -60,7 +60,7 @@ mus_game <- function(players, rules = mus_rules(), mano = 1L, seed = NULL, pack 
   g <- structure(list(players=players,rules=rules,mano=mano,actor=mano,
     deck=deck(cards=as_card_list(pack),language="es"),discard=list(),phase="mus",
     scores=c(0,0),complete=FALSE,hand_complete=FALSE,hand_number=1L,
-    votes=integer(),exchanged=integer(),history=list(),results=list()),class="mus_game")
+    votes=integer(),exchanged=integer(),history=list(),results=list()),class=c("mus_game","game"))
   for(i in 1:4) g$players[[i]]$hand <- list()
   order <- mus_order(mano)
   for(round in 1:4) for(i in order) {
