@@ -1,5 +1,7 @@
 set.seed(42)
-pack <- rcards::shuffle(rcards::deck())
+utils::data("deck_french", package = "rcards", envir = environment())
+pack <- rcards::deck(cards = attr(deck_french, "main_cards"))
+pack <- rcards::shuffle(pack)
 alice <- rcards::player(name = "Alice")
 
 dealt <- rcards::take_cards(alice, pack, n = 5)
