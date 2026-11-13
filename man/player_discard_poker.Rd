@@ -2,7 +2,7 @@
 % Please edit documentation in R/poker.R
 \name{player_discard_poker}
 \alias{player_discard_poker}
-\title{Define a player discard in poker}
+\title{Replace cards in a legacy draw-poker hand}
 \usage{
 player_discard_poker(
   game,
@@ -13,19 +13,19 @@ player_discard_poker(
 )
 }
 \arguments{
-\item{game}{A game object containing players}
+\item{game}{A game with a main deck and table discard deck.}
 
-\item{player}{A player name or index}
+\item{player}{Player name or index.}
 
-\item{cards}{THe player's cards to discard or indices}
+\item{cards}{Positions to replace, or card objects.}
 
-\item{replacement_deck}{Optional deck to draw replacement cards from (default: main game deck)}
+\item{replacement_deck}{Optional replacement deck.}
 
-\item{discarding_deck}{Optional deck to return discarded cards to (default: table deck)}
+\item{discarding_deck}{Optional discard deck.}
 }
 \value{
-Updated game object with player's hand updated with main deck and discarded cards returned to mock deck
+Updated game. This operation is not part of Texas Hold'em.
 }
 \description{
-Define a player discard in poker
+Replace cards in a legacy draw-poker hand
 }
