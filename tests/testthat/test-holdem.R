@@ -62,3 +62,48 @@ test_that("a tied board splits integer chips without losing odd chips", {
   h <- holdem_finish(h)
   expect_equal(holdem_stacks(h),c(12,13,5))
 })
+
+test_that("mixed legal actions conserve chips across varied stacks and seats", {
+  set.seed(410)
+  for (trial in 1:60) {
+    n <- sample(2:6,1)
+    stacks <- sample(1:80,n,replace=TRUE)
+    h <- new_holdem(stacks,dealer=sample.int(n,1))
+    count <- 0L
+    while(!h$complete) {
+      legal <- holdem_legal_actions(h)
+      action <- sample(legal$actions,1)
+      amount <- NULL
+      if(action=="raise") amount <- legal$min_raise_to + sample.int(legal$max_raise_to-legal$min_raise_to+1L,1)-1L
+      h <- holdem_action(h,action,amount)
+      expect_true(all(holdem_stacks(h)>=0))
+      count <- count+1L
+      if(count>300L) stop("Nonterminating hand")
+    }
+    expect_equal(sum(holdem_stacks(h)),sum(stacks))
+  }
+})
+
+test_that("cumulative short raises can reopen betting", {
+  h <- new_holdem(c(12,16,18,100,100),dealer=2,seed=1)
+  expect_equal(h$actor,5)
+  h <- holdem_action(h,"raise",10)
+  h <- holdem_action(h,"raise",12)
+  h <- holdem_action(h,"raise",16)
+  h <- holdem_action(h,"raise",18)
+  h <- holdem_action(h,"call")
+  expect_equal(h$actor,5)
+  expect_true("raise" %in% holdem_legal_actions(h)$actions)
+})
+
+test_that("short-stack winners cannot collect an ineligible side pot", {
+  h <- new_holdem(c(10,30,30),seed=1)
+  h$board <- Map(card,c("A","K","Q","2","3"),c("Spades","Spades","Spades","Hearts","Clubs"))
+  h$players[[1]]$hand <- list(card("J","Spades"),card("10","Spades"))
+  h$players[[2]]$hand <- list(card("A","Hearts"),card("A","Clubs"))
+  h$players[[3]]$hand <- list(card("K","Hearts"),card("K","Clubs"))
+  h$contributions <- c(10,30,30)
+  for(i in 1:3) h$players[[i]]$points <- 0
+  h <- holdem_finish(h)
+  expect_equal(holdem_stacks(h),c(30,40,0))
+})
