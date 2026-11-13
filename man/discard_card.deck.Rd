@@ -2,15 +2,18 @@
 % Please edit documentation in R/deck.R
 \name{discard_card.deck}
 \alias{discard_card.deck}
-\title{Discard a card at a given index from the deck}
+\title{Discard cards at specified positions}
 \usage{
 \method{discard_card}{deck}(x, index)
 }
 \arguments{
 \item{x}{A deck object.}
 
-\item{index}{Card positions to remove.}
+\item{index}{Unique integer positions to remove; integer(0) removes nothing.}
+}
+\value{
+A deck without the selected cards.
 }
 \description{
-Discard a card at a given index from the deck
+Discard cards at specified positions
 }

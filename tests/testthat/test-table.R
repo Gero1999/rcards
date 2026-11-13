@@ -9,7 +9,7 @@ test_that("table constructor creates correct object", {
 
 test_that("print.table outputs expected string", {
   t2 <- table(decks = list(deck()), points = 10)
-  expect_output(print(t2), "Table (")
+  expect_output(print(t2), "Table \\(")
 })
 
 # Edge case: table with multiple decks and points
