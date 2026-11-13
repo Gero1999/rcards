@@ -2,20 +2,18 @@
 % Please edit documentation in R/poker.R
 \name{evaluate_poker_hands}
 \alias{evaluate_poker_hands}
-\title{Evaluate poker hands for all players in a game and determine the winner(s)}
+\title{Find the winning players}
 \usage{
 evaluate_poker_hands(game, players = NULL)
 }
 \arguments{
-\item{game}{A game object containing players with hands}
+\item{game}{A game with players and optionally a community-card board.}
 
-\item{players}{Optional list of player indices to evaluate (default: all players)}
-
-\item{pot}{Index of the pot to consider (default: 1)}
+\item{players}{Eligible player indices; NULL evaluates all players.}
 }
 \value{
-A list with player indices of winners and their hand points
+Original player indices of tied winners.
 }
 \description{
-Evaluate poker hands for all players in a game and determine the winner(s)
+Find the winning players
 }

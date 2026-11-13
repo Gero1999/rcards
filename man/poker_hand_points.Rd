@@ -2,16 +2,17 @@
 % Please edit documentation in R/poker.R
 \name{poker_hand_points}
 \alias{poker_hand_points}
-\title{Calculate poker hand points based on standard poker hand rankings}
+\title{Rank a five- to seven-card poker hand}
 \usage{
 poker_hand_points(hand)
 }
 \arguments{
-\item{hand}{A list of card objects representing the player's hand}
+\item{hand}{A list of five to seven distinct French cards.}
 }
 \value{
-Numeric value representing the poker hand points
+A numeric score encoding category followed by ordered tie breakers.
 }
 \description{
-Calculate poker hand points based on standard poker hand rankings
+Evaluate the best five-card combination. Larger scores win; equal scores tie.
+Ace-low straights rank below six-high straights. Jokers are not supported.
 }
