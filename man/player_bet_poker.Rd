@@ -2,22 +2,22 @@
 % Please edit documentation in R/poker.R
 \name{player_bet_poker}
 \alias{player_bet_poker}
-\title{Define a player bet in poker}
+\title{Place a legacy poker bet}
 \usage{
 player_bet_poker(game, player, bet, pot = 1)
 }
 \arguments{
-\item{game}{A game object containing players and table}
+\item{game}{A game with players and table pots.}
 
-\item{player}{A player object or index}
+\item{player}{Player index, name, or object.}
 
-\item{bet}{Numeric value of the bet}
+\item{bet}{Nonnegative amount to add to the pot.}
 
-\item{pot}{Index of the pot to place the bet in (default: 1)}
+\item{pot}{Pot index.}
 }
 \value{
-Updated game object with bet placed in the table pot
+Updated game.
 }
 \description{
-Define a player bet in poker
+Place a legacy poker bet
 }
