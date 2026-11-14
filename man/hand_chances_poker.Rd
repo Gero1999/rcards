@@ -2,10 +2,22 @@
 % Please edit documentation in R/poker_predictions.R
 \name{hand_chances_poker}
 \alias{hand_chances_poker}
-\title{Functions to make predictions on poker hands}
+\title{Estimate random-opponent five-card draw outcomes}
 \usage{
-hand_chances_poker(hand, deck = deck(), n_players = 2, n = 1000)
+hand_chances_poker(hand, deck = poker_pack(), n_players = 2, n = 1000)
+}
+\arguments{
+\item{hand}{Five known French cards.}
+
+\item{deck}{A deck containing the known hand and available cards.}
+
+\item{n_players}{Total players, including the known hand.}
+
+\item{n}{Number of trials.}
+}
+\value{
+Win, tie, and loss frequencies. For Hold'em use holdem_equity().
 }
 \description{
-Functions to make predictions on poker hands
+Estimate random-opponent five-card draw outcomes
 }

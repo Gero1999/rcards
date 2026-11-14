@@ -8,8 +8,9 @@
 poker_hand_points <- function(hand) {
   poker_card_ids(hand)
   if (!length(hand) %in% 5:7) stop("A poker hand needs five to seven cards")
-  combinations <- utils::combn(seq_along(hand), 5L)
-  max(apply(combinations, 2L, function(i) poker_five_score(hand[i])))
+  poker_score_values(
+    match(vapply(hand, `[[`, "", "value"), c(as.character(2:10), "J", "Q", "K", "A")) + 1L,
+    match(vapply(hand, `[[`, "", "suit"), c("Hearts", "Diamonds", "Clubs", "Spades")))
 }
 
 poker_card_ids <- function(cards) {
@@ -26,26 +27,42 @@ poker_card_ids <- function(cards) {
 }
 
 poker_five_score <- function(hand) {
-  ranks <- match(vapply(hand, `[[`, "", "value"), c(as.character(2:10), "J", "Q", "K", "A")) + 1L
-  suits <- vapply(hand, `[[`, "", "suit")
-  counts <- base::table(ranks)
-  groups <- as.integer(names(counts))[order(-as.integer(counts), -as.integer(names(counts)))]
-  sizes <- sort(as.integer(counts), decreasing = TRUE)
-  ordered <- sort(ranks, decreasing = TRUE)
-  high <- if (length(unique(ranks)) == 5L && diff(range(ranks)) == 4L) max(ranks) else 0L
-  if (identical(sort(ranks), c(2L, 3L, 4L, 5L, 14L))) high <- 5L
-  flush <- length(unique(suits)) == 1L
-  category <- 0L; tie <- ordered
-  if (high > 0L && flush) { category <- 8L; tie <- high
-  } else if (sizes[1L] == 4L) { category <- 7L; tie <- groups
-  } else if (identical(sizes, c(3L, 2L))) { category <- 6L; tie <- groups
-  } else if (flush) { category <- 5L
-  } else if (high > 0L) { category <- 4L; tie <- high
-  } else if (sizes[1L] == 3L) { category <- 3L; tie <- groups
-  } else if (sum(sizes == 2L) == 2L) { category <- 2L; tie <- groups
-  } else if (sizes[1L] == 2L) { category <- 1L; tie <- groups }
-  digits <- c(tie, rep(0L, 5L - length(tie)))
-  category * 15^5 + sum(digits * 15^(4:0))
+  poker_score_values(
+    match(vapply(hand, `[[`, "", "value"), c(as.character(2:10), "J", "Q", "K", "A")) + 1L,
+    match(vapply(hand, `[[`, "", "suit"), c("Hearts", "Diamonds", "Clubs", "Spades")))
+}
+
+poker_score_values <- function(ranks, suits) {
+  encode <- function(category, tie) {
+    sum(c(category, tie, rep(0, 5L - length(tie))) * 15^(5:0))
+  }
+  straight_high <- function(x) {
+    unique_ranks <- unique(x)
+    if (14L %in% unique_ranks) unique_ranks <- c(unique_ranks, 1L)
+    for (high in 14:5) if (all((high - 0:4) %in% unique_ranks)) return(high)
+    0L
+  }
+  counts <- tabulate(ranks, nbins = 14L)
+  four <- which(counts == 4L)
+  triples <- sort(which(counts >= 3L), decreasing = TRUE)
+  pairs <- sort(which(counts >= 2L), decreasing = TRUE)
+  flush_suit <- which(tabulate(suits, nbins = 4L) >= 5L)
+  if (length(flush_suit)) {
+    flush_ranks <- sort(ranks[suits == flush_suit[1L]], decreasing = TRUE)
+    high <- straight_high(flush_ranks)
+    if (high) return(encode(8, high))
+  }
+  if (length(four)) return(encode(7, c(four, max(ranks[ranks != four]))))
+  if (length(triples) && length(setdiff(pairs, triples[1L]))) {
+    return(encode(6, c(triples[1L], max(setdiff(pairs, triples[1L])))))
+  }
+  if (length(flush_suit)) return(encode(5, head(flush_ranks, 5L)))
+  high <- straight_high(ranks)
+  if (high) return(encode(4, high))
+  if (length(triples)) return(encode(3, c(triples[1L], head(sort(ranks[ranks != triples[1L]], decreasing = TRUE), 2L))))
+  if (length(pairs) >= 2L) return(encode(2, c(pairs[1:2], max(ranks[!ranks %in% pairs[1:2]]))))
+  if (length(pairs)) return(encode(1, c(pairs, head(sort(ranks[ranks != pairs], decreasing = TRUE), 3L))))
+  encode(0, head(sort(ranks, decreasing = TRUE), 5L))
 }
 
 check_number <- function(x, name, lower = 0, upper = Inf, integer = FALSE) {
