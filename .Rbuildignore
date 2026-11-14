@@ -1,3 +1,5 @@
 ^\.github$
 ^docs$
 ^LICENSE$
+^AGENTS\.md$
+^tools$

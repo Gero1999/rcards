@@ -103,7 +103,9 @@ intrinsic pares/juego points to the partnership winning by refusal. An accepted
 the ordinary refusal rule. These rules are explicit; house-specific real-31
 exceptions, table signals, and multi-game match formats are not implemented.
 
-Lances score in order. Reaching the configured target ends the game. Otherwise
+Accepted wagers and intrinsic points settle after all negotiations, in lance
+order; refused-offer points count immediately. A later accepted ordago can decide
+the game before pending wagers settle. Reaching the target ends the game. Otherwise
 `mus_next_hand(game, seed)` preserves scores and rotates mano after a hand ends.
 `mus_legal_actions()` describes the next expected input. Mus AI is not implemented. Callers can supply actions through the R API or use
 `play()` with console/scripted controllers; see [console play](console-play.md).

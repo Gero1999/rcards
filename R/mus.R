@@ -60,7 +60,8 @@ mus_game <- function(players, rules = mus_rules(), mano = 1L, seed = NULL, pack 
   g <- structure(list(players=players,rules=rules,mano=mano,actor=mano,
     deck=deck(cards=as_card_list(pack),language="es"),discard=list(),phase="mus",
     scores=c(0,0),complete=FALSE,hand_complete=FALSE,hand_number=1L,
-    votes=integer(),exchanged=integer(),history=list(),results=list()),class=c("mus_game","game"))
+    votes=integer(),exchanged=integer(),history=list(),results=list(),
+    settlements=list(),revealed=FALSE),class=c("mus_game","game"))
   for(i in 1:4) g$players[[i]]$hand <- list()
   order <- mus_order(mano)
   for(round in 1:4) for(i in order) {
@@ -112,10 +113,7 @@ mus_infos <- function(g) lapply(g$players,function(p) mus_hand_info(p$hand,g$rul
 
 mus_begin_lance <- function(g,stage) {
   repeat {
-    if(stage>4L) {
-      g$phase <- "hand_complete";g$hand_complete <- TRUE;g$actor <- NULL
-      return(g)
-    }
+    if(stage>4L) return(mus_settle_hand(g))
     g$stage <- stage;g$phase <- c("grande","chica","pares","juego")[stage]
     info <- mus_infos(g)
     eligible <- 1:4
@@ -129,7 +127,7 @@ mus_begin_lance <- function(g,stage) {
     if(length(unique(mus_team(eligible)))==1L) {
       team <- mus_team(eligible[1])
       points <- mus_intrinsic(g,team)
-      g <- mus_award(g,team,points,"unopposed")
+      g <- mus_queue_result(g,team,points,"unopposed")
       if(g$complete) return(g)
       stage <- stage+1L;next
     }
@@ -166,9 +164,29 @@ mus_award <- function(g,team,points,reason) {
   g
 }
 
+# Wager agreements resolve the negotiation, not the hand. Compare and score
+# accepted/passed lances only after all negotiations, in grande-to-juego order.
+# Keeping this queue private also prevents future controllers seeing winners early.
+mus_queue_result <- function(g,team,points,reason) {
+  g$settlements[[length(g$settlements)+1L]] <- list(lance=g$phase,
+    team=team,points=points,reason=reason)
+  g
+}
+
+mus_settle_hand <- function(g) {
+  g$revealed <- TRUE
+  for(entry in g$settlements) {
+    g$phase <- entry$lance
+    g <- mus_award(g,entry$team,entry$points,entry$reason)
+    if(g$complete) return(g)
+  }
+  g$phase <- "hand_complete";g$hand_complete <- TRUE;g$actor <- NULL
+  g
+}
+
 mus_resolve <- function(g,team,points,reason) {
-  g <- mus_award(g,team,points,reason)
-  if(g$complete) g else mus_begin_lance(g,g$stage+1L)
+  g <- mus_queue_result(g,team,points,reason)
+  mus_begin_lance(g,g$stage+1L)
 }
 
 #' Inspect legal Mus actions
@@ -187,9 +205,9 @@ mus_legal_actions <- function(game) {
 #' Apply a Mus vote, exchange, or wager
 #'
 #' A bet starts at two points; a raise increases the total by at least two.
-#' Acceptance resolves the lance. Rejecting awards the previous offered stake
-#' (one point for an initial refusal), plus winning partnership's intrinsic
-#' pares/juego points. An accepted ordago immediately decides the game by the
+#' Acceptance ends negotiation; scores settle after all lances, in order.
+#' Refusing immediately awards the previous offer (one for an initial refusal);
+#' intrinsic pares/juego points wait until the end. An accepted ordago decides the game by the
 #' current lance; rejection behaves like refusal of the preceding offer.
 #' All-pass grande/chica/punto award one; all-pass pares/juego award intrinsic
 #' points only. Grande, chica, pares and juego are scored in that order.
@@ -249,16 +267,21 @@ mus_action <- function(game,action,amount=NULL,cards=integer(),seed=NULL) {
   if(action=="accept") {
     winner <- mus_winner(g)
     if(g$ordago) {
+      g$revealed <- TRUE
       return(mus_award(g,winner,g$rules$points_to_win-g$scores[winner],"ordago"))
     }
     points <- g$wager + if(g$phase=="punto") 0L else mus_intrinsic(g,winner)
     return(mus_resolve(g,winner,points,"accepted"))
   }
   if(action=="reject") {
-    points <- max(1L,g$accepted)
-    # Intrinsic pairs/juego belong to the partnership that wins the refused lance.
-    if(g$phase %in% c("pares","juego")) points <- points+mus_intrinsic(g,g$bet_team)
-    return(mus_resolve(g,g$bet_team,points,"refused"))
+    # Refusal points count immediately. Intrinsic pares/juego points count only
+    # at the end of the hand, even if that partnership wins this lance by refusal.
+    g <- mus_award(g,g$bet_team,max(1L,g$accepted),"refused")
+    if(g$complete) return(g)
+    if(g$phase %in% c("pares","juego")) {
+      g <- mus_queue_result(g,g$bet_team,mus_intrinsic(g,g$bet_team),"refused_intrinsic")
+    }
+    return(mus_begin_lance(g,g$stage+1L))
   }
   if(action %in% c("bet","raise")) {
     minimum <- if(action=="bet") 2L else g$wager+2L
