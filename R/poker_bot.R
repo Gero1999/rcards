@@ -54,7 +54,7 @@ poker_bot_action <- function(bot, observation) {
   if (!is.list(o) || is.null(o$legal$actor) || !identical(o$actor, o$legal$actor)) stop("Invalid observation")
   opponents <- sum(!o$folded) - 1L
   if (opponents < 1L) stop("No opponents")
-  recent <- tail(Filter(function(event) event$player != o$actor, o$history), 20L)
+  recent <- utils::tail(Filter(function(event) event$player != o$actor, o$history), 20L)
   if (length(recent)) {
     aggression <- mean(vapply(recent, function(event) event$action == "raise", logical(1)))
     target <- max(0, min(1, bot$risk + 0.3 * (0.5 - aggression)))

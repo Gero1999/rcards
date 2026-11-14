@@ -56,13 +56,13 @@ poker_score_values <- function(ranks, suits) {
   if (length(triples) && length(setdiff(pairs, triples[1L]))) {
     return(encode(6, c(triples[1L], max(setdiff(pairs, triples[1L])))))
   }
-  if (length(flush_suit)) return(encode(5, head(flush_ranks, 5L)))
+  if (length(flush_suit)) return(encode(5, utils::head(flush_ranks, 5L)))
   high <- straight_high(ranks)
   if (high) return(encode(4, high))
-  if (length(triples)) return(encode(3, c(triples[1L], head(sort(ranks[ranks != triples[1L]], decreasing = TRUE), 2L))))
+  if (length(triples)) return(encode(3, c(triples[1L], utils::head(sort(ranks[ranks != triples[1L]], decreasing = TRUE), 2L))))
   if (length(pairs) >= 2L) return(encode(2, c(pairs[1:2], max(ranks[!ranks %in% pairs[1:2]]))))
-  if (length(pairs)) return(encode(1, c(pairs, head(sort(ranks[ranks != pairs], decreasing = TRUE), 3L))))
-  encode(0, head(sort(ranks, decreasing = TRUE), 5L))
+  if (length(pairs)) return(encode(1, c(pairs, utils::head(sort(ranks[ranks != pairs], decreasing = TRUE), 3L))))
+  encode(0, utils::head(sort(ranks, decreasing = TRUE), 5L))
 }
 
 check_number <- function(x, name, lower = 0, upper = Inf, integer = FALSE) {
