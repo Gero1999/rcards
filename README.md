@@ -104,6 +104,7 @@ names or menu numbers, `raise 10` for a total street bet, or `q` to stop. Invali
 answers are retried. A stopped game can be resumed with
 `rcards::play(played$game, played$controllers)`.
 
-Mus uses the same `play()` interface with four controllers. See
+Mus uses the same `play()` interface with four controllers, including `mus_bot()`
+for automated partners and opponents. See
 [console play and the shared game interface](docs/console-play.md) for Mus,
 stateful policies, scripted input, and hand-versus-game completion.

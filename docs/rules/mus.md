@@ -62,3 +62,15 @@ Regression scenarios live in `test-mus.R`, `test-rules-audit.R`, and
 outstanding source verification. Reference for variant comparison:
 [Pagat Mus rules](https://www.pagat.com/vying/mus.html). Do not silently introduce
 house rules or describe these links as consulted when access was blocked.
+
+## Baseline controller
+
+`mus_bot()` uses bounded public-information sampling for partnership lance
+strength, then explicit exchange/wager heuristics. It samples unknown holdings
+uniformly; it is not an optimal strategy or inference from signals. Current
+pares/juego declarations constrain accepted candidates. Sampling attempts are
+bounded and zero accepted samples produce a documented neutral estimate.
+Risk, adaptation and variation are separate from sampling budget. The bot cuts
+after at most two exchange rounds and bounds autonomous raises by the score
+target. Test all chosen actions through the engine, never trust heuristics to
+change rules. Future improvements can model discards/opponent ranges explicitly.

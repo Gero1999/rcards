@@ -24,7 +24,9 @@ Use the existing task checkout. Do not create a worktree unless requested.
 4. Return action lists through `choose_action`. Human, bot, and scripted
    controllers use the same rules and legal-action validation. A bot must work
    from its supplied observation, never from another seat's cards or the deck.
-5. Put display work in console code. Rich cards and winner messages belong to
+5. Add a game-specific console view/result renderer; the current renderers know
+   Hold'em and Mus. A shared state protocol alone does not define a new game's UI.
+   Put display work in console code. Rich cards and winner messages belong to
    active human play; automated simulations remain silent and return data.
 6. Add seeded scenarios, illegal-action tests, information-boundary checks,
    conservation tests, and an example using exported APIs. Add independent
