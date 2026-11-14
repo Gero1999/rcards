@@ -1,8 +1,8 @@
 # rcards
 
 `rcards` is a development R package for constructing and manipulating playing
-cards, decks, players, and game containers. Poker helpers are experimental;
-a complete Texas Hold'em game or simulation is not available yet.
+cards, decks, players, and games. It includes individual no-limit Texas Hold'em
+hands, statistical poker bots, and configurable four-player partnership Mus.
 
 ## Development installation
 
@@ -55,9 +55,8 @@ testthat::test_local(filter = "card|deck|player|table|public-api|readme")
 ```
 
 This runs the foundation checks, including the executable README example.
-To run everything, use `testthat::test_local()`. The existing experimental poker
-suite currently has failures in hand evaluation and pot settlement; a passing
-foundation suite does not establish playable poker support.
+To run the complete suite, including poker, bots, translations, and Mus, use
+`testthat::test_local()`.
 
 Build and check the package from the parent directory:
 
@@ -71,3 +70,41 @@ These are local commands; no CI workflow is added.
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+## Card games and translations
+
+- **Texas Hold'em:** play individual no-limit hands with blinds, all-ins, side
+  pots, and split pots using `holdem_hand()` and `holdem_action()`.
+- **Statistical bots:** use bounded equity estimates with separate `risk`,
+  `adaptability`, `variation`, and `equity_samples` settings. Simulate independent
+  complete hands with `simulate_poker_game()`; updated bot state carries across hands.
+- **Mus:** select four/eight kings and a 30/40-point target through
+  `mus_game(..., rules = mus_rules(kings = 8, points_to_win = 40))`.
+- **Translations:** `translate_card()` and `translate_deck()` support English
+  (`"en"`) and Spanish (`"es"`) without changing internal card identities.
+
+See [game rules, bot behavior, and examples](docs/games.md). The installed
+`examples/holdem.R` and `examples/mus.R` scripts demonstrate complete hands.
+
+## Play from the R console
+
+Use the same game engines with human, bot, or scripted controllers:
+
+```r
+players <- list(rcards::player("You", points = 100),
+                rcards::player("Bot", points = 100))
+played <- rcards::play(
+  rcards::holdem_hand(players, seed = 42),
+  controllers = list(rcards::console_player(), rcards::poker_bot(seed = 1))
+)
+```
+
+The console shows your cards, public game state, and legal actions. Enter action
+names or menu numbers, `raise 10` for a total street bet, or `q` to stop. Invalid
+answers are retried. A stopped game can be resumed with
+`rcards::play(played$game, played$controllers)`.
+
+Mus uses the same `play()` interface with four controllers, including `mus_bot()`
+for automated partners and opponents. See
+[console play and the shared game interface](docs/console-play.md) for Mus,
+stateful policies, scripted input, and hand-versus-game completion.
