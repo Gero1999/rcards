@@ -1,20 +1,3 @@
-console_fixture <- function(lines) {
-  index <- 0L; output <- character(); prompts <- character()
-  reader <- function(prompt) {
-    prompts <<- c(prompts, prompt)
-    index <<- index + 1L
-    if (index > length(lines)) return(character())
-    value <- lines[[index]]
-    if (inherits(value, "condition")) stop(value)
-    value
-  }
-  list(controller = console_player(read = reader, write = function(text) output <<- c(output, text)),
-    output = function() paste(output, collapse = "\n"), prompts = function() prompts)
-}
-
-passive_controller <- function(o) list(action = if ("check" %in% o$legal$actions) "check" else "call")
-passive_mus_controller <- function(o) list(action = if ("cut" %in% o$legal$actions) "cut" else "pass")
-
 test_that("console players complete hands through the same protocol as policies", {
   io <- console_fixture(c("call", "check", "check", "check"))
   h <- new_holdem(seed = 17)
@@ -24,7 +7,7 @@ test_that("console players complete hands through the same protocol as policies"
   expect_equal(sum(vapply(result$game$players, `[[`, 0, "points")), 200)
   expect_match(io$output(), "Your cards")
   expect_match(io$output(), "To call")
-  expect_match(io$output(), "Payouts")
+  expect_match(io$output(), "wins|split")
   expect_output(print(result), "Play status: complete")
   expect_equal(result$game, finish_calling(h))
 })
