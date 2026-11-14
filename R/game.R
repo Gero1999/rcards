@@ -21,6 +21,10 @@ game <- function(players = list(), table = NULL, decks = list()) {
 #' @param ... Unused arguments.
 #' @export
 print.game <- function(x, ...) {
+    if (inherits(x, "holdem_hand") || inherits(x, "mus_game")) {
+        cat(paste(game_summary_text(game_result(x)), collapse = "\n"), "\n", sep = "")
+        return(invisible(x))
+    }
 	n_players <- length(x$players)
 	n_decks <- length(x$decks)
 	has_table <- !is.null(x$table)

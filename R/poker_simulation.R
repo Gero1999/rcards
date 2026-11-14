@@ -5,7 +5,8 @@
 #' No GUI or interactive console input is required. Custom policies receive only
 #' the acting player's observation and return action and optional amount.
 #' @param players A list of funded player objects.
-#' @param bots One poker_bot per seat, or one policy function per seat.
+#' @param bots One controller per seat: poker_bot(), policy_player(), or a policy
+#' function. Simulation uses the shared play() loop and retains controller state.
 #' @param hands Number of independent hands to simulate (one to 10000).
 #' @param dealer First hand's dealer seat; rotates each hand.
 #' @param small_blind,big_blind Integer blinds.
@@ -23,8 +24,8 @@ simulate_poker_game <- function(players, bots = NULL, hands = 1L, dealer = 1L,
       !all(vapply(players, inherits, logical(1), "player"))) stop("Expected two to ten players")
   check_number(dealer, "dealer", 1, n, TRUE)
   if (is.null(bots)) bots <- lapply(seq_len(n), function(i) poker_bot())
-  if (length(bots) != n || !all(vapply(bots, function(x) inherits(x,"poker_bot") || is.function(x), logical(1)))) {
-    stop("Provide one bot or policy function per seat")
+  if (!is.list(bots) || length(bots) != n || !all(vapply(bots, is_game_controller, logical(1)))) {
+    stop("Provide one supported controller per seat")
   }
   with_poker_seed(seed, function() {
     completed <- vector("list", hands)
@@ -32,19 +33,11 @@ simulate_poker_game <- function(players, bots = NULL, hands = 1L, dealer = 1L,
     for (j in seq_len(hands)) {
       button <- ((dealer + j - 2L) %% n) + 1L
       h <- holdem_hand(players, button, small_blind, big_blind)
-      actions <- 0L
-      while (!h$complete) {
-        if (actions >= max_actions) stop("Hand exceeded max_actions")
-        i <- h$actor
-        observation <- holdem_observation(h)
-        if (is.function(bots[[i]])) choice <- bots[[i]](observation) else {
-          choice <- poker_bot_action(bots[[i]], observation)
-          bots[[i]] <- choice$bot
-        }
-        if (!is.list(choice) || is.null(choice$action)) stop("Policy must return an action list")
-        h <- holdem_action(h, choice$action, choice$amount)
-        actions <- actions + 1L
-      }
+      played <- play(h, bots, max_actions = max_actions)
+      if (played$status == "action_limit") stop("Hand exceeded max_actions")
+      if (!identical(played$status, "complete")) stop("Simulation stopped: ", played$status)
+      h <- played$game
+      bots <- played$controllers
       completed[[j]] <- h
       net[j,] <- holdem_stacks(h) - vapply(players, `[[`, 0, "points")
     }

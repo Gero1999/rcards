@@ -105,8 +105,8 @@ exceptions, table signals, and multi-game match formats are not implemented.
 
 Lances score in order. Reaching the configured target ends the game. Otherwise
 `mus_next_hand(game, seed)` preserves scores and rotates mano after a hand ends.
-`mus_legal_actions()` describes the next expected input. There is no Mus AI or
-interactive console loop; callers supply the actions through the R API.
+`mus_legal_actions()` describes the next expected input. Mus AI is not implemented. Callers can supply actions through the R API or use
+`play()` with console/scripted controllers; see [console play](console-play.md).
 
 ## English and Spanish displays
 

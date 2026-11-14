@@ -85,3 +85,25 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.
 
 See [game rules, bot behavior, and examples](docs/games.md). The installed
 `examples/holdem.R` and `examples/mus.R` scripts demonstrate complete hands.
+
+## Play from the R console
+
+Use the same game engines with human, bot, or scripted controllers:
+
+```r
+players <- list(rcards::player("You", points = 100),
+                rcards::player("Bot", points = 100))
+played <- rcards::play(
+  rcards::holdem_hand(players, seed = 42),
+  controllers = list(rcards::console_player(), rcards::poker_bot(seed = 1))
+)
+```
+
+The console shows your cards, public game state, and legal actions. Enter action
+names or menu numbers, `raise 10` for a total street bet, or `q` to stop. Invalid
+answers are retried. A stopped game can be resumed with
+`rcards::play(played$game, played$controllers)`.
+
+Mus uses the same `play()` interface with four controllers. See
+[console play and the shared game interface](docs/console-play.md) for Mus,
+stateful policies, scripted input, and hand-versus-game completion.
