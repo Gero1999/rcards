@@ -29,7 +29,7 @@ holdem_hand <- function(players, dealer = 1L, small_blind = 1L,
     contributions = rep(0, n), folded = rep(FALSE, n), current_bet = big_blind,
     min_raise = big_blind, acted_at = rep(NA_real_, n), pending = seq_len(n),
     actor = NULL, complete = FALSE, pots = list(), payouts = rep(0, n),
-    history = list(), initial_chips = sum(vapply(players, `[[`, 0, "points"))),
+    history = list(), initial_stacks = vapply(players, `[[`, 0, "points"), initial_chips = sum(vapply(players, `[[`, 0, "points"))),
     class = c("holdem_hand", "game"))
   for (i in seq_len(n)) h$players[[i]]$hand <- list()
   order <- clockwise_seats(n, dealer)

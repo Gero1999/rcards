@@ -10,7 +10,7 @@
 #' assumptions. Custom controllers are trusted R code and should be stateless
 #' or self-contained: external mutable state can invalidate comparisons.
 #' @export
-estimate_actions <- function(observation,n=100L,controllers=NULL,seed=NULL,
+estimate_actions <- function(observation,n=20L,controllers=NULL,seed=NULL,
                              max_actions=1000L,max_evaluations=10000L) {
   o <- observation;n <- estimate_n(n,10000L)
   estimate_n(max_actions,1000000L);estimate_n(max_evaluations,1000000L)
@@ -40,7 +40,7 @@ finish_stat_rollout <- function(game,controllers,max_actions) {
   played$game
 }
 
-blackjack_public_model <- function(o) {
+blackjack_public_pool <- function(o) {
   if(is.null(o$rules)) stop("Observation needs public Blackjack rules")
   rules <- do.call(blackjack_rules,o$rules)
   cards <- rep(as_card_list(poker_pack()),rules$decks)
@@ -58,6 +58,12 @@ blackjack_public_model <- function(o) {
   valid <- which(if(up=="A") !ranks %in% c("10","J","Q","K") else
     if(up %in% c("10","J","Q","K")) ranks!="A" else rep(TRUE,length(cards)))
   if(!length(valid)) stop("No dealer hole card is consistent with the completed natural check")
+  list(cards=cards,rules=rules,valid=valid)
+}
+
+blackjack_public_model <- function(o,pool=NULL) {
+  if(is.null(pool)) pool <- blackjack_public_pool(o)
+  cards <- pool$cards;rules <- pool$rules;valid <- pool$valid
   hole_index <- valid[sample.int(length(valid),1L)]
   hole <- cards[[hole_index]];cards <- cards[-hole_index]
   history <- Filter(function(event) event$player==o$actor,o$history)
@@ -73,12 +79,13 @@ estimate_blackjack_actions <- function(o,n,controllers,seed,max_actions,budget) 
   controllers <- check_stat_controllers(controllers,1L)
   actions <- o$legal$actions
   check_rollout_budget(n,length(actions),budget)
+  pool <- blackjack_public_pool(o)
   gains <- matrix(NA_real_,n,length(actions),dimnames=list(NULL,actions))
   invested <- sum(vapply(o$hands,`[[`,0,"bet"))
   baseline <- o$stacks[o$actor]+invested
   with_poker_seed(seed,function() {
     for(i in seq_len(n)) {
-      model <- blackjack_public_model(o)
+      model <- blackjack_public_model(o,pool)
       for(j in seq_along(actions)) {
         game <- blackjack_step(model,actions[j])
         game <- finish_stat_rollout(game,controllers,max_actions)

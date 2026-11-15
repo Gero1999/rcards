@@ -137,3 +137,13 @@ also work. See [console play](docs/console-play.md),
 [Blackjack rules](docs/rules/blackjack.md), and [Scopa rules](docs/rules/scopa.md).
 The Italian deck is constructed with `italian_deck()`; no new binary datasets
 are needed. Game bots are baseline heuristics, not optimal strategies.
+
+## Probability estimates and simulations
+
+`poker_equity()` offers budgeted exact or sampled showdown estimates;
+`estimate_hand()` also exposes Mus lance strength from public observations.
+`estimate_actions()` compares Blackjack or Scopa choices under continuation
+strategies. `simulate_games()` runs independent hands or matches and reports
+profit/score summaries, outcome definitions and sampling uncertainty.
+See [statistical methods and cost budgets](docs/statistics.md) and the installed
+`examples/statistics.R`. All calculations run locally without external APIs.

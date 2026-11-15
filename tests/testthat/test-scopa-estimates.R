@@ -26,3 +26,10 @@ test_that("Scopa rollouts are seeded conditional on public observations only", {
   bad <- o;bad$capture_counts[1]<-1L
   expect_error(scopa_public_model(bad),"history")
 })
+
+test_that("unfinished action rollouts abort rather than fabricate point outcomes", {
+  o <- game_observation(scopa_game(seed=1))
+  set.seed(10);before <- .Random.seed
+  expect_error(estimate_actions(o,n=1,max_actions=1,seed=2),"incomplete")
+  expect_identical(.Random.seed,before)
+})

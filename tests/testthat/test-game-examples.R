@@ -1,5 +1,5 @@
 test_that("installed game examples execute through exported APIs", {
-  for (name in c("holdem.R","mus.R","mus-bots.R","blackjack.R","scopa.R")) {
+  for (name in c("holdem.R","mus.R","mus-bots.R","blackjack.R","scopa.R","statistics.R")) {
     path <- system.file("examples",name,package="rcards")
     expect_true(nzchar(path))
     e <- new.env(parent=globalenv())
