@@ -44,6 +44,7 @@ game_table_view <- function(game,seat=1L,language="en") {
       seats[[i]]$details <- ui("Stacks: %s",language,o$stacks[i])
     }
     center <- list(zone("dealer",ui("Dealer",language),faces(o$dealer)))
+    status <- ui("Round %s | Base wager %s",language,o$round_number,o$wagers[seat])
   } else {
     counts <- if(type=="mus") rep(4L,length(seats)) else o$hand_counts
     revealed <- if(type %in% c("holdem","mus")) console_revealed_hands(game) else integer()
@@ -98,6 +99,8 @@ game_table_view <- function(game,seat=1L,language="en") {
     viewer=seat,actor=o$actor,seats=seats,center=center,own=own,status=status,
     your_turn=your_turn,hand_complete=done,complete=game_complete(game),
     can_next=continuation$available,continue_label=ui(continuation$label,language),
+    next_wager=if(type=="blackjack" && done && continuation$available)
+      list(value=min(o$wagers[seat],o$stacks[seat]),maximum=o$stacks[seat]) else NULL,
     selection_limit=if(!selectable) 0L else if(type=="scopa") 1L else if(type=="liar") legal$max_cards else 4L,
     legal=legal,result=result,history=history,language=language)
 }

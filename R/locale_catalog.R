@@ -158,5 +158,10 @@ locale_catalog <- list(
   "Hand %s | Dealer %s | Blinds %s / %s" = c(es = "Mano %s | Repartidor %s | Ciegas %s / %s", de = "Hand %s | Geber %s | Blinds %s / %s", it = "Mano %s | Mazziere %s | Bui %s / %s"),
   "Table finished: fewer than two players have chips." = c(es = "Mesa terminada: quedan menos de dos jugadores con fichas.", de = "Tisch beendet: Weniger als zwei Spieler haben Chips.", it = "Tavolo concluso: meno di due giocatori hanno fiches."),
   "Your bankroll is empty. Start a new table to play again." = c(es = "No te quedan fichas. Inicia una nueva mesa para jugar de nuevo.", de = "Du hast keine Chips mehr. Starte einen neuen Tisch.", it = "Non hai pi\u00f9 fiches. Avvia un nuovo tavolo per giocare ancora."),
-  "This table cannot continue yet" = c(es = "Esta mesa todav\u00eda no puede continuar", de = "Dieser Tisch kann noch nicht fortgesetzt werden", it = "Questo tavolo non pu\u00f2 ancora continuare")
+  "This table cannot continue yet" = c(es = "Esta mesa todav\u00eda no puede continuar", de = "Dieser Tisch kann noch nicht fortgesetzt werden", it = "Questo tavolo non pu\u00f2 ancora continuare"),
+  "Next round" = c(es = "Siguiente ronda", de = "N\u00e4chste Runde", it = "Prossimo round"),
+  "Next round wager" = c(es = "Apuesta de la siguiente ronda", de = "Einsatz der n\u00e4chsten Runde", it = "Puntata del prossimo round"),
+  "Round %s | Base wager %s" = c(es = "Ronda %s | Apuesta base %s", de = "Runde %s | Grundeinsatz %s", it = "Round %s | Puntata base %s"),
+  "Choose a positive wager within your bankroll" = c(es = "Elige una apuesta positiva dentro de tu saldo", de = "W\u00e4hle einen positiven Einsatz innerhalb deines Guthabens", it = "Scegli una puntata positiva entro il tuo saldo"),
+  "Review the result, then continue or start a new table." = c(es = "Revisa el resultado y contin\u00faa o inicia una nueva mesa.", de = "Ergebnis ansehen, dann fortsetzen oder einen neuen Tisch starten.", it = "Controlla il risultato, poi continua o avvia un nuovo tavolo.")
 )

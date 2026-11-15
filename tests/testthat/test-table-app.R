@@ -94,7 +94,8 @@ test_that("split Blackjack hands progress and browser sessions are independent",
     expect_true(view()$hand_complete)
     expect_length(view()$result,2)
     expect_false(view()$center[[1]]$cards[[2]]$back)
-    expect_false(view()$can_next)
+    expect_true(view()$can_next)
+    expect_equal(view()$next_wager$value,10)
   })
   shiny::testServer(server,{
     session$flushReact()

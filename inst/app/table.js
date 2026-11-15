@@ -10,6 +10,8 @@
     if (!el || el.disabled || !window.Shiny) return;
     var payload = {version: Number(el.dataset.rcVersion)};
     if (continuation) {
+      var wager = document.getElementById("next_wager");
+      payload.wager = wager && wager.value !== "" ? Number(wager.value) : null;
       Shiny.setInputValue("table_continue", payload, {priority: "event"});
     } else if (action) {
       payload.action = el.dataset.rcAction;

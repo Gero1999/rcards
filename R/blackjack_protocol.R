@@ -28,7 +28,8 @@ game_hand_complete.blackjack_game <- function(game) game$complete
 game_result.blackjack_game <- function(game) {
   list(game_type="blackjack",complete=game$complete,hand_complete=game$complete,
     player_names=vapply(game$players,`[[`,"","name"),stacks=vapply(game$players,`[[`,0,"points"),
-    results=if(game$complete) game$results else list())
+    results=if(game$complete) game$results else list(),wagers=game$wagers,
+    round_number=game$round_number)
 }
 #' @export
 game_observation.blackjack_game <- function(game,seat=NULL) {
@@ -38,7 +39,8 @@ game_observation.blackjack_game <- function(game,seat=NULL) {
     hands=if(is.null(seat)) list() else game$hands[[seat]],active_hand=game$active_hand,
     hand_counts=lapply(game$hands,function(hands) vapply(hands,function(h) length(h$cards),0L)),
     dealer=if(game$complete) game$dealer else list(game$dealer[[1L]],NULL),
-    rules=game$rules,complete=game$complete,history=game$history)
+    rules=game$rules,wagers=game$wagers,round_number=game$round_number,
+    complete=game$complete,history=game$history)
 }
 
 #' Create a baseline Blackjack controller

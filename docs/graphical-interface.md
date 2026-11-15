@@ -20,7 +20,7 @@ German (`de`), and Italian (`it`) are selectable during play.
 | --- | --- | --- |
 | Texas Hold'em | 2–10 seats; retained stacks across hands | Fold/check/call/raise. Raise **TO** a total for the betting round, including chips already committed. Bounds and the call amount are shown. |
 | Mus | Four seats, two partnerships | Mus/cut, select any cards to discard, and legal lance/stake decisions. |
-| Blackjack | One human versus the dealer; one round | Hit/stand/double/split when allowed. Split hands show their totals and wagers; the active hand is highlighted. |
+| Blackjack | One human versus the dealer; retained bankroll | Hit/stand/double/split when allowed. Split hands show their totals and wagers; the active hand is highlighted. |
 | Scopa | Two or three individual players; four in teams | Select one own card, then a numbered capture option. Table positions and the chosen capture are highlighted. |
 | Mentiroso | 2–8 seats, Spanish pack | Select one or more own cards and a declared rank, or pass/challenge when allowed. Only a challenged batch is revealed. |
 
@@ -36,7 +36,17 @@ rotated clockwise among funded players. Eliminated seats receive no cards or
 blinds. The human table stops if your bankroll is empty or fewer than two
 funded players remain; there are no automatic rebuys or stack resets.
 Mus and Scopa retain scores and controller memory between hands. Completed
-matches and Blackjack rounds currently restart through **New table**.
+matches currently restart through **New table**.
+
+Blackjack offers **Next round**, carrying settled bankrolls and controller
+memory forward. The displayed next wager can be changed before continuing;
+if the previous base wager exceeds your remaining bankroll, the field shows
+the available balance for explicit confirmation. A zero bankroll stops play.
+Bot seats unable to cover their own base wager sit out. Doubles and splits do
+not increase subsequent base wagers. Each round uses a fresh complete shuffled
+shoe; a continuous shoe and card-counting session are not implemented.
+`blackjack_next_round(completed, wager = 5, seed = 42)` exposes the same engine
+transition programmatically; `game_next_hand(completed)` keeps base wagers.
 
 For programmatic or console poker, use `holdem_next_hand(completed, seed = 42)`
 or `game_next_hand(completed)`, then call `play()` with the returned state and

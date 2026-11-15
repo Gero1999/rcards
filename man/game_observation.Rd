@@ -47,7 +47,9 @@ game-specific methods. Rules stay inside the individual engines.
 game_complete() means the entire game is over: one Hold'em hand, or a Mus
 game at its target score. game_hand_complete() also marks an intermediate Mus
 hand/deal boundary. game_next_hand() advances Mus or Scopa at such a boundary,
-or explicitly deals another completed Hold'em hand with settled stacks.
+or explicitly deals another completed Hold'em hand or Blackjack round with
+settled stacks. Individual hand/round completion remains distinct from
+choosing to continue at the same table.
 
 Observations and results exclude opponents' hidden cards and deck order.
 These projections protect controller inputs, not access to the full in-process

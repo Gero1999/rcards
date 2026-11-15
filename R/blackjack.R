@@ -42,6 +42,7 @@ new_blackjack <- function(players,wager=10,rules=blackjack_defaults(),seed=NULL,
   expected <- rep(poker_card_ids(poker_pack()),rules$decks)
   if(!identical(sort(ids),sort(expected))) stop("Pack does not match configured Blackjack decks")
   g <- structure(list(players=players,initial_stacks=vapply(players,`[[`,0,"points"),
+    wagers=wager,round_number=1L,
     rules=rules,shoe=as_card_list(pack),dealer=list(),hands=lapply(wager,function(bet)
       list(list(cards=list(),bet=bet,state="active",split=FALSE,split_aces=FALSE))),
     actor=1L,active_hand=1L,history=list(),complete=FALSE,results=list()),class=c("blackjack_game","game"))

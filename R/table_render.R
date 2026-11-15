@@ -47,7 +47,7 @@ table_render_view <- function(view,selected=integer(),capture=NULL,version=0L) {
 
 table_render_controls <- function(view,version,paused=FALSE) {
   language <- view$language
-  if(view$hand_complete) return(shiny::tags$p(ui("Review the result, then start a new table or next hand.",language)))
+  if(view$hand_complete) return(shiny::tags$p(ui("Review the result, then continue or start a new table.",language)))
   if(!view$your_turn) return(shiny::tags$p(ui("Bots are playing",language)))
   legal <- view$legal
   shiny::tagList(
