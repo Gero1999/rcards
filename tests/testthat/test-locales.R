@@ -30,3 +30,13 @@ test_that("localized play translates errors and keeps names and canonical state"
   }
   for(entry in locale_catalog) expect_equal(sort(names(entry)),c("de","es","it"))
 })
+
+test_that("different console locales receive their own completion messages", {
+  frames <- character()
+  writer <- function(text) frames <<- c(frames,text)
+  g <- holdem_action(new_holdem(seed=1),"fold")
+  console_notify(g,list(console_player(write=writer,language="de"),console_player(write=writer,language="it")),"complete")
+  expect_length(frames,2)
+  expect_match(frames[1],"gewinnt")
+  expect_match(frames[2],"vince")
+})

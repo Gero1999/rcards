@@ -28,21 +28,22 @@ console_card_rows <- function(cards, style = "auto", width = 80L, numbered = FAL
   }),use.names=FALSE)
 }
 
-console_opponents <- function(o) {
+console_opponents <- function(o, language = NULL) {
   others <- setdiff(seq_along(o$player_names),o$actor)
   paste(vapply(others,function(i) {
-    back <- if(o$game_type=="holdem" && o$folded[i]) "folded" else
+    back <- if(o$game_type=="holdem" && o$folded[i]) ui("folded",language) else
       paste(rep("[##]",if(o$game_type=="holdem") 2 else 4),collapse="")
     paste0(o$player_names[i]," ",back)
   },character(1)),collapse="  ")
 }
 
 console_observation_text <- function(o, controller) {
+  if(o$game_type=="scopa") return(console_scopa(o,controller))
   if(o$game_type=="blackjack") return(console_blackjack(o,controller))
   lang <- controller$language
   phase <- if(o$game_type=="holdem") o$street else o$phase
   text <- c(paste0("\n",toupper(o$game_type)," / ",ui(toupper(phase),lang),"   ",
-    ui("%s to play",lang,o$player_names[o$actor])),console_opponents(o))
+    ui("%s to play",lang,o$player_names[o$actor])),console_opponents(o,lang))
   if(o$game_type=="holdem") {
     text <- c(text,ui("Pot %s  |  To call %s  |  Your stack %s",lang,o$pot,o$legal$to_call,o$stacks[o$actor]))
     if(length(o$board)) text <- c(text,ui("Board",lang),console_card_rows(o$board,controller$style,controller$width))
@@ -90,6 +91,7 @@ console_hand_label <- function(cards) {
 }
 
 console_hand_end_text <- function(game, controller) {
+  if(inherits(game,"scopa_game")) return(console_scopa_end(game,controller))
   if(inherits(game,"blackjack_game")) return(console_blackjack_end(game,controller))
   text <- character();seats <- console_revealed_hands(game)
   if(length(seats)) {
@@ -122,7 +124,7 @@ console_hand_end_text <- function(game, controller) {
         if(!length(team_entries)) next
         points <- sum(vapply(team_entries,`[[`,0,"points"))
         names <- vapply(game$players[mus_team(1:4)==team],`[[`,"","name")
-        summaries <- c(summaries,paste0(lance,": ",paste(names,collapse=" & ")," +",points))
+        summaries <- c(summaries,paste0(if(console_language(controller$language)=="en") lance else ui(toupper(lance),controller$language),": ",paste(names,collapse=" & ")," +",points))
       }
     }
     text <- c(text,strwrap(paste(summaries,collapse=" | "),width=controller$width),
@@ -139,11 +141,12 @@ console_notify <- function(game, controllers, status) {
   written <- list()
   for(controller in controllers) {
     if(!inherits(controller,"console_player")) next
-    if(any(vapply(written,function(write) identical(write,controller$write),logical(1)))) next
+    if(any(vapply(written,function(entry) identical(entry$write,controller$write) &&
+      identical(entry$language,console_language(controller$language)),logical(1)))) next
     text <- if(status %in% c("complete","hand_complete")) console_hand_end_text(game,controller) else
       c(ui("Paused: %s. Resume with play(result$game, result$controllers).",controller$language,ui(status,controller$language)),game_summary_text(game_result(game),controller$language))
     controller$write(paste(text,collapse="\n"))
-    written[[length(written)+1L]] <- controller$write
+    written[[length(written)+1L]] <- list(write=controller$write,language=console_language(controller$language))
   }
   invisible(NULL)
 }

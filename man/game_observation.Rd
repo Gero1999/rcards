@@ -39,14 +39,14 @@ game state; completion methods return logical scalars; game_result() returns
 a public summary; game_next_hand() returns a new hand preserving game scores.
 }
 \description{
-Hold'em and Mus inherit from game and implement this protocol. The plain
+Hold'em, Mus, Blackjack and Scopa inherit from game and implement this protocol. The plain
 game() constructor remains a general container and cannot be played without
 game-specific methods. Rules stay inside the individual engines.
 }
 \details{
 game_complete() means the entire game is over: one Hold'em hand, or a Mus
 game at its target score. game_hand_complete() also marks an intermediate Mus
-hand boundary. game_next_hand() advances Mus at such a boundary.
+hand/deal boundary. game_next_hand() advances Mus or Scopa at such a boundary.
 
 Observations and results exclude opponents' hidden cards and deck order.
 These projections protect controller inputs, not access to the full in-process

@@ -90,3 +90,46 @@ test_that("Scopa matches settle whole deals and rotate dealer with scores retain
   g$scores <- c(2,1)
   expect_true(scopa_settle(g)$complete)
 })
+
+test_that("Scopa public protocol bots and matches support all player counts", {
+  for(n in 2:4) {
+    g <- scopa_game(paste0("P",seq_len(n)),rules=scopa_rules(target=3),seed=7)
+    o <- game_observation(g)
+    expect_null(o[["stock"]]);expect_null(o$players);expect_length(o$hole,3)
+    expect_equal(o$hand_counts,rep(3L,n))
+    result <- play(g,rep(list(scopa_bot()),n),until="game",seed=42)
+    expect_true(result$game$complete)
+    expect_true(max(result$game$scores)>=3)
+    expect_length(italian_card_ids(scopa_cards(result$game)),40)
+    expect_length(game_observation(result$game)$hole,0)
+    expect_true(length(unique(result$game$winner))==1L)
+  }
+})
+
+test_that("Scopa console selects capture options in every language and pauses safely", {
+  for(language in supported_languages()) {
+    g <- scopa_game(seed=3)
+    io <- console_fixture(c(paste(action_label("play",language),"1 1"),"q"))
+    io$controller$language <- language
+    result <- play(g,list(io$controller,scopa_bot()))
+    expect_equal(result$status,"quit")
+    expect_equal(result$game$history[[1]]$player,1)
+    expect_match(io$output(),"SCOPA")
+    expect_length(italian_card_ids(scopa_cards(result$game)),40)
+  }
+  g <- scopa_game(seed=1)
+  io <- console_fixture(c("play 99 1","q"))
+  result <- play(g,list(io$controller,scopa_bot()))
+  expect_identical(result$game,g)
+  expect_error(game_action(g,list(action="hit")),"Illegal Scopa")
+})
+
+test_that("Scopa prompts for ambiguous captures and quitting keeps the state", {
+  g <- scopa_game(seed=1)
+  g$table_cards <- list(card("5","Denari"),card("5","Coppe"))
+  g$players[[1]]$hand <- list(card("5","Spade"))
+  io <- console_fixture(c("play","1","q"))
+  result <- play(g,list(io$controller,scopa_bot()))
+  expect_identical(result$game,g)
+  expect_true(any(grepl("Capture option 1..2",io$prompts(),fixed=TRUE)))
+})
