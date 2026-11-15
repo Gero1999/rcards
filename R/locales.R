@@ -32,13 +32,13 @@ console_action <- function(token, legal, language = NULL) {
 
 action_aliases <- list(
   en=list(),
-  es=list(fold="retirarse",check="pasar",call="igualar",raise="subir",quit="salir",
+  es=list(claim="declarar",challenge="mentiroso",fold="retirarse",check="pasar",call="igualar",raise="subir",quit="salir",
     cut="cortar",discard="descartar",bet="apostar",accept="aceptar",reject="rechazar",pass="pasar",
     hit="pedir",stand="plantarse",double="doblar",split="dividir",play="jugar"),
-  de=list(fold="aussteigen",check="schieben",call="mitgehen",raise="erh\u00f6hen",quit="beenden",
+  de=list(claim="ansagen",challenge="anzweifeln",fold="aussteigen",check="schieben",call="mitgehen",raise="erh\u00f6hen",quit="beenden",
     cut="beendenmus",discard="tauschen",bet="setzen",accept="annehmen",reject="ablehnen",pass="passen",
     hit="ziehen",stand="halten",double="verdoppeln",split="teilen",play="spielen"),
-  it=list(fold="lasciare",check="passare",call="vedere",raise="rilanciare",quit="uscire",
+  it=list(claim="dichiarare",challenge="bugiardo",fold="lasciare",check="passare",call="vedere",raise="rilanciare",quit="uscire",
     cut="tagliare",discard="scartare",bet="puntare",accept="accettare",reject="rifiutare",pass="passare",
     hit="carta",stand="stare",double="raddoppiare",split="dividere",play="giocare")
 )

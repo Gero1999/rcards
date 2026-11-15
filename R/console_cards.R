@@ -38,6 +38,7 @@ console_opponents <- function(o, language = NULL) {
 }
 
 console_observation_text <- function(o, controller) {
+  if(o$game_type=="liar") return(console_liar(o,controller))
   if(o$game_type=="scopa") return(console_scopa(o,controller))
   if(o$game_type=="blackjack") return(console_blackjack(o,controller))
   lang <- controller$language
@@ -91,6 +92,7 @@ console_hand_label <- function(cards) {
 }
 
 console_hand_end_text <- function(game, controller) {
+  if(inherits(game,"liar_game")) return(console_liar_end(game,controller))
   if(inherits(game,"scopa_game")) return(console_scopa_end(game,controller))
   if(inherits(game,"blackjack_game")) return(console_blackjack_end(game,controller))
   text <- character();seats <- console_revealed_hands(game)
