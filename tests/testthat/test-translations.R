@@ -6,7 +6,7 @@ test_that("translation changes displays but preserves game identity", {
   expect_equal(translate_card(es,"en")$display,"Ace of Spades \u2660")
   expect_match(translate_card(card("11","Copas"),"en")$display,"Knight of Cups")
   expect_match(translate_card(card("11","Copas"),"es")$display,"Caballo de Copas")
-  expect_error(translate_card(c,"fr"),"en and es")
+  expect_error(translate_card(c,"fr"),"en, es, de, it")
 })
 
 test_that("deck translation preserves optional metadata, order and poker rankings", {
@@ -20,5 +20,5 @@ test_that("deck translation preserves optional metadata, order and poker ranking
   expect_identical(attr(translated,"main_cards"),as_card_list(translated)[1])
   expect_identical(attr(translated,"optional_cards"),as_card_list(translated)[2])
   expect_length(translate_deck(deck(),"es"),0)
-  expect_error(translate_deck(deck(),"fr"),"en and es")
+  expect_error(translate_deck(deck(),"fr"),"en, es, de, it")
 })

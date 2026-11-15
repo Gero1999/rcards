@@ -116,11 +116,11 @@ test_that("the shared loop can finish Mus hands or a whole configured game", {
 
 test_that("four console seats use the same Mus loop", {
   frame <- ""
-  reader <- function(prompt) if (grepl("Actions: .*cut", frame)) "cut" else "pass"
+  reader <- function(prompt) if (grepl("Acciones: .*cortar", frame)) "cut" else "pass"
   human <- console_player(read = reader, write = function(text) frame <<- text, language = "es")
   result <- play(new_mus(seed = 4), rep(list(human), 4))
   expect_equal(result$status, "hand_complete")
-  expect_match(frame, "Scores")
+  expect_match(frame, "Puntos")
   expect_equal(result$game, finish_mus_passing(new_mus(seed = 4)))
 })
 

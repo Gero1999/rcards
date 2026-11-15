@@ -47,3 +47,11 @@ action_label <- function(action, language = NULL) {
   aliases <- action_aliases[[console_language(language)]][[action]]
   if(length(aliases)) aliases[1L] else action
 }
+
+console_error <- function(message, language = NULL) {
+  pattern <- "^(.+) must be a finite (integer|number) between (.+) and (.+)$"
+  match <- regmatches(message,regexec(pattern,message))[[1L]]
+  if(length(match)) return(ui("%s must be a finite %s between %s and %s",language,
+    ui(match[2],language),ui(match[3],language),match[4],match[5]))
+  ui(message,language)
+}
