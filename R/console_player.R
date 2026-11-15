@@ -60,6 +60,7 @@ console_decision <- function(line, legal, controller) {
   if (action == "quit") return(list(action = "quit"))
   if (!action %in% legal$actions) console_input_error("Choose one of the listed legal actions")
   arguments <- tokens[-1L]
+  if (action=="claim") return(console_liar_decision(arguments,legal,controller))
   if (action=="play") return(console_scopa_decision(arguments,legal,controller))
   if (action %in% c("raise", "bet")) {
     if (!length(arguments)) {

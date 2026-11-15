@@ -14,10 +14,6 @@ test_that("Mentiroso deals complete configurable packs and preserves seeded RNG"
   expect_error(new_liar(pack=as_card_list(mus_pack())[1:39]),"complete")
 })
 
-liar_decline <- function(g) {
-  while(!g$complete && g$phase=="response") g <- liar_step(g,"pass")
-  g
-}
 
 test_that("Mentiroso keeps its rank until a challenge and follows response order", {
   g <- new_liar(seed=3)
@@ -36,12 +32,15 @@ test_that("Mentiroso keeps its rank until a challenge and follows response order
 test_that("challenges punish the liar or challenger and reveal only the latest batch", {
   for(lie in c(FALSE,TRUE)) {
     g <- new_liar(seed=3)
-    old_rank <- g$players[[1]]$hand[[1]]$value
-    g <- liar_decline(liar_step(g,"claim",1,old_rank))
+    shared <- intersect(vapply(g$players[[1]]$hand,`[[`,"","value"),vapply(g$players[[2]]$hand,`[[`,"","value"))
+    expect_gt(length(shared),0)
+    old_rank <- shared[1]
+    first <- match(old_rank,vapply(g$players[[1]]$hand,`[[`,"","value"))
+    g <- liar_decline(liar_step(g,"claim",first,old_rank))
     i <- g$actor
     values <- vapply(g$players[[i]]$hand,`[[`,"","value")
     position <- which(if(lie) values!=old_rank else values==old_rank)[1]
-    if(is.na(position)) next
+    expect_false(is.na(position))
     batch <- g$players[[i]]$hand[position]
     g <- liar_step(g,"claim",position)
     expect_length(g$pile,2)
