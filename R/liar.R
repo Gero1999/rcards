@@ -47,3 +47,67 @@ liar_assert_cards <- function(g) {
     stop("Liar card conservation failed")
   invisible(g)
 }
+
+liar_legal <- function(g) {
+  if(g$complete) return(list(actor=NULL,actions=character()))
+  if(g$phase=="response") return(list(actor=g$actor,actions=c("challenge","pass")))
+  list(actor=g$actor,actions="claim",card_positions=seq_along(g$players[[g$actor]]$hand),
+    ranks=if(is.null(g$rank)) liar_ranks(g$rules) else g$rank,
+    max_cards=min(g$rules$max_cards,length(g$players[[g$actor]]$hand)))
+}
+
+liar_finish <- function(g,winner) {
+  g$complete <- TRUE;g$winner <- winner;g$actor <- NULL;g$phase <- "complete"
+  g$responders <- integer()
+  g
+}
+
+liar_step <- function(g,action,cards=integer(),rank=NULL) {
+  legal <- liar_legal(g)
+  if(!is.character(action) || length(action)!=1L || is.na(action) || !action %in% legal$actions)
+    stop("Illegal Liar action")
+  i <- g$actor
+  if(action=="claim") {
+    validate_positions(cards,length(g$players[[i]]$hand))
+    if(!length(cards) || length(cards)>legal$max_cards) stop("Select one through the allowed maximum cards")
+    if(is.null(rank)) rank <- g$rank
+    if(length(rank)!=1L || is.na(rank) || !is.atomic(rank)) stop("Choose a claim rank")
+    rank <- toupper(as.character(rank))
+    if(!rank %in% legal$ranks) stop("Claim the current declared rank")
+    batch <- g$players[[i]]$hand[cards]
+    g$players[[i]]$hand <- g$players[[i]]$hand[-cards]
+    g$pile <- c(g$pile,batch);g$rank <- rank
+    g$last_claim <- list(player=i,rank=rank,count=length(batch),cards=batch)
+    g$last_reveal <- NULL
+    g$history[[length(g$history)+1L]] <- list(action="claim",player=i,rank=rank,count=length(batch))
+    g$phase <- "response"
+    g$responders <- clockwise_seats(length(g$players),i)[seq_len(length(g$players)-1L)]
+    g$actor <- g$responders[1L]
+  } else {
+    if(length(cards) || !is.null(rank)) stop("Responses take no cards or ranks")
+    claim <- g$last_claim
+    if(action=="pass") {
+      g$history[[length(g$history)+1L]] <- list(action="pass",player=i)
+      g$responders <- g$responders[-1L]
+      if(length(g$responders)) g$actor <- g$responders[1L] else {
+        if(!length(g$players[[claim$player]]$hand)) return(liar_finish(g,claim$player))
+        g$actor <- clockwise_seats(length(g$players),claim$player)[1L]
+        g$phase <- "claim";g$last_claim <- NULL
+      }
+    } else {
+      caught <- any(vapply(claim$cards,function(x) x$value!=claim$rank,logical(1)))
+      picker <- if(caught) claim$player else i
+      size <- length(g$pile)
+      g$players[[picker]]$hand <- c(g$players[[picker]]$hand,g$pile)
+      g$pile <- list()
+      reveal <- list(action="challenge",player=i,claimant=claim$player,rank=claim$rank,
+        caught=caught,picker=picker,pickup_count=size,cards=claim$cards)
+      g$last_reveal <- reveal;g$history[[length(g$history)+1L]] <- reveal
+      g$last_claim <- NULL;g$responders <- integer();g$rank <- NULL
+      if(!length(g$players[[claim$player]]$hand)) return(liar_finish(g,claim$player))
+      g$actor <- picker;g$phase <- "claim"
+    }
+  }
+  liar_assert_cards(g)
+  g
+}
