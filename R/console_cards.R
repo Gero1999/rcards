@@ -116,8 +116,20 @@ console_hand_end_text <- function(game, controller) {
     }
   } else {
     results <- Filter(function(entry) entry$hand==game$hand_number,game$results)
-    for(entry in results) text <- c(text,paste0(entry$lance,": team ",entry$team," +",entry$points,"."))
-    text <- c(text,paste0("Scores ",game$scores[1L]," : ",game$scores[2L]))
+    summaries <- character()
+    for(lance in c("grande","chica","pares","juego","punto")) {
+      entries <- Filter(function(entry) entry$lance==lance,results)
+      if(!length(entries)) next
+      for(team in 1:2) {
+        team_entries <- Filter(function(entry) entry$team==team,entries)
+        if(!length(team_entries)) next
+        points <- sum(vapply(team_entries,`[[`,0,"points"))
+        names <- vapply(game$players[mus_team(1:4)==team],`[[`,"","name")
+        summaries <- c(summaries,paste0(lance,": ",paste(names,collapse=" & ")," +",points))
+      }
+    }
+    text <- c(text,strwrap(paste(summaries,collapse=" | "),width=controller$width),
+      paste0("Scores ",game$scores[1L]," : ",game$scores[2L]))
     if(game$complete) {
       names <- vapply(game$players[mus_team(1:4)==game$winner],`[[`,"","name")
       text <- c(text,paste0(paste(names,collapse=" & ")," win!"))

@@ -97,7 +97,11 @@ mus_pair_score <- function(ranks) {
 }
 
 mus_hand_info <- function(hand,rules) {
-  ranks <- mus_values(hand,rules)
+  mus_rank_info(mus_values(hand,rules))
+}
+
+# Pure rank calculation shared by the engine and public-information sampling.
+mus_rank_info <- function(ranks) {
   pair <- mus_pair_score(ranks)
   total <- sum(pmin(ranks,10L))
   # Legal 40-card packs cannot produce totals 38 or 39.

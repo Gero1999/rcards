@@ -104,8 +104,8 @@ counter <- rcards::policy_player(function(observation, state) {
 `choose_action(controller, observation)` returns `decision` and an updated
 `controller`. The runner saves updates after accepted actions; reuse
 `played$controllers` to retain them. The same protocol drives
-`simulate_poker_game()`, including stateful policies across hands. Poker bots
-support Hold'em; Mus currently supports console and scripted controllers.
+`simulate_poker_game()`, including stateful policies across hands. Poker bots support Hold'em; Mus supports console, scripted controllers, and
+`mus_bot()`.
 
 ## Scripted console input and output
 
@@ -160,3 +160,20 @@ Use `console_player(style = "ascii", width = 40)` for narrow/basic terminals;
 `auto` chooses Unicode borders on a UTF-8 terminal. Cards wrap to fit the selected
 width. Spanish suits use O/C/E/B on card faces; an explicitly selected language
 adds a compact suit-name legend. Simulation results remain structured objects.
+
+## One human with three Mus bots
+
+```r
+game <- rcards::mus_game(c("You", "Opponent bot", "Partner bot", "Other bot"),
+                        rules = rcards::mus_rules(kings = 8, points_to_win = 40),
+                        seed = 42)
+controllers <- c(list(rcards::console_player()),
+                 lapply(1:3, function(i) rcards::mus_bot(seed = i)))
+played <- rcards::play(game, controllers)
+```
+
+Seat 3 is your partner; seats 2 and 4 are opponents. Use `until = "game"` to play
+to the target score. Bot states are returned in `played$controllers`. Their
+`last_estimate` records actual accepted samples and attempts; public declaration
+constraints can reduce the sample count. This initial controller uses uniform
+unknown holdings and simple strategic rules, not a claim of expert Mus strength.
