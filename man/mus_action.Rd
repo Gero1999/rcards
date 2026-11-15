@@ -22,9 +22,9 @@ Updated game state. Inputs are not modified.
 }
 \description{
 A bet starts at two points; a raise increases the total by at least two.
-Acceptance resolves the lance. Rejecting awards the previous offered stake
-(one point for an initial refusal), plus winning partnership's intrinsic
-pares/juego points. An accepted ordago immediately decides the game by the
+Acceptance ends negotiation; scores settle after all lances, in order.
+Refusing immediately awards the previous offer (one for an initial refusal);
+intrinsic pares/juego points wait until the end. An accepted ordago decides the game by the
 current lance; rejection behaves like refusal of the preceding offer.
 All-pass grande/chica/punto award one; all-pass pares/juego award intrinsic
 points only. Grande, chica, pares and juego are scored in that order.
