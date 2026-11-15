@@ -138,6 +138,28 @@ also work. See [console play](docs/console-play.md),
 The Italian deck is constructed with `italian_deck()`; no new binary datasets
 are needed. Game bots are baseline heuristics, not optimal strategies.
 
+## Play at a graphical table
+
+Install the optional Shiny dependency, then open a local browser table:
+
+```r
+install.packages("shiny")  # once
+rcards::play_app()
+```
+
+Choose Texas Hold'em, Mus, Blackjack, Scopa, or Mentiroso, the player count,
+and English, Spanish, German, or Italian; **New table** starts that game.
+You control one seat against bots. Cards, public table state, legal actions,
+and short results share one interface. In Scopa, select a hand card and a
+capture option; in Mentiroso, select cards and the declared rank. Poker raises
+are labeled as the total contribution for the current betting round.
+
+You can also supply an existing game, for example
+`rcards::play_app(rcards::scopa_game(seed = 42), language = "it")`.
+Mus and Scopa offer **Next hand** while their match continues. Console play
+remains available. See [graphical play and adapter design](docs/graphical-interface.md)
+for controls, local session limits, and browser checks.
+
 ## Probability estimates and simulations
 
 `poker_equity()` offers budgeted exact or sampled showdown estimates;
