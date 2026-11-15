@@ -35,8 +35,14 @@ poker with settled stacks, fixed seats, retained bot memory, and the dealer
 rotated clockwise among funded players. Eliminated seats receive no cards or
 blinds. The human table stops if your bankroll is empty or fewer than two
 funded players remain; there are no automatic rebuys or stack resets.
-Mus and Scopa retain scores and controller memory between hands. Completed
-matches currently restart through **New table**.
+Mus and Scopa retain scores and controller memory between hands. At the score
+target, **New match** starts a rematch with the same players, rules, and bot
+memory, explicitly resetting match scores to zero and rotating dealer/mano.
+Mentiroso offers **Next deal** after the winner is confirmed, rotating the
+dealer, clearing claims and reveals, and redealing the configured pack. It
+does not invent a points or elimination system across deals.
+`game_rematch(completed, seed = 42)` exposes these transitions programmatically;
+`liar_next_deal(completed, seed = 42)` also supports an optional ordered pack.
 
 Blackjack offers **Next round**, carrying settled bankrolls and controller
 memory forward. The displayed next wager can be changed before continuing;

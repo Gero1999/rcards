@@ -163,5 +163,8 @@ locale_catalog <- list(
   "Next round wager" = c(es = "Apuesta de la siguiente ronda", de = "Einsatz der n\u00e4chsten Runde", it = "Puntata del prossimo round"),
   "Round %s | Base wager %s" = c(es = "Ronda %s | Apuesta base %s", de = "Runde %s | Grundeinsatz %s", it = "Round %s | Puntata base %s"),
   "Choose a positive wager within your bankroll" = c(es = "Elige una apuesta positiva dentro de tu saldo", de = "W\u00e4hle einen positiven Einsatz innerhalb deines Guthabens", it = "Scegli una puntata positiva entro il tuo saldo"),
-  "Review the result, then continue or start a new table." = c(es = "Revisa el resultado y contin\u00faa o inicia una nueva mesa.", de = "Ergebnis ansehen, dann fortsetzen oder einen neuen Tisch starten.", it = "Controlla il risultato, poi continua o avvia un nuovo tavolo.")
+  "Review the result, then continue or start a new table." = c(es = "Revisa el resultado y contin\u00faa o inicia una nueva mesa.", de = "Ergebnis ansehen, dann fortsetzen oder einen neuen Tisch starten.", it = "Controlla il risultato, poi continua o avvia un nuovo tavolo."),
+  "New match" = c(es = "Nueva partida", de = "Neues Spiel", it = "Nuova partita"),
+  "Next deal" = c(es = "Siguiente reparto", de = "N\u00e4chste Austeilung", it = "Prossima distribuzione"),
+  "Deal %s" = c(es = "Reparto %s", de = "Austeilung %s", it = "Distribuzione %s")
 )

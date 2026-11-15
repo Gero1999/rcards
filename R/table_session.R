@@ -69,6 +69,12 @@ table_continuation <- function(game,seat=NULL) {
       game$players[[seat]]$points>0
     if(!available) message <- "Your bankroll is empty. Start a new table to play again."
   }
+  if((inherits(game,"mus_game") || inherits(game,"scopa_game")) && game_complete(game)) {
+    available <- TRUE;label <- "New match"
+  }
+  if(inherits(game,"liar_game") && game_complete(game)) {
+    available <- TRUE;label <- "Next deal"
+  }
   list(available=available,label=label,message=message)
 }
 
@@ -84,6 +90,8 @@ table_next <- function(state,version=state$version,wager=NULL) {
       if(wager<=0) stop("Choose a positive wager within your bankroll")
       wagers[state$seat] <- wager
       blackjack_next_round(state$game,wagers)
+    } else if((inherits(state$game,"mus_game") || inherits(state$game,"scopa_game")) && game_complete(state$game)) {
+      game_rematch(state$game)
     } else game_next_hand(state$game)
   })
   state$completed <- utils::tail(c(state$completed,list(result)),20L)

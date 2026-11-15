@@ -89,3 +89,41 @@ test_that("Shiny Blackjack continuation uses the submitted wager", {
     expect_match(state()$error,"turn changed")
   })
 })
+
+test_that("completed deals and matches continue without replacing controllers", {
+  games <- list(finished_liar_for_rematch(),finished_mus_for_rematch(),finished_scopa_for_rematch())
+  labels <- c("Next deal","New match","New match")
+  for(i in seq_along(games)) {
+    state <- table_session(games[[i]])
+    view <- game_table_view(state$game)
+    expect_true(view$can_next)
+    expect_equal(view$continue_label,labels[i])
+    continued <- table_next(state)
+    expect_identical(continued$controllers,state$controllers)
+    expect_identical(continued$game$rules,state$game$rules)
+    expect_false(game_complete(continued$game))
+    expect_length(continued$completed,1)
+    expect_null(continued$completed[[1]]$players)
+    if(i==1) {
+      expect_equal(continued$game$deal_number,2)
+      expect_length(continued$game$history,0)
+      expect_null(continued$game$last_reveal)
+      expect_length(continued$game$pile,0)
+    } else expect_true(all(continued$game$scores==0))
+    expect_true(game_complete(state$game))
+  }
+})
+
+test_that("Shiny rematches start with the same rules and reset match scores", {
+  skip_if_not_installed("shiny")
+  initial <- table_session(finished_mus_for_rematch())
+  shiny::testServer(table_app_server(initial,"es"),{
+    session$flushReact()
+    expect_equal(view()$continue_label,"Nueva partida")
+    session$setInputs(table_continue=list(version=0))
+    expect_identical(state()$game$rules,initial$game$rules)
+    expect_equal(state()$game$scores,c(0,0))
+    expect_equal(state()$game$mano,1)
+    expect_length(state()$completed,1)
+  })
+})

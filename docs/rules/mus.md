@@ -57,6 +57,14 @@ score-target victory by refusal does not require card revelation.
 private discard positions with counts. Public pares/juego declarations are
 available at the relevant lance. Next hands rotate mano and retain scores.
 
+Once a partnership reaches the target, `game_rematch(game, seed=...)` explicitly
+starts a new match with the same players, seats, partnerships, and rules. Scores
+reset to zero; mano moves one seat clockwise from the completed match's final
+hand. Old hands, discards, wagers, queued settlements, reveals, and history do
+not carry into the new match. Player metadata is retained, and controller state
+can be reused separately. An unfinished match cannot be replaced by a rematch;
+use `game_next_hand()` at an ordinary hand boundary to retain its scores.
+
 Regression scenarios live in `test-mus.R`, `test-rules-audit.R`, and
 `test-game-protocol.R`. See [audit status](audit.md) for confirmed code checks and
 outstanding source verification. Reference for variant comparison:
