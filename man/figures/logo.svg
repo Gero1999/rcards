@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="296" viewBox="0 0 256 296" role="img" aria-labelledby="title description">
+  <title id="title">rcards logo</title>
+  <desc id="description">Three ivory cards fan out inside a navy and gold hexagon. Three green dots on the front card connect play with probability.</desc>
+  <!-- SPDX-License-Identifier: Apache-2.0. Original geometric artwork for rcards.
+       No external images, fonts, scripts, or third-party artwork. -->
+  <path d="M128 7 249 77v142l-121 70L7 219V77Z" fill="#101f29" stroke="#e5bd68" stroke-width="4" stroke-linejoin="round"/>
+  <path d="m128 23 107 62v126l-107 62-107-62V85Z" fill="#153c37" stroke="#2c6255" stroke-width="1.5"/>
+  <g transform="rotate(-22 97 149)">
+    <rect x="53" y="92" width="78" height="119" rx="9" fill="#f5f0df" stroke="#e5bd68" stroke-width="2"/>
+    <path d="m68 105 5 8-5 8-5-8Z" fill="#225f51"/>
+    <path d="m115 183 5 8-5 8-5-8Z" fill="#225f51"/>
+  </g>
+  <g transform="rotate(22 159 149)">
+    <rect x="125" y="92" width="78" height="119" rx="9" fill="#f5f0df" stroke="#e5bd68" stroke-width="2"/>
+    <path d="m140 105 5 8-5 8-5-8Z" fill="#225f51"/>
+    <path d="m187 183 5 8-5 8-5-8Z" fill="#225f51"/>
+  </g>
+  <rect x="87" y="66" width="82" height="130" rx="10" fill="#fff9ed" stroke="#e5bd68" stroke-width="2.5"/>
+  <path d="M101 82h13m-13 6h8m33 86h13m-8 6h8" fill="none" stroke="#225f51" stroke-width="3" stroke-linecap="round"/>
+  <g fill="#225f51">
+    <circle cx="111" cy="149" r="7"/>
+    <circle cx="128" cy="131" r="7"/>
+    <circle cx="145" cy="113" r="7"/>
+  </g>
+  <path d="M97 236h62" stroke="#e5bd68" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="128" cy="249" r="3" fill="#8cdec0"/>
+</svg>

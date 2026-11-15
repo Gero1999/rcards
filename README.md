@@ -1,29 +1,111 @@
+<p align="center">
+  <img src="man/figures/logo.svg" alt="rcards: a fan of cards with probability dots inside a hexagon" width="152" height="176">
+</p>
+
 # rcards
 
-`rcards` is a development R package for constructing and manipulating playing
-cards, decks, players, and games. It includes individual no-limit Texas Hold'em
-hands, statistical poker bots, and configurable four-player partnership Mus.
+**Play, simulate, and explore card games in R.**
 
-## Development installation
+Take a seat at a card table, build a bot, or ask how likely a hand is to win.
+`rcards` brings five games, console and browser play, and statistical tools
+into one R package.
+
+[Start playing](#start-playing) · [Games](#supported-games) ·
+[Statistics](#probabilities-and-simulations) · [Documentation](#documentation)
+
+<p align="center">
+  <img src="man/figures/table-scopa.png" alt="The rcards graphical Scopa table with three players, covered opponents, public table cards, and the human hand" width="960">
+</p>
+
+*A local Scopa table: your cards, public information, and a choice of legal moves.*
+
+## Start playing
+
+The package is under development. Clone this repository, open an R session
+in its root, and load the current source:
 
 ```r
-install.packages(c("pkgload", "testthat"))
-pkgload::load_all("/path/to/rcards")
+install.packages(c("pkgload", "testthat", "shiny"))  # once; omit shiny for console-only play
+pkgload::load_all(".")
+rcards::play_app()
 ```
 
-The supported foundation API is `card()`, `deck()`, `player()`, `table()`,
-`game()`, `shuffle()`, `discard_card()`, `take_cards()`, and `leave_cards()`.
-The `table()` constructor masks `base::table()`; use qualified names when needed.
-See function help for arguments. `deck()` creates an empty, generic deck.
-Both bundled datasets are generated from explicit main and optional card lists
-using `usethis::use_data()`: French cards have 52 standard cards and two optional
-jokers; Spanish cards have 40 standard cards and eight optional 8s and 9s.
-Use `deck(cards = attr(deck_french, "main_cards"))` for a 52-card French deck.
-Pass `optional_cards` and `include_optional = TRUE` to add optional cards explicitly.
+Choose a game, player count, and language, then click **New table**. You play
+one seat against bots; Blackjack pits you against the dealer. Select cards
+when the game calls for them and use the legal action buttons. Poker raises
+are labeled as the **total for the current betting round**. Mus and Scopa
+offer **Next hand** while the match continues.
+
+The graphical app runs locally in your browser and keeps each session in
+memory. See [graphical play](docs/graphical-interface.md) for configured games,
+controls, and session limits.
+
+### Prefer the console?
+
+With `pkgload` and `testthat` installed, load the checkout with
+`pkgload::load_all(".")`; Shiny is not needed. This starts one Blackjack round
+with Italian prompts:
+
+```r
+rcards::play(
+  rcards::blackjack_game(list(rcards::player("You", points = 100))),
+  list(rcards::console_player(language = "it"))
+)
+```
+
+Console play shows your cards, public information, and legal moves. Enter an
+action name or menu number, or `q` to stop. Human, bot, and scripted controllers
+use the same game engines. See [console play](docs/console-play.md) for poker,
+Mus, Scopa, Mentiroso, and resuming a stopped game.
+
+## Supported games
+
+| Game | Players | What you can play |
+| --- | --- | --- |
+| [Texas Hold'em](docs/rules/holdem.md) | 2–10 | Individual no-limit hands with blinds, all-ins, side pots, and split pots. |
+| [Mus](docs/rules/mus.md) | 4, in partnerships | Configurable four/eight kings and a 30/40-point target, with exchanges and lance wagering. |
+| [Blackjack](docs/rules/blackjack.md) | 1–7 versus the dealer | Individual rounds with configurable dealer rules, doubles, and splits. The default graphical table has one player. |
+| [Scopa](docs/rules/scopa.md) | 2–4 | Two or three individual players, or four in partnerships; choose captures and play matches. |
+| [Mentiroso / Liar](docs/rules/liar.md) | 2–8 | Face-down claims, bluffing, and challenges; the declared rank stays fixed until a challenge. |
+
+Play and card displays support **English, Spanish, German, and Italian**
+(`en`, `es`, `de`, `it`). Translations preserve canonical card identities and
+game state. Baseline bots are provided for every game; they use public
+observations and are not optimal strategies.
+
+## Probabilities and simulations
+
+Start with a question about a hand. For example, estimate the showdown equity
+of suited ace–king against one uniformly random opponent:
+
+```r
+hole <- list(rcards::card("A", "Spades"),
+             rcards::card("K", "Spades"))
+equity <- rcards::poker_equity(hole, n = 1000, seed = 42)
+equity$estimates
+```
+
+Equity is the expected share of the pot at showdown, including ties. This
+model does not simulate betting or folding. Reports include their assumptions
+and sampling uncertainty; more samples reduce sampling noise.
+
+For known outs, use exact counting instead of simulation:
+
+```r
+rcards::draw_probability(successes = 9, remaining = 47, draws = 1)
+# 9 / 47: the chance of hitting one of nine outs on the next card
+```
+
+`estimate_hand()` also estimates Mus lance strength; `estimate_actions()`
+compares Blackjack or Scopa decisions under continuation strategies.
+`simulate_games()` runs repeated hands or matches with score/profit summaries.
+These calculations run locally without external APIs or ranking datasets.
+See [statistical methods and budgets](docs/statistics.md) for assumptions,
+cost controls, and examples.
 
 ## Quick start
 
-After loading the package:
+Build and deal a deck through the foundation API:
 
 ```r
 set.seed(42)
@@ -42,135 +124,45 @@ print(returned$player)
 print(returned$deck)
 ```
 
-`take_cards()` draws from the top of the deck; shuffle first for random dealing.
-Operations return updated objects and do not modify their inputs. Deck slicing,
-shuffling, discarding, drawing, and returning preserve deck class, language, and
-active optional-card metadata. Invalid draw counts and return/discard positions
-produce errors.
+The foundation includes `card()`, `deck()`, `player()`, `table()`, `game()`,
+`shuffle()`, and the card-transfer functions above. Operations return updated
+objects rather than modifying their inputs. `deck()` starts empty; construct
+a game-specific pack explicitly. When the package is attached, `table()` masks
+`base::table()`; qualify either function name when needed.
 
-## Local validation
+French and Spanish datasets contain explicit main and optional card lists;
+their generators use `usethis::use_data()`. The French main pack has 52 cards
+with two optional jokers; the Spanish main pack has 40 cards with optional
+8s and 9s. `italian_deck()` constructs a 40-card Italian pack directly.
+
+## Documentation
+
+| Explore | Read |
+| --- | --- |
+| Play interactively | [Graphical table](docs/graphical-interface.md) · [Console guide](docs/console-play.md) |
+| Learn the engines and bots | [Games and examples](docs/games.md) · [Supported rule profiles](docs/rules/audit.md) |
+| Estimate and simulate | [Statistical methods](docs/statistics.md) |
+| Extend the package | [Contributing](CONTRIBUTING.md) · [Game development guide](AGENTS.md) |
+| Reuse the artwork | [Asset provenance and license](docs/branding.md) |
+
+Use R help, such as `?rcards::play_app` or `?rcards::poker_equity`, for function
+arguments. Runnable examples are installed under `examples/`, including
+`graphical-play.R`, `holdem.R`, `mus.R`, and `statistics.R`.
+
+## Development and validation
 
 ```r
-testthat::test_local(filter = "card|deck|player|table|public-api|readme")
+install.packages("testthat")  # once
+testthat::test_local()
 ```
 
-This runs the foundation checks, including the executable README example.
-To run the complete suite, including poker, bots, translations, and Mus, use
-`testthat::test_local()`.
-
-Build and check the package from the parent directory:
+Build and check from the parent directory:
 
 ```sh
 R CMD build rcards
 R CMD check --no-manual rcards_0.0.0.9000.tar.gz
 ```
 
-These are local commands; no CI workflow is added.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
-
-## Card games and translations
-
-- **Texas Hold'em:** play individual no-limit hands with blinds, all-ins, side
-  pots, and split pots using `holdem_hand()` and `holdem_action()`.
-- **Statistical bots:** use bounded equity estimates with separate `risk`,
-  `adaptability`, `variation`, and `equity_samples` settings. Simulate independent
-  complete hands with `simulate_poker_game()`; updated bot state carries across hands.
-- **Mus:** select four/eight kings and a 30/40-point target through
-  `mus_game(..., rules = mus_rules(kings = 8, points_to_win = 40))`.
-- **Translations:** `translate_card()` and `translate_deck()` support English
-  (`"en"`) and Spanish (`"es"`) without changing internal card identities.
-
-See [game rules, bot behavior, and examples](docs/games.md). The installed
-`examples/holdem.R` and `examples/mus.R` scripts demonstrate complete hands.
-
-## Play from the R console
-
-Use the same game engines with human, bot, or scripted controllers:
-
-```r
-players <- list(rcards::player("You", points = 100),
-                rcards::player("Bot", points = 100))
-played <- rcards::play(
-  rcards::holdem_hand(players, seed = 42),
-  controllers = list(rcards::console_player(), rcards::poker_bot(seed = 1))
-)
-```
-
-The console shows your cards, public game state, and legal actions. Enter action
-names or menu numbers, `raise 10` for a total street bet, or `q` to stop. Invalid
-answers are retried. A stopped game can be resumed with
-`rcards::play(played$game, played$controllers)`.
-
-Mus uses the same `play()` interface with four controllers, including `mus_bot()`
-for automated partners and opponents. See
-[console play and the shared game interface](docs/console-play.md) for Mus,
-stateful policies, scripted input, and hand-versus-game completion.
-
-## More games and console languages
-
-Play one Blackjack round against the dealer:
-
-```r
-rcards::play(
-  rcards::blackjack_game(list(rcards::player("You", points = 100))),
-  list(rcards::console_player(language = "it"))
-)
-```
-
-Scopa supports two or three individual players, or four in partnerships:
-
-```r
-rcards::play(
-  rcards::scopa_game(c("You", "Bot 1", "Partner", "Bot 2")),
-  c(list(rcards::console_player(language = "de")),
-    rep(list(rcards::scopa_bot()), 3)),
-  until = "game"
-)
-```
-
-Console languages are English (`en`), Spanish (`es`), German (`de`), and Italian
-(`it`). Prompts and action names are localized; English commands and menu numbers
-also work. See [console play](docs/console-play.md),
-[Blackjack rules](docs/rules/blackjack.md), and [Scopa rules](docs/rules/scopa.md).
-The Italian deck is constructed with `italian_deck()`; no new binary datasets
-are needed. Game bots are baseline heuristics, not optimal strategies.
-
-## Play at a graphical table
-
-Install the optional Shiny dependency, then open a local browser table:
-
-```r
-install.packages("shiny")  # once
-rcards::play_app()
-```
-
-Choose Texas Hold'em, Mus, Blackjack, Scopa, or Mentiroso, the player count,
-and English, Spanish, German, or Italian; **New table** starts that game.
-You control one seat against bots. Cards, public table state, legal actions,
-and short results share one interface. In Scopa, select a hand card and a
-capture option; in Mentiroso, select cards and the declared rank. Poker raises
-are labeled as the total contribution for the current betting round.
-
-You can also supply an existing game, for example
-`rcards::play_app(rcards::scopa_game(seed = 42), language = "it")`.
-Mus and Scopa offer **Next hand** while their match continues. Console play
-remains available. See [graphical play and adapter design](docs/graphical-interface.md)
-for controls, local session limits, and browser checks.
-
-## Probability estimates and simulations
-
-`poker_equity()` offers budgeted exact or sampled showdown estimates;
-`estimate_hand()` also exposes Mus lance strength from public observations.
-`estimate_actions()` compares Blackjack or Scopa choices under continuation
-strategies. `simulate_games()` runs independent hands or matches and reports
-profit/score summaries, outcome definitions and sampling uncertainty.
-See [statistical methods and cost budgets](docs/statistics.md) and the installed
-`examples/statistics.R`. All calculations run locally without external APIs.
-
-Mentiroso (Liar) is also available through `liar_game()` and `liar_bot()`, with
-2–8 players, fixed-rank claims until challenge, and Spanish or French packs.
-See [console instructions](docs/console-play.md#mentiroso-liar) and
-[the supported rules](docs/rules/liar.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
+The package and original repository artwork use the [Apache 2.0 license](LICENSE).
