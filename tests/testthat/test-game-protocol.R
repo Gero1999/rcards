@@ -49,5 +49,7 @@ test_that("public observations and printing stay safe at completion", {
   expect_length(game_legal_actions(h)$actions, 0)
   expect_output(print(h), "Stacks")
   expect_output(print(game()), "Game")
-  expect_error(game_next_hand(h), "cannot advance")
+  continued <- game_next_hand(h)
+  expect_s3_class(continued,"holdem_hand")
+  expect_equal(continued$initial_stacks,holdem_stacks(h))
 })
