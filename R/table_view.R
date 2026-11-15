@@ -51,7 +51,8 @@ game_table_view <- function(game,seat=1L,language="en") {
       cards <- if(i==seat) faces(o$hole) else if(i %in% revealed) faces(game$players[[i]]$hand) else backs(counts[i])
       if(i==seat) own <- list(zone("hand",ui("Your cards",language),cards,selectable)) else
         seats[[i]]$hands <- list(zone(paste0("seat_",i),"",cards))
-      if(type=="holdem") seats[[i]]$details <- c(ui("Stacks: %s",language,o$stacks[i]),if(o$folded[i]) ui("folded",language))
+      if(type=="holdem") seats[[i]]$details <- c(ui("Stacks: %s",language,o$stacks[i]),
+        if(i==seat) ui("Already in this round: %s",language,o$round_bets[i]),if(o$folded[i]) ui("folded",language))
       if(type %in% c("mus","scopa")) seats[[i]]$details <- paste0(ui("Side %s",language,o$teams[i])," | ",o$scores[o$teams[i]])
       if(type=="liar") seats[[i]]$details <- as.character(counts[i])
     }
@@ -79,13 +80,22 @@ game_table_view <- function(game,seat=1L,language="en") {
       }
     }
   }
+  history <- lapply(utils::tail(o$history,4L),function(event) {
+    i <- event$player
+    if(is.null(i) || length(i)!=1L || is.na(i) || i<1 || i>length(seats)) return(NULL)
+    if(type=="liar" && event$action=="claim") return(ui("Claim: %s | Rank: %s | Cards: %s",language,o$player_names[i],event$rank,event$count))
+    detail <- if(!is.null(event$amount) && length(event$amount)==1L) paste0(" ",event$amount) else ""
+    if(!is.null(event$discard_count)) detail <- paste0(" ",event$discard_count," ",ui("cards",language))
+    paste0(o$player_names[i]," / ",action_label(event$action,language),detail)
+  })
+  history <- Filter(Negate(is.null),history)
   result <- if(done) table_result_text(game,language) else character()
   list(game_type=type,phase=if(is.null(o$phase)) o$street else o$phase,
     viewer=seat,actor=o$actor,seats=seats,center=center,own=own,status=status,
     your_turn=your_turn,hand_complete=done,complete=game_complete(game),
     can_next=done && !game_complete(game) && type %in% c("mus","scopa"),
     selection_limit=if(!selectable) 0L else if(type=="scopa") 1L else if(type=="liar") legal$max_cards else 4L,
-    legal=legal,result=result,language=language)
+    legal=legal,result=result,history=history,language=language)
 }
 
 table_result_text <- function(game,language) {

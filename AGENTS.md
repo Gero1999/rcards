@@ -37,6 +37,9 @@ Use the existing task checkout. Do not create a worktree unless requested.
 6. Add seeded scenarios, illegal-action tests, information-boundary checks,
    conservation tests, and an example using exported APIs. Add independent
    expected outcomes; avoid only comparing two helpers using the same logic.
+7. For graphical play, follow [the table adapter contract](docs/graphical-interface.md).
+   Extend the view/action adapter and default controller before adding a game
+   to the optional Shiny selector. Never send full engine state to the browser.
 
 ## Data and interfaces
 

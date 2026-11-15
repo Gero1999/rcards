@@ -17,6 +17,7 @@ RoxygenNote: 7.3.3
 Depends: 
     R (>= 3.5)
 Suggests: 
+    shiny (>= 1.8.0),
     roxygen2,
     usethis,
     testthat (>= 3.0.0)
