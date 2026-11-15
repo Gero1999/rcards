@@ -45,7 +45,7 @@ game_observation.scopa_game <- function(game,seat=NULL) {
     table_cards=game$table_cards,stock_count=length(game$stock),
     hand_counts=vapply(game$players,function(p) length(p$hand),0L),
     capture_counts=vapply(game$captured,length,0L),sweeps=game$sweeps,
-    history=game$history,complete=game$complete,hand_complete=game$hand_complete)
+    rules=game$rules,history=game$history,complete=game$complete,hand_complete=game$hand_complete)
 }
 
 #' Create a public-information Scopa controller
