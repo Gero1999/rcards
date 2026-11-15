@@ -18,7 +18,7 @@ uses readline() in interactive R; inject a function for scripted tests or UIs.}
 
 \item{write}{Optional function of text. Defaults to cat(text, "\\n").}
 
-\item{language}{Card-display language, en or es; NULL retains existing displays.}
+\item{language}{Console and card language: en, es, de, it; NULL uses English prompts and retains custom card displays.}
 
 \item{style}{Card borders: auto selects Unicode on UTF-8 terminals, or ascii.}
 

@@ -7,7 +7,7 @@
 #' @param read Optional function of prompt returning one input line. The default
 #' uses readline() in interactive R; inject a function for scripted tests or UIs.
 #' @param write Optional function of text. Defaults to cat(text, "\\n").
-#' @param language Card-display language, en or es; NULL retains existing displays.
+#' @param language Console and card language: en, es, de, it; NULL uses English prompts and retains custom card displays.
 #' @param style Card borders: auto selects Unicode on UTF-8 terminals, or ascii.
 #' @param width Maximum card-row width (16 to 240 columns).
 #' @return A game_controller. Use one controller per seat in play(). Multiple
@@ -20,7 +20,7 @@ console_player <- function(read = NULL, write = NULL, language = NULL,
   if (!is.null(read) && !is.function(read)) stop("read must be a function")
   if (is.null(write)) write <- console_default_write
   if (!is.function(write)) stop("write must be a function")
-  if (!is.null(language)) translate_card(card("A", "Spades"), language)
+  console_language(language)
   structure(list(read = read, write = write, language = language, style = style, width = width),
             class = c("console_player", "game_controller"))
 }
@@ -31,6 +31,7 @@ console_input_error <- function(message) {
 }
 
 console_read <- function(controller, prompt) {
+  prompt <- ui(prompt, controller$language)
   if (is.null(controller$read)) {
     if (!interactive()) stop("Console input needs an interactive R session or a custom read function")
     readline(prompt)
@@ -55,18 +56,20 @@ console_decision <- function(line, legal, controller) {
     if (!is.finite(index) || index < 1 || index > length(legal$actions)) console_input_error("Choose a listed menu number")
     action <- legal$actions[index]
   }
+  action <- console_action(action, legal$actions, controller$language)
+  if (action == "quit") return(list(action = "quit"))
   if (!action %in% legal$actions) console_input_error("Choose one of the listed legal actions")
   arguments <- tokens[-1L]
   if (action %in% c("raise", "bet")) {
     if (!length(arguments)) {
       prompt <- if (!is.null(legal$min_raise_to)) {
-        paste0("Raise TO total this round (", legal$min_raise_to, "..", legal$max_raise_to,
-               "; includes chips already in, not extra; q to quit): ")
+        ui("Raise TO total this round (%s..%s; includes chips already in, not extra; q to quit): ",
+           controller$language, legal$min_raise_to, legal$max_raise_to)
       } else {
-        paste0("Bet/raise TO total stake (minimum ", legal$min_stake, "; q to quit): ")
+        ui("Bet/raise TO total stake (minimum %s; q to quit): ",controller$language,legal$min_stake)
       }
       value <- console_read(controller, prompt)
-      if (!length(value) || (length(value) == 1L && (is.na(value) || tolower(trimws(value)) %in% c("q","quit","exit")))) {
+      if (!length(value) || (length(value) == 1L && (is.na(value) || console_action(tolower(trimws(value)), "quit", controller$language)=="quit"))) {
         return(list(action = "quit"))
       }
       arguments <- value
@@ -75,7 +78,7 @@ console_decision <- function(line, legal, controller) {
     return(list(action = action, amount = console_number(arguments)))
   }
   if (action == "discard") {
-    if (!length(arguments) || identical(arguments, "none") || identical(arguments, "0")) positions <- integer() else {
+    if (!length(arguments) || (length(arguments)==1L && arguments %in% c("none","ninguna","keine","nessuna")) || identical(arguments, "0")) positions <- integer() else {
       positions <- unname(vapply(arguments, console_number, numeric(1)))
     }
     return(list(action = action, cards = positions))

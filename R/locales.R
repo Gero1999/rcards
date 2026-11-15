@@ -20,4 +20,30 @@ ui <- function(key, language = NULL, ...) {
   if(length(list(...))) sprintf(text, ...) else text
 }
 
-locale_catalog <- list()
+
+console_action <- function(token, legal, language = NULL) {
+  if(token %in% c(legal,"quit","q","exit")) return(if(token %in% c("q","exit")) "quit" else token)
+  language <- console_language(language)
+  aliases <- action_aliases[[language]]
+  candidates <- names(aliases)[vapply(aliases,function(words) token %in% words,logical(1))]
+  candidates <- intersect(candidates,c(legal,"quit"))
+  if(length(candidates)==1L) candidates else token
+}
+
+action_aliases <- list(
+  en=list(),
+  es=list(fold="retirarse",check="pasar",call="igualar",raise="subir",quit="salir",
+    cut="cortar",discard="descartar",bet="apostar",accept="aceptar",reject="rechazar",pass="pasar",
+    hit="pedir",stand="plantarse",double="doblar",split="dividir",play="jugar"),
+  de=list(fold="aussteigen",check="schieben",call="mitgehen",raise="erh\u00f6hen",quit="beenden",
+    cut="beendenmus",discard="tauschen",bet="setzen",accept="annehmen",reject="ablehnen",pass="passen",
+    hit="ziehen",stand="halten",double="verdoppeln",split="teilen",play="spielen"),
+  it=list(fold="lasciare",check="passare",call="vedere",raise="rilanciare",quit="uscire",
+    cut="tagliare",discard="scartare",bet="puntare",accept="accettare",reject="rifiutare",pass="passare",
+    hit="carta",stand="stare",double="raddoppiare",split="dividere",play="giocare")
+)
+
+action_label <- function(action, language = NULL) {
+  aliases <- action_aliases[[console_language(language)]][[action]]
+  if(length(aliases)) aliases[1L] else action
+}
