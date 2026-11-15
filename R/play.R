@@ -89,7 +89,7 @@ play <- function(game, controllers, until = c("hand", "game"),
 
 game_summary_text <- function(result, language = NULL) {
   if(result$game_type=="liar") return(if(result$complete) ui("Winner: %s",language,result$player_names[result$winner]) else
-    paste(vapply(seq_along(result$player_names),function(i) ui("%s: %s cards",language,result$player_names[i],result$hand_counts[i]),""),collapse=" | "))
+    ui("Cards remaining: %s",language,paste(paste0(result$player_names,"=",result$hand_counts),collapse=" | ")))
   if(result$game_type=="scopa") return(ui("Match scores: %s",language,paste(result$scores,collapse=" : ")))
   if(result$game_type=="blackjack") return(ui("Stacks: %s",language,paste(paste0(result$player_names,"=",result$stacks),collapse="; ")))
   if (identical(result$game_type, "holdem")) {

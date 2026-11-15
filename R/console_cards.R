@@ -18,7 +18,7 @@ console_card_rows <- function(cards, style = "auto", width = 80L, numbered = FAL
     if(is.na(symbol)) symbol <- "?"
     lines <- c(top,paste0(edge,sprintf("%-5s",rank),edge),
       paste0(edge,"  ",symbol,"  ",edge),paste0(edge,sprintf("%5s",rank),edge),bottom)
-    if(numbered) lines <- c(lines,sprintf("  [%d]  ",i))
+    if(numbered) lines <- c(lines,sprintf(" %-6s",paste0("[",i,"]")))
     lines
   })
   per_row <- max(1L,floor((width+1L)/8L))

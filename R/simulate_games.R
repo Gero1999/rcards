@@ -15,7 +15,8 @@
 #' @param keep_games Retain completed full game objects (including hidden state).
 #' @return A list of per-side summaries, per-run values/outcomes, completion
 #' statuses and definitions. Poker/Blackjack win/tie/loss means positive/zero/
-#' negative net chips, not pot winners or showdown ties. Mus/Scopa hand outcomes
+#' negative net chips, not pot winners or showdown ties. Liar values are negative
+#' remaining card counts and outcomes use the confirmed winner. Mus/Scopa hand outcomes
 #' compare points gained during the deal; whole-game outcomes use the match winner.
 #' @export
 simulate_games <- function(game_factory,controllers,n=100L,until=c("hand","game"),
@@ -62,7 +63,7 @@ simulate_games <- function(game_factory,controllers,n=100L,until=c("hand","game"
   statuses <- do.call(rbind,statuses)
   list(type=layout$type,scope=until,requested=n,completed=sum(statuses$completed),
     incomplete=sum(!statuses$completed),confidence_level=0.95,
-    definition=if(layout$type %in% c("holdem","blackjack"))
+    definition=if(layout$type=="liar") "Value is negative remaining cards; win/loss uses the confirmed empty-hand winner, not an unchallenged pending claim." else if(layout$type %in% c("holdem","blackjack"))
       "Value is net chip profit from the round's initial stacks; win/tie/loss is positive/zero/negative profit, not showdown or pot outcomes." else
       if(until=="hand") "Value is side points gained in the deal; win/tie/loss means sole highest/tied highest/lower deal gains, not match victory." else
         "Value is side points gained; win/loss uses the completed match winner.",
@@ -75,9 +76,9 @@ simulate_games <- function(game_factory,controllers,n=100L,until=c("hand","game"
 
 simulation_setup <- function(g) {
   type <- if(inherits(g,"holdem_hand")) "holdem" else if(inherits(g,"blackjack_game")) "blackjack" else
-    if(inherits(g,"mus_game")) "mus" else if(inherits(g,"scopa_game")) "scopa" else stop("Unsupported simulation game")
+    if(inherits(g,"mus_game")) "mus" else if(inherits(g,"scopa_game")) "scopa" else if(inherits(g,"liar_game")) "liar" else stop("Unsupported simulation game")
   labels <- vapply(g$players,`[[`,"","name")
-  if(type %in% c("holdem","blackjack")) {
+  if(type=="liar") initial <- NULL else if(type %in% c("holdem","blackjack")) {
     initial <- g$initial_stacks
     if(is.null(initial)) stop("Game needs per-seat initial stacks")
   } else {
@@ -89,6 +90,11 @@ simulation_setup <- function(g) {
 }
 
 simulation_outcomes <- function(g,setup,until) {
+  if(setup$type=="liar") {
+    counts <- vapply(g$players,function(p) length(p$hand),0L)
+    return(data.frame(side=seq_along(counts),label=setup$labels,value=-counts,
+      outcome=ifelse(seq_along(counts)==g$winner,"win","loss")))
+  }
   money <- setup$type %in% c("holdem","blackjack")
   value <- if(money) vapply(g$players,`[[`,0,"points")-setup$initial else g$scores-setup$initial
   sides <- seq_along(value)

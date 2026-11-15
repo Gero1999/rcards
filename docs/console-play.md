@@ -229,3 +229,29 @@ Cards on the table and in your hand are numbered independently. Enter
 `play 2` prompts when multiple captures exist; bare `play` prompts for the hand
 position first. Captures list table positions, not card values. `q` pauses.
 Two- and three-player games use the same interface with fewer controllers.
+
+## Mentiroso (Liar)
+
+```r
+played <- rcards::play(
+  rcards::liar_game(c("You","Bot 1","Bot 2")),
+  c(list(rcards::console_player(language="es")),
+    rep(list(rcards::liar_bot()),2))
+)
+```
+
+Enter `claim 7 1 3` to discard your first and third cards while claiming sevens.
+The displayed declared rank must be used until someone challenges; cards may be
+a bluff. Bare `claim` prompts for the opening rank (when needed) and positions.
+English commands always work. Spanish uses `declarar`, `mentiroso`, `pasar`;
+German uses `ansagen`, `anzweifeln`, `passen`; Italian uses `dichiarare`,
+`bugiardo`, `passare`. Use q to pause and resume with the returned controllers.
+
+After a claim, opponents respond clockwise with challenge/pass. A challenge
+reveals only the latest batch; it never reveals earlier face-down cards in the
+pickup. Last-card claims are provisional until responses finish. As with other
+games, shared terminal history is not a private screen for multiple humans.
+
+For French packs, Q (or q) at a rank prompt means Queen. Type `quit` to exit
+that prompt; q still exits ordinary action/card-position prompts. Inline
+`claim Q 1` also works. This avoids confusing the Queen rank with the quit key.

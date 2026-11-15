@@ -3,11 +3,16 @@ console_liar <- function(o,controller) {
   text <- c(paste0("\nMENTIROSO | ",ui("%s to play",lang,o$player_names[o$actor])),
     ui("Pile %s | Declared rank %s",lang,o$pile_count,if(is.null(o$rank)) ui("choose a rank",lang) else o$rank),
     ui("Your cards",lang),console_card_rows(o$hole,controller$style,controller$width,TRUE))
-  for(i in setdiff(seq_along(o$player_names),o$actor)) text <- c(text,
-    ui("%s: %s cards",lang,o$player_names[i],o$hand_counts[i]))
-  if(!is.null(o$claim)) text <- c(text,ui("%s claims %s cards of rank %s",lang,
-    o$player_names[o$claim$player],o$claim$count,o$claim$rank))
-  if(!is.null(o$reveal)) text <- c(text,console_liar_reveal(o$reveal,o$player_names,controller))
+  text <- c(text,ui("Cards remaining: %s",lang,
+    paste(paste0(o$player_names,"=",o$hand_counts),collapse=" | ")))
+  if(!is.null(o$claim)) text <- c(text,ui("Claim: %s | Rank: %s | Cards: %s",lang,
+    o$player_names[o$claim$player],o$claim$rank,o$claim$count))
+  reveal <- o$reveal
+  if(is.null(reveal)) {
+    challenges <- Filter(function(event) event$action=="challenge",o$history)
+    if(length(challenges)) reveal <- utils::tail(challenges,1)[[1]]
+  }
+  if(!is.null(reveal)) text <- c(text,console_liar_reveal(reveal,o$player_names,controller))
   if(o$phase=="claim") text <- c(text,
     ui("claim RANK POSITIONS (e.g. claim 7 1 3)",lang),
     ui("Allowed ranks: %s | Maximum cards: %s",lang,paste(o$legal$ranks,collapse=", "),o$legal$max_cards)) else
@@ -17,8 +22,9 @@ console_liar <- function(o,controller) {
 
 console_liar_reveal <- function(reveal,names,controller) {
   lang <- controller$language
-  c(ui(if(reveal$caught) "Caught bluff" else "Truthful claim",lang),
-    ui("%s picks up %s cards",lang,names[reveal$picker],reveal$pickup_count),
+  c(ui("Latest challenge: %s vs %s (rank %s)",lang,names[reveal$player],names[reveal$claimant],reveal$rank),
+    ui(if(reveal$caught) "Caught bluff" else "Truthful claim",lang),
+    ui("Pickup: %s | Cards: %s",lang,names[reveal$picker],reveal$pickup_count),
     ui("Latest batch revealed",lang),console_card_rows(reveal$cards,controller$style,controller$width))
 }
 
@@ -34,8 +40,9 @@ console_liar_decision <- function(arguments,legal,controller) {
     console_action(tolower(trimws(value)),"quit",controller$language)=="quit"))
   if(!length(arguments)) {
     rank <- if(length(legal$ranks)==1L) legal$ranks else console_read(controller,
-      ui("Claim rank (%s; q to quit): ",controller$language,paste(legal$ranks,collapse=", ")))
-    if(quit_input(rank)) return(list(action="quit"))
+      ui("Claim rank (%s; type quit to exit): ",controller$language,paste(legal$ranks,collapse=", ")))
+    valid_rank <- length(rank)==1L && !is.na(rank) && toupper(rank) %in% legal$ranks
+    if(!valid_rank && quit_input(rank)) return(list(action="quit"))
     line <- console_read(controller,"Card positions (e.g. 1 3; q to quit): ")
     if(quit_input(line)) return(list(action="quit"))
     positions <- strsplit(trimws(line),"[[:space:],]+")[[1L]]
