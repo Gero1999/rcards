@@ -4,7 +4,13 @@
 \alias{console_player}
 \title{Create a human console player}
 \usage{
-console_player(read = NULL, write = NULL, language = NULL)
+console_player(
+  read = NULL,
+  write = NULL,
+  language = NULL,
+  style = c("auto", "unicode", "ascii"),
+  width = getOption("width", 80L)
+)
 }
 \arguments{
 \item{read}{Optional function of prompt returning one input line. The default
@@ -13,6 +19,10 @@ uses readline() in interactive R; inject a function for scripted tests or UIs.}
 \item{write}{Optional function of text. Defaults to cat(text, "\\n").}
 
 \item{language}{Card-display language, en or es; NULL retains existing displays.}
+
+\item{style}{Card borders: auto selects Unicode on UTF-8 terminals, or ascii.}
+
+\item{width}{Maximum card-row width (16 to 240 columns).}
 }
 \value{
 A game_controller. Use one controller per seat in play(). Multiple
