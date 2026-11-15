@@ -71,7 +71,9 @@ console_observation_text <- function(o, controller) {
   }
   text <- c(text,paste0("Actions: ",paste(paste0("[",seq_along(o$legal$actions),"] ",o$legal$actions),collapse="  "),"  |  q quit"))
   if("raise" %in% o$legal$actions && o$game_type=="holdem") text <- c(text,
-    paste0("raise TOTAL (",o$legal$min_raise_to,"..",o$legal$max_raise_to,")"))
+    paste0("raise TOTAL this round (",o$legal$min_raise_to,"..",o$legal$max_raise_to,
+      "); already in: ",o$round_bets[o$actor]),
+    "Total includes chips already in this round; enter the new total, not extra chips.")
   if(any(c("bet","raise") %in% o$legal$actions) && o$game_type=="mus") text <- c(text,
     paste0("bet/raise TOTAL (min ",o$legal$min_stake,")"))
   if("discard" %in% o$legal$actions) text <- c(text,"discard 1 3  |  discard none")
@@ -111,7 +113,8 @@ console_hand_end_text <- function(game, controller) {
       contested <- contested+1L
       label <- if(contested==1L) "pot" else paste0("side pot ",contested-1L)
       hand <- if(length(seats)) paste0(" - ",console_hand_label(c(game$players[[pot$winners[1L]]]$hand,game$board))) else ""
-      text <- c(text,paste0(paste(names,collapse=" & "),if(length(names)>1L) " split " else " wins ",
+      verb <- if(length(names)>1L) " split " else if(tolower(trimws(names))=="you") " win " else " wins "
+      text <- c(text,paste0(paste(names,collapse=" & "),verb,
         label," ",pot$amount,hand,"."))
     }
   } else {

@@ -33,3 +33,27 @@ test_that("automatic simulation has no presentation side effects", {
   expect_output(simulate_poker_game(players,rep(list(passive_controller),2),seed=1),NA)
   expect_output(play(new_mus(seed=2),rep(list(passive_mus_controller),4)),NA)
 })
+
+test_that("winner announcements agree with You and named players", {
+  h <- holdem_action(new_holdem(seed=3), "fold")
+  winner <- h$pots[[1]]$winners
+  controller <- console_player(style="ascii")
+  for(name in c("You", "you", "Alice")) {
+    h$players[[winner]]$name <- name
+    text <- paste(console_hand_end_text(h,controller),collapse="\n")
+    expected <- if(tolower(name)=="you") paste0(name," win pot") else "Alice wins pot"
+    expect_match(text,expected,fixed=TRUE)
+    expect_false(grepl("You wins|you wins",text))
+  }
+})
+
+test_that("raise guidance explains totals and low raises preserve state", {
+  h <- new_holdem(seed=1)
+  io <- console_fixture(c("raise 1", "raise 2", "raise 3", "q"))
+  result <- play(h,list(io$controller,passive_controller))
+  expect_identical(result$game,h)
+  expect_equal(result$actions,0)
+  expect_match(io$output(),"raise TOTAL this round",fixed=TRUE)
+  expect_match(io$output(),"already in: 1",fixed=TRUE)
+  expect_match(io$output(),"not extra chips",fixed=TRUE)
+})

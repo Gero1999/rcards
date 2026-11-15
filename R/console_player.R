@@ -59,7 +59,13 @@ console_decision <- function(line, legal, controller) {
   arguments <- tokens[-1L]
   if (action %in% c("raise", "bet")) {
     if (!length(arguments)) {
-      value <- console_read(controller, "Total amount (or q to quit): ")
+      prompt <- if (!is.null(legal$min_raise_to)) {
+        paste0("Raise TO total this round (", legal$min_raise_to, "..", legal$max_raise_to,
+               "; includes chips already in, not extra; q to quit): ")
+      } else {
+        paste0("Bet/raise TO total stake (minimum ", legal$min_stake, "; q to quit): ")
+      }
+      value <- console_read(controller, prompt)
       if (!length(value) || (length(value) == 1L && (is.na(value) || tolower(trimws(value)) %in% c("q","quit","exit")))) {
         return(list(action = "quit"))
       }
