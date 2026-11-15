@@ -9,7 +9,7 @@ translate_deck(x, language = "en")
 \arguments{
 \item{x}{A deck object.}
 
-\item{language}{Target language: en or es.}
+\item{language}{Target language: en, es, de, or it.}
 }
 \value{
 A deck with translated cards, coherent main/optional metadata, and

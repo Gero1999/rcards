@@ -38,7 +38,8 @@ play <- function(game, controllers, until = c("hand", "game"),
     finish <- function(status) {
       structure(list(game = game, controllers = controllers, status = status,
         actions = actions, result = game_result(game),
-        last_error = if (status == "input_limit") last_error else NULL), class = "game_play")
+        last_error = if (status == "input_limit") last_error else NULL,
+        language = {human <- Filter(function(x) inherits(x,"console_player"),controllers); if(length(human)) human[[1]]$language else NULL}), class = "game_play")
     }
     repeat {
       if (game_complete(game)) return(finish("complete"))
@@ -78,7 +79,7 @@ play <- function(game, controllers, until = c("hand", "game"),
         error <- updated
       }
       invalid <- invalid + 1L; last_error <- conditionMessage(error)
-      controller$write(ui("Please try again: %s", controller$language, ui(last_error, controller$language)))
+      controller$write(ui("Please try again: %s", controller$language, console_error(last_error, controller$language)))
       if (invalid >= max_invalid) return(finish("input_limit"))
     }
   })
@@ -86,17 +87,17 @@ play <- function(game, controllers, until = c("hand", "game"),
   result
 }
 
-game_summary_text <- function(result) {
+game_summary_text <- function(result, language = NULL) {
   if (identical(result$game_type, "holdem")) {
-    text <- c(paste0("Hold'em | Phase: ", result$phase),
-      paste0("Stacks: ", paste(paste0(result$player_names, "=", result$stacks), collapse = "; ")))
+    text <- c(ui("Hold'em | Phase: %s",language,ui(toupper(result$phase),language)),
+      ui("Stacks: %s",language,paste(paste0(result$player_names, "=", result$stacks), collapse = "; ")))
     if (result$complete) text <- c(text,
-      paste0("Payouts: ", paste(paste0(result$player_names, "=", result$payouts), collapse = "; ")))
+      ui("Payouts: %s",language,paste(paste0(result$player_names, "=", result$payouts), collapse = "; ")))
     text
   } else if (identical(result$game_type, "mus")) {
-    text <- c(paste0("Mus | Hand ", result$hand_number, " | Phase: ", result$phase),
-      paste0("Scores: team 1=", result$scores[1L], "; team 2=", result$scores[2L]))
-    if (result$complete) text <- c(text, paste0("Winning partnership: team ", result$winner))
+    text <- c(ui("Mus | Hand %s | Phase: %s",language,result$hand_number,ui(toupper(result$phase),language)),
+      ui("Scores: team 1=%s; team 2=%s",language,result$scores[1L],result$scores[2L]))
+    if (result$complete) text <- c(text, ui("Winning partnership: team %s",language,result$winner))
     text
   } else {
     paste0("Game complete: ", isTRUE(result$complete))
@@ -104,7 +105,7 @@ game_summary_text <- function(result) {
 }
 
 game_play_text <- function(x) {
-  c(paste0("Play status: ", x$status, " | Accepted actions: ", x$actions), game_summary_text(x$result))
+  c(ui("Play status: %s | Accepted actions: %s", x$language, ui(x$status,x$language), x$actions), game_summary_text(x$result, x$language))
 }
 
 #' Print a play result without revealing private cards

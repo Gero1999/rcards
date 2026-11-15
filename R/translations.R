@@ -1,39 +1,41 @@
-#' Translate a card display into English or Spanish
+#' Translate a card display into English, Spanish, German or Italian
 #'
 #' Only display text changes. Internal value, suit, symbol, and other fields
 #' remain unchanged, so comparisons and game rules are language-independent.
 #' Explicit translation replaces any custom display. Unknown suit/value labels
 #' are retained rather than guessed.
 #' @param x A card object.
-#' @param language Target language: en or es.
+#' @param language Target language: en, es, de, or it.
 #' @return A card with a translated display string.
 #' @export
 translate_card <- function(x, language = "en") {
   if (!inherits(x, "card")) stop("Expected a card")
-  if (!is.character(language) || length(language) != 1L || is.na(language) ||
-      !language %in% c("en", "es")) stop("Supported languages are en and es")
+  language <- console_language(language)
   french <- x$suit %in% c("Hearts","Diamonds","Clubs","Spades","Joker")
-  suits <- if (language == "en") c(Hearts="Hearts",Diamonds="Diamonds",Clubs="Clubs",
-    Spades="Spades",Joker="Joker",Oros="Coins",Copas="Cups",Espadas="Swords",Bastos="Batons") else
-    c(Hearts="Corazones",Diamonds="Diamantes",Clubs="Tr\u00e9boles",Spades="Picas",
-      Joker="Comod\u00edn",Oros="Oros",Copas="Copas",Espadas="Espadas",Bastos="Bastos")
-  ranks <- if (french) {
-    if (language == "en") c(A="Ace",J="Jack",Q="Queen",K="King",Joker="Joker") else
-      c(A="As",J="Jota",Q="Reina",K="Rey",Joker="Comod\u00edn")
-  } else {
-    if (language == "en") c("1"="Ace","10"="Jack","11"="Knight","12"="King") else
-      c("1"="As","10"="Sota","11"="Caballo","12"="Rey")
-  }
+  suits <- switch(language,
+    en=c(Hearts="Hearts",Diamonds="Diamonds",Clubs="Clubs",Spades="Spades",Joker="Joker",Oros="Coins",Copas="Cups",Espadas="Swords",Bastos="Batons"),
+    es=c(Hearts="Corazones",Diamonds="Diamantes",Clubs="Tr\u00e9boles",Spades="Picas",Joker="Comod\u00edn",Oros="Oros",Copas="Copas",Espadas="Espadas",Bastos="Bastos"),
+    de=c(Hearts="Herz",Diamonds="Karo",Clubs="Kreuz",Spades="Pik",Joker="Joker",Oros="M\u00fcnzen",Copas="Kelche",Espadas="Schwerter",Bastos="St\u00e4be"),
+    it=c(Hearts="Cuori",Diamonds="Quadri",Clubs="Fiori",Spades="Picche",Joker="Jolly",Oros="Denari",Copas="Coppe",Espadas="Spade",Bastos="Bastoni"))
+  ranks <- if(french) switch(language,
+    en=c(A="Ace",J="Jack",Q="Queen",K="King",Joker="Joker"),
+    es=c(A="As",J="Jota",Q="Reina",K="Rey",Joker="Comod\u00edn"),
+    de=c(A="Ass",J="Bube",Q="Dame",K="K\u00f6nig",Joker="Joker"),
+    it=c(A="Asso",J="Fante",Q="Regina",K="Re",Joker="Jolly")) else switch(language,
+    en=c("1"="Ace","10"="Jack","11"="Knight","12"="King"),
+    es=c("1"="As","10"="Sota","11"="Caballo","12"="Rey"),
+    de=c("1"="Ass","10"="Bube","11"="Reiter","12"="K\u00f6nig"),
+    it=c("1"="Asso","10"="Fante","11"="Cavallo","12"="Re"))
   value <- unname(ranks[x$value]); suit <- unname(suits[x$suit])
   if (is.na(value)) value <- x$value
   if (is.na(suit)) suit <- x$suit
-  x$display <- paste(value, if (language == "en") "of" else "de", suit, x$symbol)
+  x$display <- paste(value, switch(language,en="of",es="de",de="von",it="di"), suit, x$symbol)
   x
 }
 
 #' Translate a deck display without changing card identities
 #' @param x A deck object.
-#' @param language Target language: en or es.
+#' @param language Target language: en, es, de, or it.
 #' @return A deck with translated cards, coherent main/optional metadata, and
 #' the selected language attribute. No dataset files are modified.
 #' @export
