@@ -35,6 +35,20 @@ Invalid human input is explained and retried at the same turn. No game state is
 changed by an invalid answer. Invalid bot or policy decisions raise errors so
 programming mistakes are visible rather than silently retried.
 
+For example, if the current bet is 10 and you have already contributed 4 this
+round, `raise 20` brings your total to 20 and takes 16 more chips from your stack.
+The total is for this betting round, not the whole hand or pot. Amounts outside
+the displayed bounds are rejected without changing the state, and you are
+prompted again. Enter `call` to match the current bet; an undersized raise is not
+automatically converted to a call. The displayed minimum accounts for a legal
+short all-in when your stack cannot cover a full raise.
+
+`poker_bot(equity_samples = 128)` samples 128 random opponent-card and board
+completions per decision to estimate the bot's expected share of the pot.
+Increasing this number reduces sampling noise but takes longer; it does not
+change risk tolerance or make the strategy optimal. The samples are calculated
+locally, without network or API calls.
+
 ## Four-player Mus
 
 ```r
