@@ -57,5 +57,6 @@ estimate_hand <- function(observation,...) {
   if(!is.list(observation) || !is.character(observation$game_type) ||
      length(observation$game_type)!=1L || is.na(observation$game_type)) stop("Provide a public game observation")
   switch(observation$game_type,
+    holdem=estimate_poker_observation(observation,...),
     stop("Hand estimation is not available for this game"))
 }
