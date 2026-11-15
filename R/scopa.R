@@ -16,6 +16,7 @@ scopa_deal_batch <- function(g) {
 }
 
 new_scopa <- function(players=c("You","Bot"),rules=scopa_defaults(),dealer=length(players),seed=NULL,pack=NULL) {
+  rules <- do.call(scopa_rules,rules)
   if(is.character(players)) players <- lapply(players,player)
   n <- length(players)
   if(!is.list(players) || !n %in% 2:4 || !all(vapply(players,inherits,logical(1),"player"))) stop("Scopa needs two three or four players")
@@ -100,5 +101,5 @@ scopa_close_deal <- function(g) {
     g$table_cards <- list()
   }
   g$hand_complete <- TRUE;g$actor <- NULL
-  g
+  scopa_settle(g)
 }
