@@ -44,6 +44,7 @@ play <- function(game, controllers, until = c("hand", "game"),
       if (game_complete(game)) return(finish("complete"))
       if (game_hand_complete(game)) {
         if (until == "hand") return(finish("hand_complete"))
+        console_notify(game, controllers, "hand_complete")
         game <- game_next_hand(game)
       }
       if (actions >= max_actions) return(finish("action_limit"))
@@ -81,8 +82,7 @@ play <- function(game, controllers, until = c("hand", "game"),
       if (invalid >= max_invalid) return(finish("input_limit"))
     }
   })
-  humans <- Filter(function(x) inherits(x, "console_player"), result$controllers)
-  if (length(humans)) humans[[1L]]$write(paste(game_play_text(result), collapse = "\n"))
+  console_notify(result$game, result$controllers, result$status)
   result
 }
 

@@ -146,3 +146,17 @@ private discard positions with public discard counts and expose pair/juego
 eligibility only at the relevant lance. Opponent cards and deck order are never
 passed to controllers by the runner. Full game objects remain inspectable by
 code running in the same R process; this projection is not an isolation sandbox.
+
+## Card-first display
+
+Active console controllers render compact card faces, covered opponent hands,
+and a short winner/split/refund line at the end. Live poker hands are revealed
+only at contested showdown; folded cards and hands won by folds stay private.
+Mus cards are shown at hand-end settlement or accepted ordago, not an early
+refusal victory. Completed Mus hands are displayed before the next deal when
+playing a whole game. Other controllers and automated simulations do no rendering.
+
+Use `console_player(style = "ascii", width = 40)` for narrow/basic terminals;
+`auto` chooses Unicode borders on a UTF-8 terminal. Cards wrap to fit the selected
+width. Spanish suits use O/C/E/B on card faces; an explicitly selected language
+adds a compact suit-name legend. Simulation results remain structured objects.

@@ -8,15 +8,20 @@
 #' uses readline() in interactive R; inject a function for scripted tests or UIs.
 #' @param write Optional function of text. Defaults to cat(text, "\\n").
 #' @param language Card-display language, en or es; NULL retains existing displays.
+#' @param style Card borders: auto selects Unicode on UTF-8 terminals, or ascii.
+#' @param width Maximum card-row width (16 to 240 columns).
 #' @return A game_controller. Use one controller per seat in play(). Multiple
 #' humans can share a terminal, but previously displayed hands remain visible.
 #' @export
-console_player <- function(read = NULL, write = NULL, language = NULL) {
+console_player <- function(read = NULL, write = NULL, language = NULL,
+    style = c("auto", "unicode", "ascii"), width = getOption("width", 80L)) {
+  style <- match.arg(style)
+  check_number(width, "width", 16, 240, TRUE)
   if (!is.null(read) && !is.function(read)) stop("read must be a function")
-  if (is.null(write)) write <- function(text) cat(text, "\n", sep = "")
+  if (is.null(write)) write <- console_default_write
   if (!is.function(write)) stop("write must be a function")
   if (!is.null(language)) translate_card(card("A", "Spades"), language)
-  structure(list(read = read, write = write, language = language),
+  structure(list(read = read, write = write, language = language, style = style, width = width),
             class = c("console_player", "game_controller"))
 }
 
@@ -73,52 +78,9 @@ console_decision <- function(line, legal, controller) {
   list(action = action)
 }
 
-console_card_text <- function(cards, language = NULL, numbered = FALSE) {
-  if (!length(cards)) return("(none)")
-  text <- vapply(cards, function(x) {
-    if (!is.null(language)) x <- translate_card(x, language)
-    x$display
-  }, character(1))
-  if (numbered) text <- paste0(seq_along(text), ") ", text)
-  paste(text, collapse = " | ")
-}
-
-console_observation_text <- function(o, language) {
-  actor <- o$actor
-  title <- if (o$game_type == "holdem") "Texas Hold'em" else "Mus"
-  text <- c(paste0("\n", title, " - ", o$player_names[actor], " (seat ", actor, ")"),
-    paste0("Your cards: ", console_card_text(o$hole, language, TRUE)))
-  if (o$game_type == "holdem") {
-    text <- c(text, paste0("Street: ", o$street), paste0("Board: ", console_card_text(o$board, language)),
-      paste0("Stacks: ", paste(paste0(o$player_names, "=", o$stacks), collapse = "; ")),
-      paste0("Pot: ", o$pot, " | To call: ", o$legal$to_call))
-    if ("raise" %in% o$legal$actions) text <- c(text,
-      paste0("Raise-to bounds (total street bet): ", o$legal$min_raise_to, " to ", o$legal$max_raise_to))
-  } else {
-    partner <- which(o$teams == o$teams[actor] & seq_along(o$teams) != actor)
-    text <- c(text, paste0("Hand ", o$hand_number, " | Phase: ", o$phase,
-      " | Mano: ", o$player_names[o$mano]),
-      paste0("Your partner: ", o$player_names[partner]),
-      paste0("Scores: team 1 (seats 1/3)=", o$scores[1L], "; team 2 (seats 2/4)=", o$scores[2L]),
-      paste0("Rules: ", o$rules$kings, " kings; target ", o$rules$points_to_win))
-    if (!is.null(o$wager)) text <- c(text, paste0("Current stake: ", if (o$ordago) "ordago" else o$wager))
-    if (!is.null(o$legal$min_stake)) text <- c(text, paste0("Minimum total stake: ", o$legal$min_stake))
-  }
-  if (length(o$history)) {
-    recent <- vapply(utils::tail(o$history, 8L), function(event) {
-      detail <- if (!is.null(event$amount)) paste0(" ", event$amount) else ""
-      if (!is.null(event$discard_count)) detail <- paste0(" ", event$discard_count, " card(s)")
-      paste0(o$player_names[event$player], ": ", event$action, detail)
-    }, character(1))
-    text <- c(text, "Recent public actions:", recent)
-  }
-  c(text, paste0("Actions: ", paste(paste0(seq_along(o$legal$actions), ") ", o$legal$actions), collapse = " | ")),
-    "Use an action name or number; raise/bet TOTAL; discard POSITIONS (empty to keep all); q to quit.")
-}
-
 #' @export
 choose_action.console_player <- function(controller, observation) {
-  controller$write(paste(console_observation_text(observation, controller$language), collapse = "\n"))
+  controller$write(paste(console_observation_text(observation, controller), collapse = "\n"))
   line <- console_read(controller, "Your action: ")
   decision <- console_decision(line, observation$legal, controller)
   list(decision = decision, controller = controller)
