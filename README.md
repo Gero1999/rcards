@@ -108,3 +108,32 @@ Mus uses the same `play()` interface with four controllers, including `mus_bot()
 for automated partners and opponents. See
 [console play and the shared game interface](docs/console-play.md) for Mus,
 stateful policies, scripted input, and hand-versus-game completion.
+
+## More games and console languages
+
+Play one Blackjack round against the dealer:
+
+```r
+rcards::play(
+  rcards::blackjack_game(list(rcards::player("You", points = 100))),
+  list(rcards::console_player(language = "it"))
+)
+```
+
+Scopa supports two or three individual players, or four in partnerships:
+
+```r
+rcards::play(
+  rcards::scopa_game(c("You", "Bot 1", "Partner", "Bot 2")),
+  c(list(rcards::console_player(language = "de")),
+    rep(list(rcards::scopa_bot()), 3)),
+  until = "game"
+)
+```
+
+Console languages are English (`en`), Spanish (`es`), German (`de`), and Italian
+(`it`). Prompts and action names are localized; English commands and menu numbers
+also work. See [console play](docs/console-play.md),
+[Blackjack rules](docs/rules/blackjack.md), and [Scopa rules](docs/rules/scopa.md).
+The Italian deck is constructed with `italian_deck()`; no new binary datasets
+are needed. Game bots are baseline heuristics, not optimal strategies.

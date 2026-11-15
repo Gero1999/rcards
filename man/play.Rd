@@ -38,9 +38,9 @@ only game_observation() and return decisions to game_action(), so interactive
 play and simulation use the same validation and rule engines.
 }
 \details{
-By default stop after one hand. until = "game" automatically advances Mus
-hands until a partnership reaches the score target; Hold'em still represents
-one hand. Stateful controllers are returned and can be reused in later calls.
+By default stop after one hand. until = "game" automatically advances Mus or Scopa
+hands until a partnership reaches the score target; Blackjack and Hold'em each represent
+one hand/round. Stateful controllers are returned and can be reused in later calls.
 
 Invalid console answers are retried without changing game state. Invalid
 scripted or bot decisions raise errors. Quitting, EOF, or interruption during

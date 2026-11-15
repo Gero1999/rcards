@@ -191,3 +191,41 @@ to the target score. Bot states are returned in `played$controllers`. Their
 `last_estimate` records actual accepted samples and attempts; public declaration
 constraints can reduce the sample count. This initial controller uses uniform
 unknown holdings and simple strategic rules, not a claim of expert Mus strength.
+
+## Four console languages
+
+Choose `console_player(language="en")`, `"es"`, `"de"`, or `"it"`. Prompts,
+legal-action labels, expected input errors and result messages are localized;
+English action identifiers and menu numbers are always accepted. User names,
+internal actions and game rules are unchanged. Missing translations and external
+controller diagnostics fall back to English. See [language policy](languages.md).
+
+## Blackjack
+
+```r
+played <- rcards::play(
+  rcards::blackjack_game(list(rcards::player("You",points=100))),
+  list(rcards::console_player(language="it"))
+)
+```
+
+Use hit/stand/double/split (or their displayed translations). The active split
+hand and wager are displayed explicitly. Dealer play and settlement are automatic.
+This is one round, not a continuing casino session.
+
+## Multiplayer Scopa
+
+```r
+played <- rcards::play(
+  rcards::scopa_game(c("You","Bot 1","Partner","Bot 2")),
+  c(list(rcards::console_player(language="it")),
+    rep(list(rcards::scopa_bot()),3)),
+  until="game"
+)
+```
+
+Cards on the table and in your hand are numbered independently. Enter
+`play 2 1` to play your second hand card using its first listed capture option.
+`play 2` prompts when multiple captures exist; bare `play` prompts for the hand
+position first. Captures list table positions, not card values. `q` pauses.
+Two- and three-player games use the same interface with fewer controllers.

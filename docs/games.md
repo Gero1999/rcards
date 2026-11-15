@@ -129,3 +129,11 @@ never rewritten by translation.
 list(console_player(language="it")))` plays one round against the automatic
 dealer. Use `blackjack_rules()` to configure deck count, soft 17, natural payout,
 doubling after splits, and maximum hands. See [rules](rules/blackjack.md).
+
+## Scopa
+
+`scopa_game()` supports two or three individuals, or four players in fixed
+partnerships (1/3 and 2/4). `play()` completes one deal; `until="game"` continues
+to the score target. Use `scopa_rules(target=11)` to select the target.
+`scopa_bot()` uses only its own cards and public capture choices. See
+[rules](rules/scopa.md) for the precise scoring profile and supported variants.

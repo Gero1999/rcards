@@ -60,6 +60,7 @@ console_decision <- function(line, legal, controller) {
   if (action == "quit") return(list(action = "quit"))
   if (!action %in% legal$actions) console_input_error("Choose one of the listed legal actions")
   arguments <- tokens[-1L]
+  if (action=="play") return(console_scopa_decision(arguments,legal,controller))
   if (action %in% c("raise", "bet")) {
     if (!length(arguments)) {
       prompt <- if (!is.null(legal$min_raise_to)) {
@@ -93,4 +94,26 @@ choose_action.console_player <- function(controller, observation) {
   line <- console_read(controller, "Your action: ")
   decision <- console_decision(line, observation$legal, controller)
   list(decision = decision, controller = controller)
+}
+
+console_scopa_decision <- function(arguments,legal,controller) {
+  is_quit <- function(value) !length(value) || (length(value)==1L &&
+    (is.na(value) || console_action(tolower(trimws(value)),"quit",controller$language)=="quit"))
+  if(!length(arguments)) {
+    value <- console_read(controller,"Hand position (or q to quit): ")
+    if(is_quit(value)) return(list(action="quit"))
+    arguments <- value
+  }
+  if(!length(arguments) %in% 1:2) console_input_error("Use play HAND OPTION")
+  position <- console_number(arguments[1])
+  if(position!=floor(position) || position<1 || position>length(legal$captures))
+    console_input_error("Choose a listed hand position")
+  options <- legal$captures[[position]]
+  if(length(arguments)==1L && length(options)>1L) {
+    value <- console_read(controller,ui("Capture option 1..%s (or q to quit): ",controller$language,length(options)))
+    if(is_quit(value)) return(list(action="quit"))
+    arguments <- c(arguments,value)
+  }
+  capture <- if(length(arguments)==2L) console_number(arguments[2]) else 1L
+  list(action="play",cards=position,amount=capture)
 }

@@ -91,3 +91,16 @@ test_that("Blackjack protocol hides the shoe and hole card and plays with contro
     expect_equal(sum(vapply(result$game$players,`[[`,0,"points")),300+sum(returned-wagers))
   }
 })
+
+test_that("split limits and disabling double after split constrain legal decisions", {
+  g <- blackjack_game(list(player(points=100)),rules=blackjack_rules(decks=1,max_hands=2,double_after_split=FALSE),
+    pack=blackjack_pack("8s 9h 8d 8c 8h 2s 3d 4c"))
+  g <- game_action(g,list(action="split"))
+  expect_length(g$hands[[1]],2)
+  expect_equal(g$players[[1]]$points,80)
+  expect_false(any(c("split","double") %in% game_legal_actions(g)$actions))
+  before <- game_observation(g)
+  g$dealer[[2]] <- card("2","Clubs")
+  g$shoe <- rev(g$shoe)
+  expect_identical(game_observation(g),before)
+})
