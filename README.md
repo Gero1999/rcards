@@ -45,7 +45,8 @@ rules, and bot memory.
 
 The graphical app runs locally in your browser and keeps each session in
 memory. See [graphical play](docs/graphical-interface.md) for configured games,
-controls, and session limits.
+controls, and session limits. **Help** explains the current game and links to
+bug reports and new-game suggestions in this repository.
 
 ### Prefer the console?
 

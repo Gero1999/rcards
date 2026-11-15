@@ -64,6 +64,8 @@ table_render_controls <- function(view,version,paused=FALSE) {
       shiny::selectInput("rank",ui("Declared rank",language),choices=if(length(legal$ranks)>1L)
         c(stats::setNames("",ui("choose a rank",language)),stats::setNames(legal$ranks,legal$ranks)) else legal$ranks,
         selected=if(length(legal$ranks)==1L) legal$ranks else "",selectize=FALSE),
+    if(view$game_type=="liar" && "claim" %in% legal$actions)
+      shiny::tags$p(class="rc-help",ui("Select 1 to %s cards.",language,view$selection_limit)),
     if(view$game_type=="scopa") shiny::uiOutput("capture_controls"),
     shiny::tags$div(class="rc-actions",lapply(legal$actions,function(action) {
       shiny::tags$button(type="button",class=paste("rc-action",if(action %in% c("fold","reject","challenge")) "rc-secondary"),

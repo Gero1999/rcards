@@ -52,3 +52,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
 .rc-app .rc-footer .btn{background:transparent}.rc-center .rc-cards{row-gap:28px;padding-bottom:18px}
 .rc-game-title{font:26px Georgia,serif;color:var(--rc-gold);margin:0 0 15px}.rc-game-title small{font:11px system-ui,sans-serif;letter-spacing:1px;color:var(--rc-muted);margin-left:14px}
 .rc-own-details{font-size:12px;color:var(--rc-muted)}.rc-history{font-size:12px;color:var(--rc-muted);max-width:500px;margin:0 auto 18px}.rc-history summary{cursor:pointer}.rc-history ol{text-align:left;line-height:1.8}
+.rc-brand .rc-logo{display:block;width:96px;height:auto}.rc-header-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:flex-end}
+.rc-footer>.shiny-input-container{width:170px;margin:0}.rc-help-modal .modal-content{background:#182a36;color:#edf4ed;border:1px solid #54716c;border-radius:14px}
+.rc-help-modal .modal-header,.rc-help-modal .modal-footer{border-color:#476159}.rc-help-modal .close{color:#edf4ed;opacity:1}.rc-help-modal .modal-title{color:#f0cc81}
+.rc-help{line-height:1.6}.rc-help h3{color:#f0cc81;font-size:18px}.rc-help li{margin-bottom:12px}.rc-help a{color:#a7edcf;text-decoration:underline}.rc-help a:focus-visible{outline:2px solid #f0cc81;outline-offset:3px}
+.rc-help-modal .btn{background:#f0cc81;color:#182a36;border-color:#f0cc81;border-radius:8px}.rc-help-modal .btn:focus-visible{outline:2px solid #a7edcf;outline-offset:3px}
+@media(max-width:650px){.rc-brand .rc-logo{width:76px}.rc-header-actions{gap:10px}.rc-help-modal .modal-dialog{margin:12px}.rc-help ol{padding-left:23px}}
