@@ -12,6 +12,10 @@ Use the existing task checkout. Do not create a worktree unless requested.
   the engine. Keep rules readable; prefer named intermediate values to dense
   expressions. Scores are comparison encodings, not chip or game-point awards.
 
+- Read [Blackjack rules](docs/rules/blackjack.md) before editing Blackjack.
+- Read [Scopa rules](docs/rules/scopa.md) before editing Scopa.
+- Keep console strings and aliases in the locale catalog; never translate canonical state.
+
 ## Adding a game
 
 1. Add `docs/rules/<game>.md`: deck, players/partnerships, turn order, actions,
