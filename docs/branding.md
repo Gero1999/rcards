@@ -7,10 +7,12 @@ simple geometric paths, rectangles, and circles. An AI-assisted visual concept
 informed the design; the committed asset is editable SVG source. The navy,
 green, gold, and ivory palette follows the package's graphical table.
 
-The mark combines a fan of three cards with probability dots. It contains no
+The mark combines three cards: `r` on the left, a spade with a gold diamond in
+the middle, and `cards` on the right. The lettering is drawn directly as
+original vector paths. It contains no
 third-party card illustrations, stock icons, casino branding, official R logo,
-embedded fonts, scripts, or remote resources. The package name is ordinary
-README text, so no font file is redistributed with the logo.
+embedded fonts, scripts, or remote resources. No font file is redistributed
+with the logo.
 
 ## Table preview
 

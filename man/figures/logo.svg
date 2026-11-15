@@ -1,26 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="296" viewBox="0 0 256 296" role="img" aria-labelledby="title description">
   <title id="title">rcards logo</title>
-  <desc id="description">Three ivory cards fan out inside a navy and gold hexagon. Three green dots on the front card connect play with probability.</desc>
+  <desc id="description">Three ivory cards fan out inside a navy and gold hexagon: a lowercase r on the left, a green spade with a gold diamond in the middle, and cards on the right.</desc>
   <!-- SPDX-License-Identifier: Apache-2.0. Original geometric artwork for rcards.
        No external images, fonts, scripts, or third-party artwork. -->
   <path d="M128 7 249 77v142l-121 70L7 219V77Z" fill="#101f29" stroke="#e5bd68" stroke-width="4" stroke-linejoin="round"/>
   <path d="m128 23 107 62v126l-107 62-107-62V85Z" fill="#153c37" stroke="#2c6255" stroke-width="1.5"/>
-  <g transform="rotate(-22 97 149)">
-    <rect x="53" y="92" width="78" height="119" rx="9" fill="#f5f0df" stroke="#e5bd68" stroke-width="2"/>
-    <path d="m68 105 5 8-5 8-5-8Z" fill="#225f51"/>
-    <path d="m115 183 5 8-5 8-5-8Z" fill="#225f51"/>
+  <g transform="rotate(-14 64 144)">
+    <rect x="25" y="90" width="78" height="108" rx="9" fill="#f5f0df" stroke="#e5bd68" stroke-width="2"/>
+    <path d="M51 170v-39m0 13c0-16 15-19 25-11" fill="none" stroke="#225f51" stroke-width="7.5" stroke-linecap="round"/>
   </g>
-  <g transform="rotate(22 159 149)">
-    <rect x="125" y="92" width="78" height="119" rx="9" fill="#f5f0df" stroke="#e5bd68" stroke-width="2"/>
-    <path d="m140 105 5 8-5 8-5-8Z" fill="#225f51"/>
-    <path d="m187 183 5 8-5 8-5-8Z" fill="#225f51"/>
+  <g transform="rotate(14 194 144)">
+    <rect x="155" y="90" width="78" height="108" rx="9" fill="#f5f0df" stroke="#e5bd68" stroke-width="2"/>
+    <!-- Original monoline lettering, drawn directly as paths: c a r d s. -->
+    <g transform="translate(166 143) scale(.72)" fill="none" stroke="#225f51" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M11 3C4-2 1 3 1 8s3 10 10 5"/>
+      <path d="M27 15V1M27 8C27-2 16-2 16 8s11 10 11 0"/>
+      <path d="M34 15V1M34 6C37 0 40-1 44 2"/>
+      <path d="M61 15V-7M61 8C61-2 50-2 50 8s11 10 11 0"/>
+      <path d="M78 2C72-2 67 0 68 5s11 2 11 7-8 6-12 2"/>
+    </g>
   </g>
-  <rect x="87" y="66" width="82" height="130" rx="10" fill="#fff9ed" stroke="#e5bd68" stroke-width="2.5"/>
-  <path d="M101 82h13m-13 6h8m33 86h13m-8 6h8" fill="none" stroke="#225f51" stroke-width="3" stroke-linecap="round"/>
-  <g fill="#225f51">
-    <circle cx="111" cy="149" r="7"/>
-    <circle cx="128" cy="131" r="7"/>
-    <circle cx="145" cy="113" r="7"/>
+  <rect x="90" y="78" width="72" height="112" rx="10" fill="#fff9ed" stroke="#e5bd68" stroke-width="2.5"/>
+  <g transform="translate(126 127)">
+    <path d="M0-25C-6-15-21-7-21 4c0 11 13 14 21 5 8 9 21 6 21-5C21-7 6-15 0-25Z" fill="#225f51"/>
+    <path d="M0 7C0 18-4 23-10 26h20C4 23 0 18 0 7Z" fill="#225f51"/>
+    <path d="m0-6 6 7-6 7-6-7Z" fill="#e5bd68"/>
   </g>
   <path d="M97 236h62" stroke="#e5bd68" stroke-width="2" stroke-linecap="round"/>
   <circle cx="128" cy="249" r="3" fill="#8cdec0"/>

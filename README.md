@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="man/figures/logo.svg" alt="rcards: a fan of cards with probability dots inside a hexagon" width="152" height="176">
+  <img src="man/figures/logo.svg" alt="rcards: r on the left card, a spade in the middle, and cards on the right, inside a hexagon" width="208" height="241">
 </p>
 
 # rcards
