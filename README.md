@@ -37,6 +37,8 @@ are labeled as the **total for the current betting round**. **Next hand**
 continues poker with settled stacks and a rotated dealer; Mus and Scopa also
 offer it while the match continues. Poker stops when you run out of chips or
 fewer than two funded players remain; **New table** explicitly starts over.
+Blackjack offers **Next round** with your settled bankroll and a visible wager
+choice. Each Blackjack round uses a freshly shuffled shoe.
 
 The graphical app runs locally in your browser and keeps each session in
 memory. See [graphical play](docs/graphical-interface.md) for configured games,
@@ -66,7 +68,7 @@ Mus, Scopa, Mentiroso, and resuming a stopped game.
 | --- | --- | --- |
 | [Texas Hold'em](docs/rules/holdem.md) | 2–10 | No-limit hands with blinds, all-ins, side pots, and split pots; continue with the same stacks. |
 | [Mus](docs/rules/mus.md) | 4, in partnerships | Configurable four/eight kings and a 30/40-point target, with exchanges and lance wagering. |
-| [Blackjack](docs/rules/blackjack.md) | 1–7 versus the dealer | Individual rounds with configurable dealer rules, doubles, and splits. The default graphical table has one player. |
+| [Blackjack](docs/rules/blackjack.md) | 1–7 versus the dealer | Continue rounds with your bankroll, configurable dealer rules, doubles, and splits. The default graphical table has one player. |
 | [Scopa](docs/rules/scopa.md) | 2–4 | Two or three individual players, or four in partnerships; choose captures and play matches. |
 | [Mentiroso / Liar](docs/rules/liar.md) | 2–8 | Face-down claims, bluffing, and challenges; the declared rank stays fixed until a challenge. |
 

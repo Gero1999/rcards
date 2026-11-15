@@ -62,14 +62,30 @@ table_continuation <- function(game,seat=NULL) {
       message <- "Your bankroll is empty. Start a new table to play again."
     }
   }
-  list(available=available,label="Next hand",message=message)
+  label <- "Next hand"
+  if(inherits(game,"blackjack_game") && game_hand_complete(game)) {
+    label <- "Next round"
+    available <- if(is.null(seat)) any(vapply(game$players,`[[`,0,"points")>=blackjack_round_wagers(game)) else
+      game$players[[seat]]$points>0
+    if(!available) message <- "Your bankroll is empty. Start a new table to play again."
+  }
+  list(available=available,label=label,message=message)
 }
 
-table_next <- function(state,version=state$version) {
+table_next <- function(state,version=state$version,wager=NULL) {
   if(!identical(as.integer(version),as.integer(state$version))) stop("The turn changed; choose again")
   if(!table_continuation(state$game,state$seat)$available) stop("This table cannot continue yet")
   result <- game_result(state$game)
-  state$game <- with_poker_seed(table_step_seed(state),function() game_next_hand(state$game))
+  state$game <- with_poker_seed(table_step_seed(state),function() {
+    if(inherits(state$game,"blackjack_game")) {
+      wagers <- blackjack_round_wagers(state$game)
+      if(is.null(wager)) wager <- min(wagers[state$seat],state$game$players[[state$seat]]$points)
+      check_number(wager,"wager",0,state$game$players[[state$seat]]$points)
+      if(wager<=0) stop("Choose a positive wager within your bankroll")
+      wagers[state$seat] <- wager
+      blackjack_next_round(state$game,wagers)
+    } else game_next_hand(state$game)
+  })
   state$completed <- utils::tail(c(state$completed,list(result)),20L)
   state$version <- state$version+1L;state$actions <- state$actions+1L;state$bot_actions <- 0L
   state$error <- NULL;state$paused <- FALSE

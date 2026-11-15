@@ -103,7 +103,7 @@ table_app_server <- function(initial,initial_language) {
       tryCatch({
         event <- input$table_continue
         if(!is.list(event) || length(event$version)!=1L || is.na(event$version)) stop("The turn changed; choose again")
-        state(table_next(state(),event$version));selected(integer())
+        state(table_next(state(),event$version,event$wager));selected(integer())
       },error=report_error)
     },ignoreInit=TRUE)
     shiny::observeEvent(input$card_pick,{
@@ -178,6 +178,8 @@ table_app_server <- function(initial,initial_language) {
     output$footer <- shiny::renderUI(shiny::tagList(
       shiny::tags$span(ui("Local play against bots. Your seat: %s",lang(),view()$seats[[view()$viewer]]$name)),
       shiny::actionButton("pause_table",ui(if(state()$paused) "Resume" else "Pause",lang())),
+      if(!is.null(view()$next_wager)) shiny::numericInput("next_wager",ui("Next round wager",lang()),
+        value=view()$next_wager$value,min=0,max=view()$next_wager$maximum,step=1),
       if(view()$can_next) shiny::tags$button(type="button",id="next_hand",class="btn btn-default",
         `data-rc-continue`="next",`data-rc-version`=state()$version,view()$continue_label)))
   }
