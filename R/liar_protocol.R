@@ -44,5 +44,6 @@ game_observation.liar_game <- function(game,seat=NULL) {
     pile_count=length(game$pile),rank=game$rank,
     claim=if(is.null(game$last_claim)) NULL else game$last_claim[c("player","rank","count")],
     responders=game$responders,reveal=game$last_reveal,history=game$history,
+    deal_number=if(is.null(game$deal_number)) 1L else game$deal_number,
     rules=game$rules,legal=liar_legal(game),complete=game$complete,winner=game$winner)
 }

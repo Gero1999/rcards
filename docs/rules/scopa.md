@@ -26,6 +26,14 @@ before comparing scores. A tied lead at/above target requires another deal;
 otherwise the unique leading side wins. Rotate dealer between deals. No initial
 three-king redeal or regional bonus variants are included in this profile.
 
+At the completed match boundary, `game_rematch(game, seed=...)` explicitly
+starts another match with the same player objects, seats, partnerships, and
+target. Dealer rotates one seat clockwise from the final deal. Match scores,
+capture piles, sweeps, old table cards, results, and history reset; a complete
+pack is shuffled and dealt afresh. Controllers remain separate and can be
+reused. This is distinct from `game_next_hand()` within an unfinished match,
+which preserves its scores. A rematch cannot interrupt an unfinished match.
+
 Observations expose the table, own cards, public capture history and scores,
 other players' hand counts, and stock count. Never expose opponents' hands or
 future stock order. Console moves select a hand position and a numbered capture

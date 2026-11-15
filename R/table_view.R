@@ -72,8 +72,9 @@ game_table_view <- function(game,seat=1L,language="en") {
     if(type=="liar") {
       center <- list(zone("pile",ui("Pile %s | Declared rank %s",language,o$pile_count,
         if(is.null(o$rank)) ui("choose a rank",language) else o$rank),backs(as.integer(o$pile_count>0))))
-      if(!is.null(o$claim)) status <- ui("Claim: %s | Rank: %s | Cards: %s",language,
-        o$player_names[o$claim$player],o$claim$rank,o$claim$count)
+      status <- ui("Deal %s",language,o$deal_number)
+      if(!is.null(o$claim)) status <- c(status,ui("Claim: %s | Rank: %s | Cards: %s",language,
+        o$player_names[o$claim$player],o$claim$rank,o$claim$count))
       challenges <- Filter(function(event) event$action=="challenge",o$history)
       if(length(challenges)) {
         reveal <- utils::tail(challenges,1)[[1]]

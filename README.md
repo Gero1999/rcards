@@ -39,6 +39,9 @@ offer it while the match continues. Poker stops when you run out of chips or
 fewer than two funded players remain; **New table** explicitly starts over.
 Blackjack offers **Next round** with your settled bankroll and a visible wager
 choice. Each Blackjack round uses a freshly shuffled shoe.
+Mentiroso offers **Next deal** after a confirmed winner. Completed Mus and Scopa
+matches offer **New match**, resetting match scores while retaining seats,
+rules, and bot memory.
 
 The graphical app runs locally in your browser and keeps each session in
 memory. See [graphical play](docs/graphical-interface.md) for configured games,

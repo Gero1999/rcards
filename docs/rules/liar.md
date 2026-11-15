@@ -28,6 +28,15 @@ surviving a challenge. A caught bluff on the last cards cannot win. A game is
 one deal, without scores or elimination rounds. There is no mathematical turn
 limit in the rules; play() action limits can pause potentially long games.
 
+After a confirmed winner, `liar_next_deal(game, seed=...)` (or
+`game_rematch(game, seed=...)`) redeals a complete pack with the same players,
+seat order, and configured rules. Dealer moves one seat clockwise, the next
+seat leads, and old claims, piles, reveals, and history are cleared. Player
+metadata is retained; no match points or elimination rules are added.
+`game_next_hand(game)` also starts the next completed deal. The returned
+`deal_number` counts the first deal as one. Retain controller objects separately
+to keep their state across deals. Redealing an unfinished deal is rejected.
+
 Observations expose own cards, other hand counts, pile count, current rank,
 public claim rank/count/claimant, response order, and public challenge reveals.
 Never expose opponents' hands, unrevealed batches, discard positions or a hidden

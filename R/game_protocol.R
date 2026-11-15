@@ -10,6 +10,9 @@
 #' or explicitly deals another completed Hold'em hand or Blackjack round with
 #' settled stacks. Individual hand/round completion remains distinct from
 #' choosing to continue at the same table.
+#' Mentiroso can deal again after a confirmed winner. game_rematch() explicitly
+#' starts a fresh completed Mus/Scopa match with scores reset, or another
+#' Mentiroso deal; it retains players and rules.
 #'
 #' Observations and results exclude opponents' hidden cards and deck order.
 #' These projections protect controller inputs, not access to the full in-process

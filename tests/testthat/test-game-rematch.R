@@ -1,0 +1,116 @@
+test_that("Mentiroso redeals preserve players and rules but clear the old claim", {
+  for(style in c("spanish","french")) {
+    old <- finished_liar_for_rematch(liar_rules(style,max_cards=2L))
+    old$players[[2]]$role <- "custom role"
+    old$players[[2]]$points <- 37
+    old$players[[2]]$note <- list(preference="patient")
+    saved <- old
+    expect_true(old$complete)
+    expect_true(length(old$last_reveal$cards)>0L)
+    fresh <- liar_next_deal(old,seed=17)
+    expect_identical(old,saved)
+    expect_identical(fresh$rules,old$rules)
+    expect_equal(fresh$dealer,1L)
+    expect_equal(fresh$actor,2L)
+    expect_equal(fresh$deal_number,2L)
+    expect_equal(fresh$players[[2]]$role,"custom role")
+    expect_equal(fresh$players[[2]]$points,37)
+    expect_identical(fresh$players[[2]]$note,old$players[[2]]$note)
+    expect_identical(vapply(fresh$players,`[[`,"","name"),c("A","B","C"))
+    expect_false(fresh$complete)
+    expect_identical(fresh$phase,"claim")
+    expect_length(fresh$history,0L)
+    expect_length(fresh$pile,0L)
+    expect_length(fresh$responders,0L)
+    expect_null(fresh$rank);expect_null(fresh$last_claim)
+    expect_null(fresh$last_reveal);expect_null(fresh$winner)
+    expect_error(liar_assert_cards(fresh),NA)
+    counts <- vapply(fresh$players,function(p) length(p$hand),0L)
+    expect_equal(sum(counts),if(style=="spanish") 40L else 52L)
+    observation <- game_observation(fresh,1L)
+    expect_null(observation$claim);expect_null(observation$reveal)
+    expect_null(observation$winner)
+    expect_length(observation$history,0L)
+    expect_identical(game_rematch(old,seed=17),fresh)
+  }
+})
+
+test_that("Mus rematches reset scores and settlements while rotating mano", {
+  old <- finished_mus_for_rematch()
+  old$players[[3]]$note <- "retain me"
+  saved <- old
+  expect_true(old$complete)
+  expect_equal(max(old$scores),30)
+  fresh <- game_rematch(old,seed=19)
+  expect_identical(old,saved)
+  expect_identical(fresh$rules,mus_rules(4,30))
+  expect_identical(fresh$scores,c(0,0))
+  expect_equal(fresh$mano,1L);expect_equal(fresh$actor,1L)
+  expect_equal(fresh$hand_number,1L)
+  expect_equal(fresh$players[[3]]$note,"retain me")
+  expect_false(fresh$complete);expect_false(fresh$hand_complete)
+  expect_false(fresh$revealed)
+  expect_length(fresh$history,0L);expect_length(fresh$results,0L)
+  expect_length(fresh$settlements,0L);expect_length(fresh$discard,0L)
+  cards <- c(unlist(lapply(fresh$players,`[[`,"hand"),recursive=FALSE),as_card_list(fresh$deck))
+  expect_length(mus_card_ids(cards),40L)
+  observation <- game_observation(fresh,2L)
+  expect_length(observation$results,0L)
+  expect_null(observation$winner)
+  # An ordinary finished hand is not permission to discard unfinished scores.
+  partial <- finish_mus_passing(new_mus(seed=7))
+  expect_false(partial$complete)
+  expect_error(game_rematch(partial),"Finish.*Mus match")
+  expect_error(game_next_hand(old),"must not be complete")
+})
+
+test_that("Scopa rematches preserve seating and reset all deal and score state", {
+  for(n in 2:4) {
+    old <- finished_scopa_for_rematch(n)
+    old$players[[1]]$note <- list(custom=TRUE)
+    saved <- old
+    fresh <- game_rematch(old,seed=23)
+    expect_identical(old,saved)
+    expect_identical(fresh$rules,old$rules)
+    expect_identical(fresh$teams,old$teams)
+    expect_equal(fresh$dealer,old$dealer %% n+1L)
+    expect_equal(fresh$actor,fresh$dealer %% n+1L)
+    expect_equal(fresh$scores,numeric(if(n==4L) 2L else n))
+    expect_equal(fresh$hand_number,1L)
+    expect_identical(fresh$players[[1]]$note,list(custom=TRUE))
+    expect_identical(vapply(fresh$players,`[[`,"","name"),vapply(old$players,`[[`,"","name"))
+    expect_false(fresh$complete);expect_false(fresh$hand_complete)
+    expect_null(fresh$winner);expect_null(fresh$last_capturer)
+    expect_length(fresh$history,0L);expect_length(fresh$results,0L)
+    expect_equal(fresh$sweeps,integer(n))
+    expect_true(all(vapply(fresh$captured,length,0L)==0L))
+    cards <- c(fresh$stock,fresh$table_cards,unlist(lapply(fresh$players,`[[`,"hand"),recursive=FALSE))
+    expect_length(italian_card_ids(cards),40L)
+    expect_length(fresh$table_cards,4L)
+    expect_equal(vapply(fresh$players,function(p) length(p$hand),0L),rep(3L,n))
+    expect_length(game_observation(fresh,1L)$history,0L)
+    expect_error(game_next_hand(old),"must not be complete")
+  }
+})
+
+test_that("redeals and rematches are seeded and reject unfinished games", {
+  games <- list(finished_liar_for_rematch(),finished_mus_for_rematch(),finished_scopa_for_rematch())
+  set.seed(42);before <- .Random.seed
+  for(old in games) {
+    expect_identical(game_rematch(old,seed=11),game_rematch(old,seed=11))
+    expect_identical(.Random.seed,before)
+  }
+  old <- games[[1L]]
+  expected <- liar_pack(old$rules)
+  ordered <- liar_next_deal(old,pack=expected)
+  expect_identical(ordered$players[[2L]]$hand[[1L]],expected[[1L]])
+  expect_error(liar_next_deal(old,pack=expected[-1L]),"complete configured pack")
+  fresh <- game_rematch(old,seed=2)
+  expect_error(game_rematch(fresh),"Finish.*Mentiroso")
+  expect_error(liar_next_deal(fresh),"Finish.*Mentiroso")
+  expect_error(game_rematch(new_mus(seed=1)),"Finish.*Mus match")
+  expect_error(game_rematch(scopa_game(seed=1)),"Finish.*Scopa match")
+  expect_error(game_rematch(list()),"does not support")
+  expect_error(game_rematch(game()),"does not support")
+  expect_error(game_next_hand(old),NA)
+})
