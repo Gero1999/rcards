@@ -19,7 +19,8 @@ estimate_n <- function(n,maximum=100000L) {
   as.integer(n)
 }
 
-# Wilson intervals for Bernoulli events; normal Monte Carlo intervals for means.
+# Wilson intervals for Bernoulli events; bounded-mean Hoeffding intervals for
+# equity, normal Monte Carlo intervals for unbounded profit/point means.
 # No simulation variance is claimed for exact enumeration or one-sample means.
 estimate_summary <- function(values,binary=FALSE,exact=FALSE,level=0.95,bounds=NULL) {
   check_number(level,"level",0,1)
@@ -35,6 +36,11 @@ estimate_summary <- function(values,binary=FALSE,exact=FALSE,level=0.95,bounds=N
     center <- (mean+z^2/(2*n))/(1+z^2/n)
     half <- z*sqrt(mean*(1-mean)/n+z^2/(4*n^2))/(1+z^2/n)
     interval <- c(center-half,center+half)
+  } else if(!is.null(bounds)) {
+    if(any(values<bounds[1] | values>bounds[2])) stop("Samples outside stated bounds")
+    se <- if(n>1L) stats::sd(values)/sqrt(n) else NA_real_
+    half <- (bounds[2]-bounds[1])*sqrt(log(2/(1-level))/(2*n))
+    interval <- mean+c(-1,1)*half
   } else if(n>1L) {
     se <- stats::sd(values)/sqrt(n);interval <- mean+c(-1,1)*z*se
   } else {se<-NA_real_;interval<-c(NA_real_,NA_real_)}
@@ -50,6 +56,8 @@ stat_report <- function(type,method,assumptions,estimates,details=list()) {
 #' Estimate hand strength from a public game observation
 #' @param observation A result of game_observation(), not full engine state.
 #' @param ... Game-specific estimation options.
+#' @details Holdem observations dispatch to poker_equity(); Mus observations
+#' dispatch to mus_lance_equity(). Use estimate_actions() for Blackjack or Scopa.
 #' @return A report with method, assumptions, estimates, sample counts and
 #' Monte Carlo uncertainty. Supported games are added in game-specific modules.
 #' @export

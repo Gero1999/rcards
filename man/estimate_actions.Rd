@@ -6,7 +6,7 @@
 \usage{
 estimate_actions(
   observation,
-  n = 100L,
+  n = 20L,
   controllers = NULL,
   seed = NULL,
   max_actions = 1000L,

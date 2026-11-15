@@ -11,6 +11,7 @@ test_that("statistical reports distinguish exact samples and uncertainty", {
   summary <- estimate_summary(c(0,0),binary=TRUE)
   expect_gt(summary$upper,0)
   expect_equal(estimate_summary(c(0,1),exact=TRUE)$standard_error,0)
+  expect_lt(estimate_summary(c(1,1),bounds=c(0,1))$lower,1)
   expect_true(is.na(estimate_summary(1)$standard_error))
   expect_true(is.na(estimate_summary(numeric())$estimate))
   expect_error(estimate_hand(list()),"public game observation")

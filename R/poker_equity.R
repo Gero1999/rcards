@@ -54,10 +54,8 @@ poker_equity <- function(hole,board=list(),opponents=1L,opponent_hands=NULL,n=10
     } else {
       enumerate_opponents <- function(remaining,others,community,left) {
         if(!left) {evaluate(community,others);return(invisible(NULL))}
-        utils::combn(remaining,2L,FUN=function(pair) {
+        for(pair in utils::combn(remaining,2L,simplify=FALSE))
           enumerate_opponents(setdiff(remaining,pair),c(others,list(pair)),community,left-1L)
-          NULL
-        },simplify=FALSE)
         invisible(NULL)
       }
       boards <- if(missing) utils::combn(available,missing,simplify=FALSE) else list(integer())

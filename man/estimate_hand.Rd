@@ -18,3 +18,7 @@ Monte Carlo uncertainty. Supported games are added in game-specific modules.
 \description{
 Estimate hand strength from a public game observation
 }
+\details{
+Holdem observations dispatch to poker_equity(); Mus observations
+dispatch to mus_lance_equity(). Use estimate_actions() for Blackjack or Scopa.
+}
