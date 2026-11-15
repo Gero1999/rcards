@@ -26,6 +26,13 @@ translate_card <- function(x, language = "en") {
     es=c("1"="As","10"="Sota","11"="Caballo","12"="Rey"),
     de=c("1"="Ass","10"="Bube","11"="Reiter","12"="K\u00f6nig"),
     it=c("1"="Asso","10"="Fante","11"="Cavallo","12"="Re"))
+  italian <- x$suit %in% c("Denari","Coppe","Spade","Bastoni")
+  suits <- c(suits,setNames(unname(suits[c("Oros","Copas","Espadas","Bastos")]),c("Denari","Coppe","Spade","Bastoni")))
+  if(italian) ranks <- switch(language,
+    en=c("1"="Ace","8"="Jack","9"="Knight","10"="King"),
+    es=c("1"="As","8"="Sota","9"="Caballo","10"="Rey"),
+    de=c("1"="Ass","8"="Bube","9"="Reiter","10"="K\u00f6nig"),
+    it=c("1"="Asso","8"="Fante","9"="Cavallo","10"="Re"))
   value <- unname(ranks[x$value]); suit <- unname(suits[x$suit])
   if (is.na(value)) value <- x$value
   if (is.na(suit)) suit <- x$suit

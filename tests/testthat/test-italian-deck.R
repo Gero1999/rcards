@@ -1,0 +1,11 @@
+test_that("Italian packs preserve identity while displaying local face names", {
+  d <- italian_deck()
+  expect_length(d,40)
+  expect_length(unique(italian_card_ids(d)),40)
+  expect_equal(attr(d,"language"),"it")
+  expect_match(translate_card(card("8","Denari"),"it")$display,"Fante di Denari")
+  expect_match(translate_card(card("10","Denari"),"en")$display,"King of Coins")
+  expect_match(translate_card(card("10","Oros"),"en")$display,"Jack of Coins")
+  for(language in supported_languages()) expect_identical(italian_card_ids(translate_deck(d,language)),italian_card_ids(d))
+  expect_length(attr(d,"optional_cards"),0)
+})

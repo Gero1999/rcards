@@ -1,4 +1,5 @@
 suit_symbols <- c(
+  Denari = "D", Coppe = "C", Spade = "S", Bastoni = "B",
   Hearts = "\u2665", Diamonds = "\u2666", Clubs = "\u2663",
   Spades = "\u2660", Joker = "\U0001F0CF", Oros = "\U0001F4B0",
   Copas = "\U0001F377", Espadas = "\U0001F5E1", Bastos = "\U0001F528"
