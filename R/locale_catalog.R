@@ -154,5 +154,9 @@ locale_catalog <- list(
   "Already in this round: %s" = c(es = "Ya aportado en esta ronda: %s", de = "Bereits in dieser Runde: %s", it = "Gi\u00e0 messo in questo giro: %s"),
   "CLAIM" = c(es = "DECLARACI\u00d3N", de = "ANSAGE", it = "DICHIARAZIONE"),
   "RESPONSE" = c(es = "RESPUESTA", de = "ANTWORT", it = "RISPOSTA"),
-  "COMPLETE" = c(es = "TERMINADO", de = "BEENDET", it = "COMPLETATO")
+  "COMPLETE" = c(es = "TERMINADO", de = "BEENDET", it = "COMPLETATO"),
+  "Hand %s | Dealer %s | Blinds %s / %s" = c(es = "Mano %s | Repartidor %s | Ciegas %s / %s", de = "Hand %s | Geber %s | Blinds %s / %s", it = "Mano %s | Mazziere %s | Bui %s / %s"),
+  "Table finished: fewer than two players have chips." = c(es = "Mesa terminada: quedan menos de dos jugadores con fichas.", de = "Tisch beendet: Weniger als zwei Spieler haben Chips.", it = "Tavolo concluso: meno di due giocatori hanno fiches."),
+  "Your bankroll is empty. Start a new table to play again." = c(es = "No te quedan fichas. Inicia una nueva mesa para jugar de nuevo.", de = "Du hast keine Chips mehr. Starte einen neuen Tisch.", it = "Non hai pi\u00f9 fiches. Avvia un nuovo tavolo per giocare ancora."),
+  "This table cannot continue yet" = c(es = "Esta mesa todav\u00eda no puede continuar", de = "Dieser Tisch kann noch nicht fortgesetzt werden", it = "Questo tavolo non pu\u00f2 ancora continuare")
 )

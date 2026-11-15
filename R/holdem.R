@@ -12,13 +12,23 @@
 #' @export
 holdem_hand <- function(players, dealer = 1L, small_blind = 1L,
                         big_blind = 2L, seed = NULL, pack = NULL) {
+  new_holdem_hand(players, dealer, small_blind, big_blind, seed, pack)
+}
+
+# Continuations retain all original seats, including eliminated players. Only
+# this private initializer permits zero stacks; fresh public hands stay strict.
+new_holdem_hand <- function(players, dealer, small_blind, big_blind, seed, pack,
+                            allow_eliminated = FALSE, hand_number = 1L) {
   if (!is.list(players) || !length(players) %in% 2:10 ||
       !all(vapply(players, inherits, logical(1), "player"))) stop("Expected two to ten players")
   n <- length(players)
   check_number(dealer, "dealer", 1, n, TRUE)
   check_number(small_blind, "small_blind", 1, integer = TRUE)
   check_number(big_blind, "big_blind", small_blind, integer = TRUE)
-  for (p in players) check_number(p$points, "stack", 1, integer = TRUE)
+  for (p in players) check_number(p$points, "stack", if (allow_eliminated) 0 else 1, integer = TRUE)
+  funded <- which(vapply(players, `[[`, 0, "points") > 0)
+  if (length(funded) < 2L) stop("At least two funded seats are needed for another hand")
+  if (!dealer %in% funded) stop("Dealer must be a funded seat")
   if (is.null(pack)) pack <- with_poker_seed(seed, function() shuffle(poker_pack()))
   ids <- poker_card_ids(pack)
   if (length(ids) != 52L) stop("pack must contain 52 distinct French cards")
@@ -26,19 +36,22 @@ holdem_hand <- function(players, dealer = 1L, small_blind = 1L,
   h <- structure(list(players = players, dealer = as.integer(dealer),
     small_blind = small_blind, big_blind = big_blind, deck = pack,
     board = list(), burned = list(), street = "preflop", round_bets = rep(0, n),
-    contributions = rep(0, n), folded = rep(FALSE, n), current_bet = big_blind,
-    min_raise = big_blind, acted_at = rep(NA_real_, n), pending = seq_len(n),
+    contributions = rep(0, n), folded = !seq_len(n) %in% funded, current_bet = big_blind,
+    min_raise = big_blind, acted_at = rep(NA_real_, n), pending = funded,
     actor = NULL, complete = FALSE, pots = list(), payouts = rep(0, n),
-    history = list(), initial_stacks = vapply(players, `[[`, 0, "points"), initial_chips = sum(vapply(players, `[[`, 0, "points"))),
+    history = list(), hand_number = hand_number,
+    initial_stacks = vapply(players, `[[`, 0, "points"), initial_chips = sum(vapply(players, `[[`, 0, "points"))),
     class = c("holdem_hand", "game"))
   for (i in seq_len(n)) h$players[[i]]$hand <- list()
   order <- clockwise_seats(n, dealer)
+  order <- order[order %in% funded]
   for (round in 1:2) for (i in order) {
     h$players[[i]]$hand <- c(h$players[[i]]$hand, as_card_list(h$deck[1L]))
     h$deck <- h$deck[-1L]
   }
-  sb <- if (n == 2L) dealer else order[1L]
-  bb <- clockwise_seats(n, sb)[1L]
+  sb <- if (length(funded) == 2L) dealer else order[1L]
+  blind_order <- clockwise_seats(n, sb)
+  bb <- blind_order[blind_order %in% funded][1L]
   h <- holdem_pay(h, sb, min(small_blind, h$players[[sb]]$points))
   h <- holdem_pay(h, bb, min(big_blind, h$players[[bb]]$points))
   # A blind that cannot cover its nominal amount remains the bring-in for players

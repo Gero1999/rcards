@@ -18,7 +18,7 @@ German (`de`), and Italian (`it`) are selectable during play.
 
 | Game | Default table options | Human controls |
 | --- | --- | --- |
-| Texas Hold'em | 2–10 seats; one hand | Fold/check/call/raise. Raise **TO** a total for the betting round, including chips already committed. Bounds and the call amount are shown. |
+| Texas Hold'em | 2–10 seats; retained stacks across hands | Fold/check/call/raise. Raise **TO** a total for the betting round, including chips already committed. Bounds and the call amount are shown. |
 | Mus | Four seats, two partnerships | Mus/cut, select any cards to discard, and legal lance/stake decisions. |
 | Blackjack | One human versus the dealer; one round | Hit/stand/double/split when allowed. Split hands show their totals and wagers; the active hand is highlighted. |
 | Scopa | Two or three individual players; four in teams | Select one own card, then a numbered capture option. Table positions and the chosen capture are highlighted. |
@@ -31,9 +31,18 @@ continues. Bots take one action per timer tick. A bounded automatic-action
 budget pauses unusually long play instead of looping indefinitely.
 
 At a hand boundary, results stay visible for review. **Next hand** continues
-Mus or Scopa with scores and controller memory retained. Completed matches,
-Hold'em hands, and Blackjack rounds restart through **New table**. The UI
-does not manage a persistent poker bankroll or a Blackjack session.
+poker with settled stacks, fixed seats, retained bot memory, and the dealer
+rotated clockwise among funded players. Eliminated seats receive no cards or
+blinds. The human table stops if your bankroll is empty or fewer than two
+funded players remain; there are no automatic rebuys or stack resets.
+Mus and Scopa retain scores and controller memory between hands. Completed
+matches and Blackjack rounds currently restart through **New table**.
+
+For programmatic or console poker, use `holdem_next_hand(completed, seed = 42)`
+or `game_next_hand(completed)`, then call `play()` with the returned state and
+the preceding play result's controllers. `game_complete()` still describes one
+completed hand; advancing to another is explicit. The graphical session also
+keeps up to twenty recent public completion summaries, never private hands.
 
 ## Configured games and local sessions
 

@@ -5,10 +5,13 @@
   document.addEventListener("click", function (event) {
     var action = event.target.closest("[data-rc-action]");
     var card = event.target.closest("[data-rc-card]");
-    var el = action || card;
+    var continuation = event.target.closest("[data-rc-continue]");
+    var el = action || card || continuation;
     if (!el || el.disabled || !window.Shiny) return;
     var payload = {version: Number(el.dataset.rcVersion)};
-    if (action) {
+    if (continuation) {
+      Shiny.setInputValue("table_continue", payload, {priority: "event"});
+    } else if (action) {
       payload.action = el.dataset.rcAction;
       var amount = document.getElementById("amount");
       var rank = document.getElementById("rank");

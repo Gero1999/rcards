@@ -33,8 +33,10 @@ rcards::play_app()
 Choose a game, player count, and language, then click **New table**. You play
 one seat against bots; Blackjack pits you against the dealer. Select cards
 when the game calls for them and use the legal action buttons. Poker raises
-are labeled as the **total for the current betting round**. Mus and Scopa
-offer **Next hand** while the match continues.
+are labeled as the **total for the current betting round**. **Next hand**
+continues poker with settled stacks and a rotated dealer; Mus and Scopa also
+offer it while the match continues. Poker stops when you run out of chips or
+fewer than two funded players remain; **New table** explicitly starts over.
 
 The graphical app runs locally in your browser and keeps each session in
 memory. See [graphical play](docs/graphical-interface.md) for configured games,
@@ -62,7 +64,7 @@ Mus, Scopa, Mentiroso, and resuming a stopped game.
 
 | Game | Players | What you can play |
 | --- | --- | --- |
-| [Texas Hold'em](docs/rules/holdem.md) | 2–10 | Individual no-limit hands with blinds, all-ins, side pots, and split pots. |
+| [Texas Hold'em](docs/rules/holdem.md) | 2–10 | No-limit hands with blinds, all-ins, side pots, and split pots; continue with the same stacks. |
 | [Mus](docs/rules/mus.md) | 4, in partnerships | Configurable four/eight kings and a 30/40-point target, with exchanges and lance wagering. |
 | [Blackjack](docs/rules/blackjack.md) | 1–7 versus the dealer | Individual rounds with configurable dealer rules, doubles, and splits. The default graphical table has one player. |
 | [Scopa](docs/rules/scopa.md) | 2–4 | Two or three individual players, or four in partnerships; choose captures and play matches. |

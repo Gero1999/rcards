@@ -41,6 +41,21 @@ is full in-process state, not a security sandbox.
 scripted play. The simulation runs independent hands with fresh starting stacks;
 it is not a continuous cash session or tournament. Bot state can persist.
 
+`holdem_next_hand()` (also `game_next_hand()`) advances a settled hand at the
+same table. It retains settled stacks, player identities, fixed seat indices,
+and blind amounts; it never replenishes chips. The button moves to the next
+funded seat clockwise. A fresh pack is shuffled and the hand number increases.
+Seats with zero chips sit out: no cards, blinds, or decisions. With exactly two
+funded seats the button posts the small blind, even if other original seats
+remain empty. This uses a moving funded button; it does not implement dead-button
+tournament administration. A table cannot deal with fewer than two funded seats.
+`game_complete()` still describes the current hand; advancing requires a
+separate explicit call, so simulations and one-hand play keep their meaning.
+
+Continuation regressions cover repeated heads-up folds, the transition from
+three funded seats to two, gaps between remaining seats, rotated blinds,
+all-in chip conservation, and rejection before settlement or after elimination.
+
 ## Evidence and references
 
 - `tests/testthat/test-holdem.R`: acting order, all-ins, side pots, odd chips,

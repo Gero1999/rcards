@@ -17,7 +17,8 @@ table_session <- function(game,seat=1L,controllers=NULL,seed=42L,max_bot_actions
     if(!is_game_controller(controllers[[i]]) || inherits(controllers[[i]],"console_player")) stop("Other seats need non-console controllers")
   controllers[seat] <- list(NULL)
   list(game=game,seat=seat,controllers=controllers,seed=seed,version=0L,
-    actions=0L,bot_actions=0L,max_bot_actions=max_bot_actions,paused=FALSE,error=NULL)
+    actions=0L,bot_actions=0L,max_bot_actions=max_bot_actions,paused=FALSE,error=NULL,
+    completed=list())
 }
 
 table_step_seed <- function(state) (state$seed+as.double(state$actions)) %% .Machine$integer.max
@@ -49,9 +50,27 @@ table_bot_step <- function(state) {
   state
 }
 
-table_next <- function(state) {
-  if(!game_hand_complete(state$game) || game_complete(state$game)) stop("Finish the current hand; game must not be complete")
+table_continuation <- function(game,seat=NULL) {
+  available <- game_hand_complete(game) && !game_complete(game) &&
+    (inherits(game,"mus_game") || inherits(game,"scopa_game"))
+  message <- NULL
+  if(inherits(game,"holdem_hand") && game_hand_complete(game)) {
+    available <- sum(holdem_stacks(game)>0)>=2L
+    if(!available) message <- "Table finished: fewer than two players have chips."
+    if(!is.null(seat) && game$players[[seat]]$points<=0) {
+      available <- FALSE
+      message <- "Your bankroll is empty. Start a new table to play again."
+    }
+  }
+  list(available=available,label="Next hand",message=message)
+}
+
+table_next <- function(state,version=state$version) {
+  if(!identical(as.integer(version),as.integer(state$version))) stop("The turn changed; choose again")
+  if(!table_continuation(state$game,state$seat)$available) stop("This table cannot continue yet")
+  result <- game_result(state$game)
   state$game <- with_poker_seed(table_step_seed(state),function() game_next_hand(state$game))
+  state$completed <- utils::tail(c(state$completed,list(result)),20L)
   state$version <- state$version+1L;state$actions <- state$actions+1L;state$bot_actions <- 0L
   state$error <- NULL;state$paused <- FALSE
   state
