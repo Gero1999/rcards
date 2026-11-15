@@ -32,3 +32,37 @@ test_that("Blackjack construction is seeded and validates complete shoes", {
   expect_identical(a,new_blackjack(list(player(points=100)),seed=4))
   expect_error(new_blackjack(list(player(points=100)),pack=list()),"Pack")
 })
+
+test_that("Blackjack doubles escrow the extra wager and settle exactly once", {
+  g <- new_bj("Ts 9h 6d 8c 5c")
+  g <- blackjack_step(g,"double")
+  expect_equal(g$players[[1]]$points,120)
+  expect_equal(g$results[[1]]$bet,20)
+  expect_error(blackjack_step(g,"stand"),"Illegal")
+  poor <- new_blackjack(list(player(points=10)),wager=10)
+  if(!poor$complete) expect_false(any(c("double","split") %in% blackjack_legal(poor)$actions))
+})
+
+test_that("split aces receive one card and split 21 pays as ordinary 21", {
+  g <- blackjack_step(new_bj("As 9h Ad 8c Ks Qh"),"split")
+  expect_true(g$complete)
+  expect_length(g$hands[[1]],2)
+  expect_equal(g$players[[1]]$points,120)
+  expect_false(any(vapply(g$results,`[[`,logical(1),"natural")))
+  expect_equal(sum(vapply(g$results,`[[`,0,"returned")),40)
+})
+
+test_that("soft seventeen payout and split limits follow configured rules", {
+  pack <- blackjack_pack("Ts Ah 8d 6c 2s")
+  start <- function(hit) new_blackjack(list(player(points=100)),
+    rules=blackjack_rules(decks=1,hit_soft17=hit),pack=pack)
+  expect_equal(blackjack_step(start(FALSE),"stand")$players[[1]]$points,110)
+  expect_equal(blackjack_step(start(TRUE),"stand")$players[[1]]$points,90)
+  g <- new_blackjack(list(player(points=100)),rules=blackjack_rules(decks=1,blackjack_payout=1.2),
+    pack=blackjack_pack("As 9h Kd 8c"))
+  expect_equal(g$players[[1]]$points,112)
+  g <- new_blackjack(list(player(points=100)),rules=blackjack_rules(decks=1,max_hands=1),
+    pack=blackjack_pack("8s 9h 8d 8c"))
+  expect_false("split" %in% blackjack_legal(g)$actions)
+  expect_error(blackjack_rules(hit_soft17=NA),"flags")
+})

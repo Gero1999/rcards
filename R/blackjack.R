@@ -22,6 +22,7 @@ blackjack_take <- function(g,seat=0L,hand=1L) {
 }
 
 new_blackjack <- function(players,wager=10,rules=blackjack_defaults(),seed=NULL,pack=NULL) {
+  rules <- do.call(blackjack_rules,rules)
   if(!is.list(players) || !length(players) %in% 1:7 ||
      !all(vapply(players,inherits,logical(1),"player"))) stop("Expected one to seven players")
   if(length(wager)==1L) wager <- rep(wager,length(players))
@@ -57,13 +58,38 @@ new_blackjack <- function(players,wager=10,rules=blackjack_defaults(),seed=NULL,
 
 blackjack_legal <- function(g) {
   if(g$complete) return(list(actor=NULL,actions=character()))
-  list(actor=g$actor,hand=g$active_hand,actions=c("hit","stand"))
+  h <- g$hands[[g$actor]][[g$active_hand]]
+  funded <- g$players[[g$actor]]$points>=h$bet
+  double <- length(h$cards)==2L && funded && (!h$split || g$rules$double_after_split) && !h$split_aces
+  split <- length(h$cards)==2L && funded && length(g$hands[[g$actor]])<g$rules$max_hands &&
+    h$cards[[1]]$value==h$cards[[2]]$value && !h$split_aces
+  list(actor=g$actor,hand=g$active_hand,actions=c("hit","stand",if(double) "double",if(split) "split"))
 }
 
 blackjack_step <- function(g,action) {
   if(length(action)!=1L || is.na(action) || !action %in% blackjack_legal(g)$actions) stop("Illegal Blackjack action")
   i <- g$actor;j <- g$active_hand
-  if(action=="hit") {
+  if(action=="split") {
+    original <- g$hands[[i]][[j]]
+    g$players[[i]]$points <- g$players[[i]]$points-original$bet
+    aces <- original$cards[[1]]$value=="A"
+    hands <- lapply(original$cards,function(x) list(cards=list(x),bet=original$bet,
+      state="active",split=TRUE,split_aces=aces))
+    before <- if(j>1L) g$hands[[i]][seq_len(j-1L)] else list()
+    after <- if(j<length(g$hands[[i]])) g$hands[[i]][seq.int(j+1L,length(g$hands[[i]]))] else list()
+    g$hands[[i]] <- c(before,hands,after)
+    for(k in j:(j+1L)) {
+      g <- blackjack_take(g,i,k)
+      if(aces || blackjack_total(g$hands[[i]][[k]]$cards)$total==21)
+        g$hands[[i]][[k]]$state <- "stood"
+    }
+  } else if(action=="double") {
+    bet <- g$hands[[i]][[j]]$bet
+    g$players[[i]]$points <- g$players[[i]]$points-bet
+    g$hands[[i]][[j]]$bet <- bet*2
+    g <- blackjack_take(g,i,j)
+    g$hands[[i]][[j]]$state <- if(blackjack_total(g$hands[[i]][[j]]$cards)$bust) "bust" else "stood"
+  } else if(action=="hit") {
     g <- blackjack_take(g,i,j)
     total <- blackjack_total(g$hands[[i]][[j]]$cards)
     if(total$bust) g$hands[[i]][[j]]$state <- "bust" else if(total$total==21) g$hands[[i]][[j]]$state <- "stood"
