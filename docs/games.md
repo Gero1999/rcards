@@ -137,3 +137,17 @@ partnerships (1/3 and 2/4). `play()` completes one deal; `until="game"` continue
 to the score target. Use `scopa_rules(target=11)` to select the target.
 `scopa_bot()` uses only its own cards and public capture choices. See
 [rules](rules/scopa.md) for the precise scoring profile and supported variants.
+
+## Mentiroso / Liar
+
+`liar_game()` supports two through eight individual players. The Spanish pack is
+the default; `liar_rules(deck="french")` selects a French pack. The declared rank
+stays fixed until a challenge, and the pickup player starts a new pile. A player
+must survive responses to their last claim before winning. See the explicit
+[rule profile](rules/liar.md); this is not the rank-cycling Cheat variant.
+
+Use `liar_bot()` for baseline play based only on public information. Its
+challenge_rate is a heuristic, not an estimate that a claim is false. Games can
+cycle, so retain action limits. `simulate_games()` supports confirmed winner
+frequencies and negative remaining-card counts. There is no universal hand
+equity for this bluffing game; results depend on the supplied strategies.

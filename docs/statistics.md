@@ -107,3 +107,9 @@ Blackjack prepares the visible-card shoe model once per estimation call and
 reuses it across trials; this local reuse never caches hidden engine state or
 answers across users. The default action budget is 20 samples per candidate: a
 quick exploratory estimate, not high precision. Increase n when needed.
+
+Mentiroso/Liar is supported by `simulate_games()` with non-console controllers.
+It reports confirmed winners and negative remaining-card counts, not hand
+strength or a calibrated probability that a claim is a bluff. Retain action
+limits: some strategy combinations can cycle. No dedicated Liar hand/action
+estimator is provided.

@@ -35,3 +35,28 @@ test_that("localized Liar claims pause and resume without exposing private batch
   result <- play(g,c(list(io$controller),rep(list(function(o) list(action="quit")),2)))
   expect_identical(result$game,g)
 })
+
+test_that("prompted Queen claims are not mistaken for quitting", {
+  legal <- list(actions="claim",ranks=c("A","Q","K"),max_cards=4)
+  io <- console_fixture(c("q","1 3"))
+  decision <- console_decision("claim",legal,io$controller)
+  expect_equal(decision,list(action="claim",amount="Q",cards=c(1,3)))
+  legal$ranks <- "Q"
+  io <- console_fixture("1")
+  expect_equal(console_decision("claim",legal,io$controller)$amount,"Q")
+  io <- console_fixture("quit")
+  expect_equal(console_decision("claim",legal,io$controller)$action,"quit")
+})
+
+test_that("public challenge feedback remains visible after the next face-down claim", {
+  g <- liar_game(seed=3)
+  rank <- g$players[[1]]$hand[[1]]$value
+  g <- liar_step(liar_step(g,"claim",1,rank),"challenge")
+  reveal <- g$last_reveal
+  rank <- g$players[[g$actor]]$hand[[1]]$value
+  g <- liar_step(g,"claim",1,rank)
+  expect_null(g$last_reveal)
+  text <- paste(console_liar(game_observation(g),console_player(style="ascii")),collapse="\n")
+  expect_match(text,"Latest challenge:",fixed=TRUE)
+  expect_identical(game_observation(g)$history[[2]]$cards,reveal$cards)
+})

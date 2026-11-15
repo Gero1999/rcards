@@ -41,7 +41,8 @@ statistical denominators and records their status. Exclusion can bias results.}
 \value{
 A list of per-side summaries, per-run values/outcomes, completion
 statuses and definitions. Poker/Blackjack win/tie/loss means positive/zero/
-negative net chips, not pot winners or showdown ties. Mus/Scopa hand outcomes
+negative net chips, not pot winners or showdown ties. Liar values are negative
+remaining card counts and outcomes use the confirmed winner. Mus/Scopa hand outcomes
 compare points gained during the deal; whole-game outcomes use the match winner.
 }
 \description{

@@ -39,7 +39,7 @@ game state; completion methods return logical scalars; game_result() returns
 a public summary; game_next_hand() returns a new hand preserving game scores.
 }
 \description{
-Hold'em, Mus, Blackjack and Scopa inherit from game and implement this protocol. The plain
+Hold'em, Mus, Blackjack, Scopa and Mentiroso inherit from game and implement this protocol. The plain
 game() constructor remains a general container and cannot be played without
 game-specific methods. Rules stay inside the individual engines.
 }

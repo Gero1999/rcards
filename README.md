@@ -147,3 +147,8 @@ strategies. `simulate_games()` runs independent hands or matches and reports
 profit/score summaries, outcome definitions and sampling uncertainty.
 See [statistical methods and cost budgets](docs/statistics.md) and the installed
 `examples/statistics.R`. All calculations run locally without external APIs.
+
+Mentiroso (Liar) is also available through `liar_game()` and `liar_bot()`, with
+2–8 players, fixed-rank claims until challenge, and Spanish or French packs.
+See [console instructions](docs/console-play.md#mentiroso-liar) and
+[the supported rules](docs/rules/liar.md).

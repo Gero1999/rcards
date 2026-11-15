@@ -1,6 +1,6 @@
 #' Shared interface for playable games
 #'
-#' Hold'em, Mus, Blackjack and Scopa inherit from game and implement this protocol. The plain
+#' Hold'em, Mus, Blackjack, Scopa and Mentiroso inherit from game and implement this protocol. The plain
 #' game() constructor remains a general container and cannot be played without
 #' game-specific methods. Rules stay inside the individual engines.
 #'

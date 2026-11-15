@@ -73,3 +73,18 @@ test_that("last-card claims cannot win before opponents have a response", {
     expect_error(liar_assert_cards(challenged),NA)
   }
 })
+
+test_that("mixed batches are lies and invalid selections leave the game untouched", {
+  g <- new_liar(seed=3)
+  original <- g
+  rank <- g$players[[1]]$hand[[1]]$value
+  off_rank <- which(vapply(g$players[[1]]$hand,function(card) card$value!=rank,logical(1)))[1]
+  pending <- liar_step(g,"claim",c(1,off_rank),rank)
+  resolved <- liar_step(pending,"challenge")
+  expect_true(resolved$last_reveal$caught)
+  expect_length(resolved$last_reveal$cards,2)
+  expect_equal(resolved$actor,1)
+  expect_error(liar_step(g,"claim",c(1,1),rank),"positions")
+  expect_error(liar_step(g,"claim",1:5,rank),"maximum")
+  expect_identical(g,original)
+})
