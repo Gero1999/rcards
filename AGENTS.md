@@ -16,6 +16,8 @@ Use the existing task checkout. Do not create a worktree unless requested.
 - Read [Scopa rules](docs/rules/scopa.md) before editing Scopa.
 - Keep console strings and aliases in the locale catalog; never translate canonical state.
 
+- Read [Mentiroso rules](docs/rules/liar.md) before editing Liar.
+
 ## Adding a game
 
 1. Add `docs/rules/<game>.md`: deck, players/partnerships, turn order, actions,
