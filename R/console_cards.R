@@ -7,7 +7,7 @@ console_card_rows <- function(cards, style = "auto", width = 80L, numbered = FAL
   unicode <- style == "unicode" || (style == "auto" && isTRUE(l10n_info()[["UTF-8"]]))
   symbols <- if (unicode) c(Hearts="\u2665",Diamonds="\u2666",Clubs="\u2663",Spades="\u2660") else
     c(Hearts="H",Diamonds="D",Clubs="C",Spades="S")
-  symbols <- c(symbols,Oros="O",Copas="C",Espadas="E",Bastos="B",Joker="*")
+  symbols <- c(symbols,Oros="O",Copas="C",Espadas="E",Bastos="B",Denari="D",Coppe="C",Spade="S",Bastoni="B",Joker="*")
   top <- if(unicode) "\u250c\u2500\u2500\u2500\u2500\u2500\u2510" else "+-----+"
   bottom <- if(unicode) "\u2514\u2500\u2500\u2500\u2500\u2500\u2518" else "+-----+"
   edge <- if(unicode) "\u2502" else "|"
