@@ -18,6 +18,7 @@ estimate_actions <- function(observation,n=100L,controllers=NULL,seed=NULL,
     stop("Provide the acting seat's active public observation")
   switch(o$game_type,
     blackjack=estimate_blackjack_actions(o,n,controllers,seed,max_actions,max_evaluations),
+    scopa=estimate_scopa_actions(o,n,controllers,seed,max_actions,max_evaluations),
     stop("Action estimation is not available for this game"))
 }
 
