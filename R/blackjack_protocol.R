@@ -38,7 +38,7 @@ game_observation.blackjack_game <- function(game,seat=NULL) {
     hands=if(is.null(seat)) list() else game$hands[[seat]],active_hand=game$active_hand,
     hand_counts=lapply(game$hands,function(hands) vapply(hands,function(h) length(h$cards),0L)),
     dealer=if(game$complete) game$dealer else list(game$dealer[[1L]],NULL),
-    complete=game$complete,history=game$history)
+    rules=game$rules,complete=game$complete,history=game$history)
 }
 
 #' Create a baseline Blackjack controller
