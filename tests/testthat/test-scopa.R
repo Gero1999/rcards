@@ -57,3 +57,36 @@ test_that("the last capture gets leftovers but final-play captures earn no sweep
   expect_identical(g$captured[[2]],remaining)
   expect_equal(g$sweeps,c(0L,0L))
 })
+
+test_that("Scopa scoring has known primiera weights and no tied majority point", {
+  sevens <- lapply(c("Denari","Coppe","Spade","Bastoni"),function(s) card("7",s))
+  expect_equal(scopa_primiera(sevens),84)
+  expect_true(is.na(scopa_primiera(sevens[-1])))
+  sixes <- lapply(c("Denari","Coppe","Spade","Bastoni"),function(s) card("6",s))
+  score <- scopa_deal_score(list(sevens,sixes),1:2,c(2L,0L))
+  # Card/coin totals tie. Sevens win settebello and primiera, plus two sweeps.
+  expect_equal(score$points,c(4L,0L))
+  score <- scopa_deal_score(list(sevens[1:2],sixes,sevens[3:4],list()),c(1L,2L,1L,2L),c(1L,0L,1L,0L))
+  expect_equal(score$points,c(4L,0L))
+  expect_equal(scopa_majority(c(20,20)),integer())
+  expect_equal(scopa_majority(c(NA,NA)),integer())
+})
+
+test_that("Scopa matches settle whole deals and rotate dealer with scores retained", {
+  g <- new_scopa(rules=scopa_rules(target=100),seed=1)
+  while(!g$hand_complete) g <- scopa_step(g,1,1)
+  next_game <- scopa_next_deal(g,seed=2)
+  expect_equal(next_game$dealer,1)
+  expect_equal(next_game$actor,2)
+  expect_equal(next_game$hand_number,2)
+  expect_equal(next_game$scores,g$scores)
+  expect_length(italian_card_ids(scopa_cards(next_game)),40)
+  expect_equal(next_game$sweeps,c(0L,0L))
+  expect_error(scopa_next_deal(next_game),"Finish")
+  # An equal leading score at the target cannot end a match.
+  g <- new_scopa(rules=scopa_rules(target=1),seed=1)
+  g$scores <- c(1,1);g$captured <- list(list(),list());g$sweeps <- c(0L,0L)
+  expect_false(scopa_settle(g)$complete)
+  g$scores <- c(2,1)
+  expect_true(scopa_settle(g)$complete)
+})
