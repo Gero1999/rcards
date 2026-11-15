@@ -74,5 +74,15 @@ locale_catalog <- list(
   "Payouts: %s" = c(es = "Pagos: %s", de = "Auszahlungen: %s", it = "Pagamenti: %s"),
   "Mus | Hand %s | Phase: %s" = c(es = "Mus | Mano %s | Fase: %s", de = "Mus | Hand %s | Phase: %s", it = "Mus | Mano %s | Fase: %s"),
   "Scores: team 1=%s; team 2=%s" = c(es = "Puntos: equipo 1=%s; equipo 2=%s", de = "Punkte: Team 1=%s; Team 2=%s", it = "Punti: squadra 1=%s; squadra 2=%s"),
-  "Winning partnership: team %s" = c(es = "Pareja ganadora: equipo %s", de = "Gewinner: Team %s", it = "Vincitori: squadra %s")
+  "Winning partnership: team %s" = c(es = "Pareja ganadora: equipo %s", de = "Gewinner: Team %s", it = "Vincitori: squadra %s"),
+  "Dealer" = c(es = "Banca", de = "Bank", it = "Banco"),
+  "Hand %s | Total %s | Wager %s" = c(es = "Mano %s | Total %s | Apuesta %s", de = "Hand %s | Wert %s | Einsatz %s", it = "Mano %s | Totale %s | Puntata %s"),
+  "Active hand %s | Your stack %s" = c(es = "Mano activa %s | Tus fichas %s", de = "Aktive Hand %s | Deine Chips %s", it = "Mano attiva %s | Le tue fiches %s"),
+  "Total %s" = c(es = "Total %s", de = "Wert %s", it = "Totale %s"),
+  "Hand %s: %s | Returned %s" = c(es = "Mano %s: %s | Devuelto %s", de = "Hand %s: %s | Zur\u00fcck %s", it = "Mano %s: %s | Restituito %s"),
+  "win" = c(es = "ganancia", de = "Gewinn", it = "vittoria"),
+  "loss" = c(es = "p\u00e9rdida", de = "Verlust", it = "sconfitta"),
+  "push" = c(es = "empate", de = "Gleichstand", it = "pareggio"),
+  "Illegal Blackjack action" = c(es = "Acci\u00f3n de Blackjack no permitida", de = "Nicht erlaubte Blackjack-Aktion", it = "Azione Blackjack non consentita"),
+  "Blackjack actions take no amounts or positions" = c(es = "Blackjack no acepta importes ni posiciones en las acciones", de = "Blackjack-Aktionen ben\u00f6tigen weder Betr\u00e4ge noch Positionen", it = "Le azioni Blackjack non accettano importi o posizioni")
 )

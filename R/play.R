@@ -88,6 +88,7 @@ play <- function(game, controllers, until = c("hand", "game"),
 }
 
 game_summary_text <- function(result, language = NULL) {
+  if(result$game_type=="blackjack") return(ui("Stacks: %s",language,paste(paste0(result$player_names,"=",result$stacks),collapse="; ")))
   if (identical(result$game_type, "holdem")) {
     text <- c(ui("Hold'em | Phase: %s",language,ui(toupper(result$phase),language)),
       ui("Stacks: %s",language,paste(paste0(result$player_names, "=", result$stacks), collapse = "; ")))

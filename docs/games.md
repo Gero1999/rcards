@@ -122,3 +122,10 @@ including main/optional metadata. Values, suit identities, and symbols stay
 unchanged, so poker and Mus rules are unaffected. Explicit translation replaces
 custom display strings. Unrecognized labels are retained. Dataset files are
 never rewritten by translation.
+
+## Blackjack
+
+`play(blackjack_game(list(player("You", points=100))),
+list(console_player(language="it")))` plays one round against the automatic
+dealer. Use `blackjack_rules()` to configure deck count, soft 17, natural payout,
+doubling after splits, and maximum hands. See [rules](rules/blackjack.md).
