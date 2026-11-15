@@ -6,7 +6,8 @@
 #'
 #' game_complete() means the entire game is over: one Hold'em hand, or a Mus
 #' game at its target score. game_hand_complete() also marks an intermediate Mus
-#' hand/deal boundary. game_next_hand() advances Mus or Scopa at such a boundary.
+#' hand/deal boundary. game_next_hand() advances Mus or Scopa at such a boundary,
+#' or explicitly deals another completed Hold'em hand with settled stacks.
 #'
 #' Observations and results exclude opponents' hidden cards and deck order.
 #' These projections protect controller inputs, not access to the full in-process
@@ -92,6 +93,9 @@ game_observation.holdem_hand <- function(game, seat = NULL) {
   observation$seat <- seat
   observation$player_names <- vapply(game$players, `[[`, "", "name")
   observation$game_type <- "holdem"
+  observation$hand_counts <- vapply(game$players, function(player) length(player$hand), 0L)
+  observation$dealer <- game$dealer
+  observation$hand_number <- if (is.null(game$hand_number)) 1L else game$hand_number
   observation$complete <- game$complete
   observation
 }
@@ -112,7 +116,8 @@ game_hand_complete.holdem_hand <- function(game) game$complete
 game_result.holdem_hand <- function(game) {
   list(game_type = "holdem", complete = game$complete, hand_complete = game$complete,
     phase = game$street, player_names = vapply(game$players, `[[`, "", "name"),
-    stacks = holdem_stacks(game), board = game$board,
+    stacks = holdem_stacks(game), board = game$board, dealer = game$dealer,
+    hand_number = if (is.null(game$hand_number)) 1L else game$hand_number,
     payouts = if (game$complete) game$payouts else NULL,
     pot = if (game$complete) 0 else sum(game$contributions))
 }

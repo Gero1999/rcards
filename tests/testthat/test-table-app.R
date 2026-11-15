@@ -122,7 +122,7 @@ test_that("Mus exchanges use selections and next hand retains match scores", {
   shiny::testServer(table_app_server(initial,"en"),{
     session$flushReact()
     expect_true(view()$can_next)
-    session$setInputs(next_hand=1)
+    session$setInputs(table_continue=list(version=0))
     expect_equal(state()$game$hand_number,2)
     expect_equal(state()$game$scores,g$scores)
     expect_false(view()$hand_complete)

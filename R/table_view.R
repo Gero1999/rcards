@@ -45,7 +45,7 @@ game_table_view <- function(game,seat=1L,language="en") {
     }
     center <- list(zone("dealer",ui("Dealer",language),faces(o$dealer)))
   } else {
-    counts <- if(type=="holdem") rep(2L,length(seats)) else if(type=="mus") rep(4L,length(seats)) else o$hand_counts
+    counts <- if(type=="mus") rep(4L,length(seats)) else o$hand_counts
     revealed <- if(type %in% c("holdem","mus")) console_revealed_hands(game) else integer()
     for(i in seq_along(seats)) {
       cards <- if(i==seat) faces(o$hole) else if(i %in% revealed) faces(game$players[[i]]$hand) else backs(counts[i])
@@ -58,8 +58,10 @@ game_table_view <- function(game,seat=1L,language="en") {
     }
     if(type=="holdem") {
       center <- list(zone("board",ui("Board",language),faces(o$board)))
-      status <- ui("Pot %s  |  To call %s  |  Your stack %s",language,o$pot,
-        if(done) 0 else if(your_turn) legal$to_call else max(0,game$current_bet-o$round_bets[seat]),o$stacks[seat])
+      status <- c(ui("Hand %s | Dealer %s | Blinds %s / %s",language,o$hand_number,
+        o$player_names[o$dealer],game$small_blind,game$big_blind),
+        ui("Pot %s  |  To call %s  |  Your stack %s",language,o$pot,
+          if(done) 0 else if(your_turn) legal$to_call else max(0,game$current_bet-o$round_bets[seat]),o$stacks[seat]))
     }
     if(type=="mus") status <- c(ui(toupper(o$phase),language),ui("Stake %s",language,if(o$ordago) "ORDAGO" else o$wager))
     if(type=="scopa") {
@@ -90,10 +92,12 @@ game_table_view <- function(game,seat=1L,language="en") {
   })
   history <- Filter(Negate(is.null),history)
   result <- if(done) table_result_text(game,language) else character()
+  continuation <- table_continuation(game,seat)
+  if(!is.null(continuation$message)) result <- c(result,ui(continuation$message,language))
   list(game_type=type,phase=if(is.null(o$phase)) o$street else o$phase,
     viewer=seat,actor=o$actor,seats=seats,center=center,own=own,status=status,
     your_turn=your_turn,hand_complete=done,complete=game_complete(game),
-    can_next=done && !game_complete(game) && type %in% c("mus","scopa"),
+    can_next=continuation$available,continue_label=ui(continuation$label,language),
     selection_limit=if(!selectable) 0L else if(type=="scopa") 1L else if(type=="liar") legal$max_cards else 4L,
     legal=legal,result=result,history=history,language=language)
 }

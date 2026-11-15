@@ -99,8 +99,12 @@ table_app_server <- function(initial,initial_language) {
       if(!current$paused) {current$bot_actions<-0L;current$error<-NULL}
       state(current)
     },ignoreInit=TRUE)
-    shiny::observeEvent(input$next_hand,{
-      tryCatch({state(table_next(state()));selected(integer())},error=report_error)
+    shiny::observeEvent(input$table_continue,{
+      tryCatch({
+        event <- input$table_continue
+        if(!is.list(event) || length(event$version)!=1L || is.na(event$version)) stop("The turn changed; choose again")
+        state(table_next(state(),event$version));selected(integer())
+      },error=report_error)
     },ignoreInit=TRUE)
     shiny::observeEvent(input$card_pick,{
       event <- input$card_pick;v <- view();current <- state()
@@ -174,6 +178,7 @@ table_app_server <- function(initial,initial_language) {
     output$footer <- shiny::renderUI(shiny::tagList(
       shiny::tags$span(ui("Local play against bots. Your seat: %s",lang(),view()$seats[[view()$viewer]]$name)),
       shiny::actionButton("pause_table",ui(if(state()$paused) "Resume" else "Pause",lang())),
-      if(view()$can_next) shiny::actionButton("next_hand",ui("Next hand",lang()))))
+      if(view()$can_next) shiny::tags$button(type="button",id="next_hand",class="btn btn-default",
+        `data-rc-continue`="next",`data-rc-version`=state()$version,view()$continue_label)))
   }
 }
