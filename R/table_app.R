@@ -4,6 +4,13 @@
 #' Game rules and legality stay in the existing engines. Each browser session
 #' owns its own game/controller state; no hidden engine state is sent to clients.
 #' This is local single-human play, not authenticated network multiplayer.
+#' @details Completed hands/rounds remain visible until you choose to continue.
+#' Poker retains stacks and rotates the dealer; Blackjack retains bankrolls
+#' and confirms the next wager, using a fresh shoe. Mentiroso can deal again;
+#' completed Mus/Scopa matches can restart with scores reset. Controllers and
+#' custom rules stay with the table. New table explicitly resets the setup.
+#' The Help button explains the current game in the selected language and
+#' links to the repository for bugs and game suggestions.
 #' @param game Optional configured Holdem, Mus, Blackjack, Scopa or Liar game.
 #' NULL starts a two-player Holdem table. The UI can start fresh default games.
 #' @param seat Human viewer seat in the supplied game, default one.
@@ -51,8 +58,8 @@ table_app_ui <- function(initial,language) {
     shiny::tags$head(shiny::tags$title("rcards | Card table"),
       shiny::includeCSS(file.path(assets,"table.css")),shiny::includeScript(file.path(assets,"table.js"))),
     shiny::tags$div(class="rc-app",
-      shiny::tags$header(class="rc-header",shiny::tags$div(class="rc-brand","rcards",shiny::tags$span("CARD TABLE")),
-        shiny::uiOutput("heading")),
+      shiny::tags$header(class="rc-header",table_brand_tag(),
+        shiny::tags$div(class="rc-header-actions",shiny::uiOutput("help_control"),shiny::uiOutput("heading"))),
       shiny::tags$section(class="rc-setup",`aria-label`="Table settings",
         shiny::selectInput("game_kind",ui("Game",language),table_game_names(),selected=type,selectize=FALSE),
         shiny::selectInput("players",ui("Players",language),table_player_choices(type),selected=length(initial$game$players),selectize=FALSE),
@@ -73,6 +80,9 @@ table_app_server <- function(initial,initial_language) {
     report_error <- function(error) {
       current <- shiny::isolate(state());current$error <- conditionMessage(error);state(current)
     }
+    shiny::observeEvent(input$show_help,{
+      shiny::showModal(table_help_dialog(view(),lang()))
+    },ignoreInit=TRUE)
     shiny::observeEvent(input$game_kind,{
       choices <- table_player_choices(input$game_kind)
       n <- suppressWarnings(as.integer(input$players))
@@ -103,6 +113,8 @@ table_app_server <- function(initial,initial_language) {
       tryCatch({
         event <- input$table_continue
         if(!is.list(event) || length(event$version)!=1L || is.na(event$version)) stop("The turn changed; choose again")
+        if(inherits(state()$game,"blackjack_game") && is.null(event$wager))
+          stop("Choose a positive wager within your bankroll")
         state(table_next(state(),event$version,event$wager));selected(integer())
       },error=report_error)
     },ignoreInit=TRUE)
@@ -146,6 +158,7 @@ table_app_server <- function(initial,initial_language) {
       }
     })
     output$new_control <- shiny::renderUI(shiny::actionButton("new_table",ui("New table",lang()),class="rc-primary"))
+    output$help_control <- shiny::renderUI(shiny::actionButton("show_help",table_help_text(lang())$help))
     output$heading <- shiny::renderUI({
       v <- view();label <- if(v$hand_complete) ui("Hand complete",lang()) else
         if(state()$paused) ui("Paused",lang()) else if(v$your_turn) ui("Your turn",lang()) else ui("Bots are playing",lang())
@@ -179,7 +192,7 @@ table_app_server <- function(initial,initial_language) {
       shiny::tags$span(ui("Local play against bots. Your seat: %s",lang(),view()$seats[[view()$viewer]]$name)),
       shiny::actionButton("pause_table",ui(if(state()$paused) "Resume" else "Pause",lang())),
       if(!is.null(view()$next_wager)) shiny::numericInput("next_wager",ui("Next round wager",lang()),
-        value=view()$next_wager$value,min=0,max=view()$next_wager$maximum,step=1),
+        value=view()$next_wager$value,min=0,max=view()$next_wager$maximum,step="any"),
       if(view()$can_next) shiny::tags$button(type="button",id="next_hand",class="btn btn-default",
         `data-rc-continue`="next",`data-rc-version`=state()$version,view()$continue_label)))
   }

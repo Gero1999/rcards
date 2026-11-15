@@ -82,6 +82,11 @@ shiny::runApp(app, host = "127.0.0.1", port = 8765, launch.browser = FALSE)
 Console play and automated simulations keep their existing interfaces. The
 optional app adds no work to either path.
 
+The header displays the original rcards logo. **Help** opens instructions for
+the game actually at the table, an app overview, and links to report bugs or
+suggest games. It follows the selected language and leaves game state intact.
+See [in-app help](graphical-help.md) for details.
+
 ## Shared table contract
 
 `game_table_view(game, seat, language)` projects one fixed viewer's information

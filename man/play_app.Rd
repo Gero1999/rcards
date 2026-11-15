@@ -42,3 +42,12 @@ Game rules and legality stay in the existing engines. Each browser session
 owns its own game/controller state; no hidden engine state is sent to clients.
 This is local single-human play, not authenticated network multiplayer.
 }
+\details{
+Completed hands/rounds remain visible until you choose to continue.
+Poker retains stacks and rotates the dealer; Blackjack retains bankrolls
+and confirms the next wager, using a fresh shoe. Mentiroso can deal again;
+completed Mus/Scopa matches can restart with scores reset. Controllers and
+custom rules stay with the table. New table explicitly resets the setup.
+The Help button explains the current game in the selected language and
+links to the repository for bugs and game suggestions.
+}

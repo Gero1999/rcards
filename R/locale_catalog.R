@@ -166,5 +166,6 @@ locale_catalog <- list(
   "Review the result, then continue or start a new table." = c(es = "Revisa el resultado y contin\u00faa o inicia una nueva mesa.", de = "Ergebnis ansehen, dann fortsetzen oder einen neuen Tisch starten.", it = "Controlla il risultato, poi continua o avvia un nuovo tavolo."),
   "New match" = c(es = "Nueva partida", de = "Neues Spiel", it = "Nuova partita"),
   "Next deal" = c(es = "Siguiente reparto", de = "N\u00e4chste Austeilung", it = "Prossima distribuzione"),
-  "Deal %s" = c(es = "Reparto %s", de = "Austeilung %s", it = "Distribuzione %s")
+  "Deal %s" = c(es = "Reparto %s", de = "Austeilung %s", it = "Distribuzione %s"),
+  "Select 1 to %s cards." = c(es = "Selecciona de 1 a %s cartas.", de = "W\u00e4hle 1 bis %s Karten.", it = "Seleziona da 1 a %s carte.")
 )

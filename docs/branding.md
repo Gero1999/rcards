@@ -14,6 +14,9 @@ third-party card illustrations, stock icons, casino branding, official R logo,
 embedded fonts, scripts, or remote resources. No font file is redistributed
 with the logo.
 
+The app bundles the same SVG at `inst/app/logo.svg` for installed-package use.
+Keep that copy byte-for-byte identical when updating the logo.
+
 ## Table preview
 
 [`man/figures/table-scopa.png`](../man/figures/table-scopa.png) is a screenshot
