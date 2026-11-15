@@ -38,6 +38,7 @@ console_opponents <- function(o) {
 }
 
 console_observation_text <- function(o, controller) {
+  if(o$game_type=="blackjack") return(console_blackjack(o,controller))
   lang <- controller$language
   phase <- if(o$game_type=="holdem") o$street else o$phase
   text <- c(paste0("\n",toupper(o$game_type)," / ",ui(toupper(phase),lang),"   ",
@@ -89,6 +90,7 @@ console_hand_label <- function(cards) {
 }
 
 console_hand_end_text <- function(game, controller) {
+  if(inherits(game,"blackjack_game")) return(console_blackjack_end(game,controller))
   text <- character();seats <- console_revealed_hands(game)
   if(length(seats)) {
     text <- paste0("\n",ui("SHOWDOWN",controller$language))

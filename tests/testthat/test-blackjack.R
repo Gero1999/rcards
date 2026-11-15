@@ -66,3 +66,28 @@ test_that("soft seventeen payout and split limits follow configured rules", {
   expect_false("split" %in% blackjack_legal(g)$actions)
   expect_error(blackjack_rules(hit_soft17=NA),"flags")
 })
+
+test_that("Blackjack protocol hides the shoe and hole card and plays with controllers", {
+  g <- new_bj("Ts 9h 8d 8c")
+  o <- game_observation(g)
+  expect_null(o$shoe);expect_null(o$dealer[[2]])
+  expect_equal(length(o$hands),1)
+  result <- play(g,list(blackjack_bot()))
+  expect_true(result$game$complete)
+  expect_length(game_observation(result$game)$hands,0)
+  for(language in supported_languages()) {
+    io <- console_fixture("stand");io$controller$language <- language
+    result <- play(g,list(io$controller))
+    expect_true(result$game$complete)
+    expect_match(io$output(),"BLACKJACK")
+  }
+  expect_error(game_action(g,list(action="hit",amount=1)),"no amounts")
+  for(seed in 1:20) {
+    g <- blackjack_game(lapply(1:3,function(i) player(paste0("P",i),points=100)),seed=seed)
+    result <- play(g,rep(list(blackjack_bot()),3))
+    expect_true(result$game$complete)
+    returned <- vapply(result$game$results,`[[`,0,"returned")
+    wagers <- vapply(result$game$results,`[[`,0,"bet")
+    expect_equal(sum(vapply(result$game$players,`[[`,0,"points")),300+sum(returned-wagers))
+  }
+})
