@@ -78,7 +78,7 @@ play <- function(game, controllers, until = c("hand", "game"),
         error <- updated
       }
       invalid <- invalid + 1L; last_error <- conditionMessage(error)
-      controller$write(paste0("Please try again: ", last_error))
+      controller$write(ui("Please try again: %s", controller$language, ui(last_error, controller$language)))
       if (invalid >= max_invalid) return(finish("input_limit"))
     }
   })
