@@ -21,7 +21,7 @@ table_scoreboard <- function(state,language="en") {
       shiny::tags$th(ui("Players",language)),shiny::tags$th(ui("Wins",language)),
       if(financial) shiny::tags$th(ui("Bankroll",language)),if(financial) shiny::tags$th(ui("Change since start",language)))),shiny::tags$tbody(rows)),
     if(!financial) shiny::tags$p(ui("Current scores: %s",language,
-      if(is.null(state$game$scores)) "—" else paste(state$game$scores,collapse=" : "))),
+      if(is.null(state$game$scores)) "\u2014" else paste(state$game$scores,collapse=" : "))),
     shiny::tags$p(ui("Latest 20 completed results",language)),
     shiny::tags$ol(lapply(results,function(result) shiny::tags$li(
       paste(game_summary_text(result,language),collapse=" | ")))))
