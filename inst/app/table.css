@@ -58,3 +58,5 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
 .rc-help{line-height:1.6}.rc-help h3{color:#f0cc81;font-size:18px}.rc-help li{margin-bottom:12px}.rc-help a{color:#a7edcf;text-decoration:underline}.rc-help a:focus-visible{outline:2px solid #f0cc81;outline-offset:3px}
 .rc-help-modal .btn{background:#f0cc81;color:#182a36;border-color:#f0cc81;border-radius:8px}.rc-help-modal .btn:focus-visible{outline:2px solid #a7edcf;outline-offset:3px}
 @media(max-width:650px){.rc-brand .rc-logo{width:76px}.rc-header-actions{gap:10px}.rc-help-modal .modal-dialog{margin:12px}.rc-help ol{padding-left:23px}}
+
+.rc-session{margin:16px 0;padding:16px;background:#182a36;border-radius:12px}.rc-session summary{cursor:pointer}.rc-scoreboard{width:100%;margin:12px 0}.rc-scoreboard td,.rc-scoreboard th{padding:6px;text-align:left}.rc-session ol{max-height:280px;overflow:auto}
