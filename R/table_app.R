@@ -67,7 +67,7 @@ table_app_ui <- function(initial,language) {
         shiny::uiOutput("new_control")),
       shiny::tags$main(shiny::uiOutput("table"),shiny::uiOutput("session_history"),
         shiny::tags$section(class="rc-feedback",`aria-live`="polite",shiny::uiOutput("feedback")),
-        shiny::tags$section(class="rc-controls",shiny::uiOutput("controls"))),
+        shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),shiny::uiOutput("controls"))),
       shiny::tags$footer(class="rc-footer",shiny::uiOutput("footer"))))
 }
 
@@ -170,6 +170,11 @@ table_app_server <- function(initial,initial_language) {
       shiny::tagList(
         if(!is.null(current$error)) shiny::tags$p(class="rc-error",role="alert",console_error(current$error,lang())),
         lapply(v$result,function(line) shiny::tags$p(class="rc-result",line)))
+    })
+    output$selection_feedback <- shiny::renderUI({
+      v <- view()
+      if(v$selection_limit>0 && v$your_turn) shiny::tags$p(role="status",`aria-live`="polite",
+        ui("Selected %s of %s cards",lang(),length(selected()),v$selection_limit))
     })
     output$controls <- shiny::renderUI({
       # Selection/capture changes must not reconstruct numeric/rank inputs and
