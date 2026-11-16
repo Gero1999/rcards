@@ -167,5 +167,16 @@ locale_catalog <- list(
   "New match" = c(es = "Nueva partida", de = "Neues Spiel", it = "Nuova partita"),
   "Next deal" = c(es = "Siguiente reparto", de = "N\u00e4chste Austeilung", it = "Prossima distribuzione"),
   "Deal %s" = c(es = "Reparto %s", de = "Austeilung %s", it = "Distribuzione %s"),
-  "Select 1 to %s cards." = c(es = "Selecciona de 1 a %s cartas.", de = "W\u00e4hle 1 bis %s Karten.", it = "Seleziona da 1 a %s carte.")
+  "Select 1 to %s cards." = c(es = "Selecciona de 1 a %s cartas.", de = "W\u00e4hle 1 bis %s Karten.", it = "Seleziona da 1 a %s carte."),
+  "Session history" = c(es = "Historial de sesi\u00f3n", de = "Sitzungsverlauf", it = "Cronologia della sessione"),
+  "Completed hands or deals: %s" = c(es = "Manos o repartos completados: %s", de = "Abgeschlossene H\u00e4nde: %s", it = "Mani o distribuzioni completate: %s"),
+  "Wins" = c(es = "Victorias", de = "Siege", it = "Vittorie"),
+  "Bankroll" = c(es = "Saldo", de = "Guthaben", it = "Saldo"),
+  "Change since start" = c(es = "Cambio desde el inicio", de = "\u00c4nderung seit Beginn", it = "Variazione dall\u2019inizio"),
+  "Current scores: %s" = c(es = "Puntos actuales: %s", de = "Aktuelle Punkte: %s", it = "Punti attuali: %s"),
+  "Latest 20 completed results" = c(es = "\u00daltimos 20 resultados", de = "Letzte 20 Ergebnisse", it = "Ultimi 20 risultati"),
+  "Selected %s of %s cards" = c(es = "Seleccionadas %s de %s cartas", de = "%s von %s Karten gew\u00e4hlt", it = "Selezionate %s di %s carte"),
+  "Next wager: %s" = c(es = "Siguiente apuesta: %s", de = "N\u00e4chster Einsatz: %s", it = "Prossima puntata: %s"),
+  "? Continue [y/n]: " = c(es = "? Continuar [s/n]: ", de = "? Fortsetzen [j/n]: ", it = "? Continuare [s/n]: "),
+  "Answer yes or no" = c(es = "Responde s\u00ed o no", de = "Antworte ja oder nein", it = "Rispondi s\u00ec o no")
 )

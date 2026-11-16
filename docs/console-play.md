@@ -255,3 +255,15 @@ games, shared terminal history is not a private screen for multiple humans.
 For French packs, Q (or q) at a rank prompt means Queen. Type `quit` to exit
 that prompt; q still exits ordinary action/card-position prompts. Inline
 `claim Q 1` also works. This avoids confusing the Queen rank with the quit key.
+
+## Continuous console sessions
+
+Use `play_session(game, controllers)` to review each completed hand and choose
+whether to continue. It preserves stacks, rules and updated controllers. The
+first console seat confirms continuation; yes/si/sí/sì/ja are accepted. Blank,
+no, quit, EOF or an interrupted confirmation stops without dealing another hand.
+`max_hands` and per-hand `max_actions` bound automatic work. A completed Mus or
+Scopa match asks for a new match; its scores then reset explicitly. Blackjack
+shows the next wager and uses a fresh shoe. The returned game and controllers
+can be supplied to a later call; public session summaries are in session_results.
+The existing `play()` function keeps its single-call behavior.
