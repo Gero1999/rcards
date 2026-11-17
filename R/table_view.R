@@ -6,7 +6,7 @@
 #' hidden truth flags or controller state. Names/display strings are plain text.
 #' @param game A supported game object.
 #' @param seat Viewer seat, independent of the current actor.
-#' @param language Display language en, es, de or it.
+#' @param language Registered display language code; see supported_languages().
 #' @return A list of seats, card zones, public status, legal controls and results.
 #' @export
 game_table_view <- function(game,seat=1L,language="en") {

@@ -11,7 +11,7 @@ game_table_view(game, seat = 1L, language = "en")
 
 \item{seat}{Viewer seat, independent of the current actor.}
 
-\item{language}{Display language en, es, de or it.}
+\item{language}{Registered display language code; see supported_languages().}
 }
 \value{
 A list of seats, card zones, public status, legal controls and results.

@@ -23,7 +23,7 @@ NULL starts a two-player Holdem table. The UI can start fresh default games.}
 \item{controllers}{Optional controller list; the human entry is ignored.
 Other seats require non-console controllers. NULL selects baseline bots.}
 
-\item{language}{Initial language: en, es, de or it.}
+\item{language}{Initial registered language code; see supported_languages().}
 
 \item{seed}{Session seed preserving caller RNG; default 42.}
 

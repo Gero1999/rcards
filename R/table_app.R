@@ -16,7 +16,7 @@
 #' @param seat Human viewer seat in the supplied game, default one.
 #' @param controllers Optional controller list; the human entry is ignored.
 #' Other seats require non-console controllers. NULL selects baseline bots.
-#' @param language Initial language: en, es, de or it.
+#' @param language Initial registered language code; see supported_languages().
 #' @param seed Session seed preserving caller RNG; default 42.
 #' @param max_bot_actions Automatic actions before pausing for confirmation.
 #' @param launch TRUE runs locally on 127.0.0.1 and opens a browser. FALSE returns
