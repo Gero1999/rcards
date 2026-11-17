@@ -153,3 +153,8 @@ match/deal victories in Mus/Scopa/Mentiroso. Partners share match wins. Bankroll
 includes chips committed to the current hand, so posting blinds is not a loss.
 Only the latest twenty public results are retained; counters cover the whole
 session. New table and browser refresh reset the session.
+
+Card selection shows a live count against the current legal maximum. Selected
+hand cards use mint outlines; a Scopa capture uses gold table-card outlines.
+Keyboard focus has a separate white outline. Paused controls explain that play
+must be resumed, and action targets have a minimum height of 44 pixels.
