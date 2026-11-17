@@ -51,11 +51,11 @@ bug reports and new-game suggestions in this repository.
 ### Prefer the console?
 
 With `pkgload` and `testthat` installed, load the checkout with
-`pkgload::load_all(".")`; Shiny is not needed. This starts one Blackjack round
+`pkgload::load_all(".")`; Shiny is not needed. This starts a Blackjack session
 with Italian prompts:
 
 ```r
-rcards::play(
+rcards::play_session(
   rcards::blackjack_game(list(rcards::player("You", points = 100))),
   list(rcards::console_player(language = "it"))
 )
