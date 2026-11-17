@@ -11,6 +11,7 @@
 translate_card <- function(x, language = "en") {
   if (!inherits(x, "card")) stop("Expected a card")
   language <- console_language(language)
+  if(language %in% names(extra_card_locales)) return(translate_extra_card(x,language))
   french <- x$suit %in% c("Hearts","Diamonds","Clubs","Spades","Joker")
   suits <- switch(language,
     en=c(Hearts="Hearts",Diamonds="Diamonds",Clubs="Clubs",Spades="Spades",Joker="Joker",Oros="Coins",Copas="Cups",Espadas="Swords",Bastos="Batons"),
@@ -53,4 +54,16 @@ translate_deck <- function(x, language = "en") {
   cards <- lapply(as_card_list(x), translate_card, language = language)
   optional <- lapply(attr(x,"optional_cards"), translate_card, language = language)
   rebuild_deck(cards, optional, language)
+}
+
+translate_extra_card <- function(x,language) {
+  lexicon <- extra_card_locales[[language]]
+  italian <- x$suit %in% c("Denari","Coppe","Spade","Bastoni")
+  french <- x$suit %in% c("Hearts","Diamonds","Clubs","Spades","Joker")
+  ranks <- if(italian) lexicon$italian else if(french) lexicon$french else lexicon$spanish
+  value <- unname(ranks[x$value]);suit <- unname(lexicon$suits[x$suit])
+  if(is.na(value)) value <- x$value
+  if(is.na(suit)) suit <- x$suit
+  x$display <- sprintf(lexicon$template,value,suit,x$symbol)
+  x
 }

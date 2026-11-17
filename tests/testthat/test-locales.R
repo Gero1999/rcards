@@ -1,5 +1,5 @@
 test_that("locales validate and fall back without changing user values", {
-  expect_equal(supported_languages(),c("en","es","de","it"))
+  expect_true(all(c("en","es","de","it") %in% supported_languages()))
   expect_equal(console_language(),"en")
   expect_error(console_language("xx"),"Supported languages")
   expect_equal(ui("unknown %s", "it", "Alice"),"unknown Alice")
@@ -28,7 +28,7 @@ test_that("localized play translates errors and keeps names and canonical state"
     expect_match(translate_card(card("A","Spades"),language)$display,
       switch(language,es="As",de="Ass",it="Asso"),fixed=TRUE)
   }
-  for(entry in locale_catalog) expect_equal(sort(names(entry)),c("de","es","it"))
+  for(entry in locale_catalog) expect_equal(sort(names(entry)),sort(setdiff(supported_languages(),"en")))
 })
 
 test_that("different console locales receive their own completion messages", {

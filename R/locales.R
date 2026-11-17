@@ -1,12 +1,15 @@
+language_names <- c(English="en", "Espa\u00f1ol"="es", Deutsch="de", Italiano="it")
+extra_card_locales <- list()
+
 #' Supported console languages
-#' @return Language codes en, es, de, and it. English is the fallback.
+#' @return Registered language codes. English is the fallback.
 #' @export
-supported_languages <- function() c("en", "es", "de", "it")
+supported_languages <- function() unname(language_names)
 
 console_language <- function(language = NULL) {
   if(is.null(language)) return("en")
   if(!is.character(language) || length(language)!=1L || is.na(language) ||
-     !language %in% supported_languages()) stop("Supported languages are en, es, de, it")
+     !language %in% supported_languages()) stop(paste("Supported languages are",paste(supported_languages(),collapse=", ")))
   language
 }
 

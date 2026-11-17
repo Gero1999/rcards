@@ -45,7 +45,7 @@ play_session <- function(game,controllers,max_hands=100L,max_actions=10000L,
         if(!length(answer) || length(answer)!=1L || is.na(answer)) return(finish("stopped"))
         answer <- tolower(trimws(answer))
         if(answer %in% c("","n","no","nein","q","quit","exit")) return(finish("stopped"))
-        if(answer %in% c("y","yes","s","si","s\u00ed","j","ja","s\u00ec")) {accepted<-TRUE;break}
+        if(answer %in% c("y","yes","sim","s","si","s\u00ed","j","ja","s\u00ec")) {accepted<-TRUE;break}
         human$write(ui("Answer yes or no",human$language))
       }
       if(!accepted) return(finish("input_limit"))

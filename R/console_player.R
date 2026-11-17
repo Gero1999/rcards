@@ -80,7 +80,7 @@ console_decision <- function(line, legal, controller) {
     return(list(action = action, amount = console_number(arguments)))
   }
   if (action == "discard") {
-    if (!length(arguments) || (length(arguments)==1L && arguments %in% c("none","ninguna","keine","nessuna")) || identical(arguments, "0")) positions <- integer() else {
+    if (!length(arguments) || (length(arguments)==1L && arguments %in% c("none","ninguna","keine","nessuna","nenhuma")) || identical(arguments, "0")) positions <- integer() else {
       positions <- unname(vapply(arguments, console_number, numeric(1)))
     }
     return(list(action = action, cards = positions))
