@@ -18,7 +18,8 @@ table_session <- function(game,seat=1L,controllers=NULL,seed=42L,max_bot_actions
   controllers[seat] <- list(NULL)
   list(game=game,seat=seat,controllers=controllers,seed=seed,version=0L,
     actions=0L,bot_actions=0L,max_bot_actions=max_bot_actions,paused=FALSE,error=NULL,
-    completed=list())
+    completed=list(),completed_count=0L,
+    starting_stacks=table_bankrolls(game),wins=integer(length(game$players)))
 }
 
 table_step_seed <- function(state) (state$seed+as.double(state$actions)) %% .Machine$integer.max
@@ -82,6 +83,7 @@ table_next <- function(state,version=state$version,wager=NULL) {
   if(!identical(as.integer(version),as.integer(state$version))) stop("The turn changed; choose again")
   if(!table_continuation(state$game,state$seat)$available) stop("This table cannot continue yet")
   result <- game_result(state$game)
+  winners <- table_winners(state$game)
   state$game <- with_poker_seed(table_step_seed(state),function() {
     if(inherits(state$game,"blackjack_game")) {
       wagers <- blackjack_round_wagers(state$game)
@@ -94,6 +96,8 @@ table_next <- function(state,version=state$version,wager=NULL) {
       game_rematch(state$game)
     } else game_next_hand(state$game)
   })
+  state$wins[winners] <- state$wins[winners]+1L
+  state$completed_count <- state$completed_count+1L
   state$completed <- utils::tail(c(state$completed,list(result)),20L)
   state$version <- state$version+1L;state$actions <- state$actions+1L;state$bot_actions <- 0L
   state$error <- NULL;state$paused <- FALSE

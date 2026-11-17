@@ -144,3 +144,12 @@ mobile viewport. It accepts only a loopback app URL, blocks external HTTP
 requests, and reports browser errors. `--screenshots /tmp/rcards-preview`
 optionally saves local previews. It uses newly generated local games and
 does not require credentials or external services.
+
+## Session scoreboard
+
+Session history counts every completed hand/deal, including the current result
+before continuing. Wins mean positive net profit in poker/Blackjack and confirmed
+match/deal victories in Mus/Scopa/Mentiroso. Partners share match wins. Bankroll
+includes chips committed to the current hand, so posting blinds is not a loss.
+Only the latest twenty public results are retained; counters cover the whole
+session. New table and browser refresh reset the session.

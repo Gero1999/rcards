@@ -65,7 +65,7 @@ table_app_ui <- function(initial,language) {
         shiny::selectInput("players",ui("Players",language),table_player_choices(type),selected=length(initial$game$players),selectize=FALSE),
         shiny::selectInput("language",ui("Language",language),c(English="en","Espa\u00f1ol"="es",Deutsch="de",Italiano="it"),selected=language,selectize=FALSE),
         shiny::uiOutput("new_control")),
-      shiny::tags$main(shiny::uiOutput("table"),
+      shiny::tags$main(shiny::uiOutput("table"),shiny::uiOutput("session_history"),
         shiny::tags$section(class="rc-feedback",`aria-live`="polite",shiny::uiOutput("feedback")),
         shiny::tags$section(class="rc-controls",shiny::uiOutput("controls"))),
       shiny::tags$footer(class="rc-footer",shiny::uiOutput("footer"))))
@@ -188,6 +188,7 @@ table_app_server <- function(initial,initial_language) {
       shiny::radioButtons("capture",ui("Capture choice",lang()),choices=stats::setNames(paste0(indices,":",seq_along(options)),labels),
         selected=if(length(options)==1L) paste0(indices,":1") else character())
     })
+    output$session_history <- shiny::renderUI(table_scoreboard(state(),lang()))
     output$footer <- shiny::renderUI(shiny::tagList(
       shiny::tags$span(ui("Local play against bots. Your seat: %s",lang(),view()$seats[[view()$viewer]]$name)),
       shiny::actionButton("pause_table",ui(if(state()$paused) "Resume" else "Pause",lang())),
