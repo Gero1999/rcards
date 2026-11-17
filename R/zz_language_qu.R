@@ -1,8 +1,10 @@
 # Provisional Southern Quechua interface. Unreviewed technical wording remains
 # explicitly Spanish instead of presenting invented Quechua rules as authoritative.
-language_names <- c(language_names, stats::setNames("qu","Quechua / Runasimi (draft)"))
+language_names <- c(language_names, stats::setNames("qu","Southern Quechua / Runasimi (draft)"))
 for(key in names(locale_catalog)) locale_catalog[[key]] <- c(locale_catalog[[key]],qu=unname(locale_catalog[[key]]["es"]))
-qu_core <- c(Game="Pukllay",Players="Pukllaqkuna",Language="Simi",cards="Raphikuna")
+qu_core <- c(Game="Pukllay",Players="Pukllaqkuna",Language="Simi",cards="Raphikuna",
+  "New table"="Musuq mesa", "Your cards"="Qampa raphiykikuna",
+  "Wait for your turn"="Suyay", "COMPLETE"="Tukusqa", "(none)"="(mana)")
 for(key in names(qu_core)) locale_catalog[[key]]["qu"] <- qu_core[[key]]
 action_aliases$qu <- action_aliases$es
 # Card vocabulary and legal-action terminology await variety-specific review.
