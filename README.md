@@ -174,3 +174,6 @@ R CMD check --no-manual rcards_0.0.0.9000.tar.gz
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the
 [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 The package and original repository artwork use the [Apache 2.0 license](LICENSE).
+
+Additional display languages include Brazilian Portuguese (`pt`) and Simplified
+Mandarin Chinese (`zh`). See [language profiles](docs/languages.md).

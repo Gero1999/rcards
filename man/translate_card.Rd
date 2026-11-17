@@ -2,14 +2,14 @@
 % Please edit documentation in R/translations.R
 \name{translate_card}
 \alias{translate_card}
-\title{Translate a card display into English, Spanish, German or Italian}
+\title{Translate a card display into a registered language}
 \usage{
 translate_card(x, language = "en")
 }
 \arguments{
 \item{x}{A card object.}
 
-\item{language}{Target language: en, es, de, or it.}
+\item{language}{Registered language code; see supported_languages().}
 }
 \value{
 A card with a translated display string.

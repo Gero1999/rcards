@@ -7,7 +7,7 @@
 #' @param read Optional function of prompt returning one input line. The default
 #' uses readline() in interactive R; inject a function for scripted tests or UIs.
 #' @param write Optional function of text. Defaults to cat(text, "\\n").
-#' @param language Console and card language: en, es, de, it; NULL uses English prompts and retains custom card displays.
+#' @param language Registered console/card language code; NULL uses English prompts and retains custom card displays.
 #' @param style Card borders: auto selects Unicode on UTF-8 terminals, or ascii.
 #' @param width Maximum card-row width (16 to 240 columns).
 #' @return A game_controller. Use one controller per seat in play(). Multiple
@@ -80,7 +80,7 @@ console_decision <- function(line, legal, controller) {
     return(list(action = action, amount = console_number(arguments)))
   }
   if (action == "discard") {
-    if (!length(arguments) || (length(arguments)==1L && arguments %in% c("none","ninguna","keine","nessuna")) || identical(arguments, "0")) positions <- integer() else {
+    if (!length(arguments) || (length(arguments)==1L && arguments %in% c("none","ninguna","keine","nessuna","nenhuma","\u65e0","\u4e0d\u6362")) || identical(arguments, "0")) positions <- integer() else {
       positions <- unname(vapply(arguments, console_number, numeric(1)))
     }
     return(list(action = action, cards = positions))

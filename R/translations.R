@@ -1,11 +1,11 @@
-#' Translate a card display into English, Spanish, German or Italian
+#' Translate a card display into a registered language
 #'
 #' Only display text changes. Internal value, suit, symbol, and other fields
 #' remain unchanged, so comparisons and game rules are language-independent.
 #' Explicit translation replaces any custom display. Unknown suit/value labels
 #' are retained rather than guessed.
 #' @param x A card object.
-#' @param language Target language: en, es, de, or it.
+#' @param language Registered language code; see supported_languages().
 #' @return A card with a translated display string.
 #' @export
 translate_card <- function(x, language = "en") {
@@ -43,7 +43,7 @@ translate_card <- function(x, language = "en") {
 
 #' Translate a deck display without changing card identities
 #' @param x A deck object.
-#' @param language Target language: en, es, de, or it.
+#' @param language Registered language code; see supported_languages().
 #' @return A deck with translated cards, coherent main/optional metadata, and
 #' the selected language attribute. No dataset files are modified.
 #' @export
