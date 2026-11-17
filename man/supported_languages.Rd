@@ -7,7 +7,7 @@
 supported_languages()
 }
 \value{
-Language codes en, es, de, and it. English is the fallback.
+Registered language codes. English is the fallback.
 }
 \description{
 Supported console languages

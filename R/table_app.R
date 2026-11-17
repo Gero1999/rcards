@@ -63,7 +63,7 @@ table_app_ui <- function(initial,language) {
       shiny::tags$section(class="rc-setup",`aria-label`="Table settings",
         shiny::selectInput("game_kind",ui("Game",language),table_game_names(),selected=type,selectize=FALSE),
         shiny::selectInput("players",ui("Players",language),table_player_choices(type),selected=length(initial$game$players),selectize=FALSE),
-        shiny::selectInput("language",ui("Language",language),c(English="en","Espa\u00f1ol"="es",Deutsch="de",Italiano="it"),selected=language,selectize=FALSE),
+        shiny::selectInput("language",ui("Language",language),language_names,selected=language,selectize=FALSE),
         shiny::uiOutput("new_control")),
       shiny::tags$main(shiny::uiOutput("table"),shiny::uiOutput("session_history"),
         shiny::tags$section(class="rc-feedback",`aria-live`="polite",shiny::uiOutput("feedback")),

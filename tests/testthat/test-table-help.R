@@ -1,6 +1,6 @@
 test_that("help selects the current game and every supported language", {
   skip_if_not_installed("shiny")
-  labels <- c(en="Help",es="Ayuda",de="Hilfe",it="Aiuto")
+  labels <- vapply(table_help_catalog, function(text) text$help, "")
   games <- c("holdem","mus","blackjack","scopa","liar")
   for(language in supported_languages()) {
     text <- table_help_text(language)
