@@ -12,3 +12,8 @@ Mandarin Chinese (`zh`) uses Simplified Chinese. Standard French ranks retain
 A/J/Q/K labels; suit descriptions and gameplay instructions are Chinese. Card
 descriptions put suit before rank. Numbered menus and English commands remain
 available when a terminal cannot enter Chinese characters.
+
+Traditional Mandarin (`zh-Hant`) is independently selectable, including Help
+and commands. Translations use Traditional characters without changing game
+identities or numeric ranks. Chinese output needs a UTF-8 terminal and a font
+with CJK coverage; English aliases and menu numbers remain available.
