@@ -10,8 +10,9 @@ rcards::play_app(rcards::scopa_game(seed = 42), language = "it")
 
 The browser uses a shared felt table, face-up own cards, covered opponents,
 public center cards, legal action buttons, and short results. Card faces and
-backs are built with local HTML/CSS and the package's existing suit symbols;
-there are no external image or API requests. English (`en`), Spanish (`es`),
+backs are built with local HTML/CSS. French suits use familiar glyphs, and
+Spanish and Italian suits use local coin, cup, sword, and baton marks. There
+are no external image or API requests. English (`en`), Spanish (`es`),
 German (`de`), and Italian (`it`) are selectable during play.
 
 ## Games and controls
@@ -23,6 +24,15 @@ German (`de`), and Italian (`it`) are selectable during play.
 | Blackjack | One human versus the dealer; retained bankroll | Hit/stand/double/split when allowed. Split hands show their totals and wagers; the active hand is highlighted. |
 | Scopa | Two or three individual players; four in teams | Select one own card, then a numbered capture option. Table positions and the chosen capture are highlighted. |
 | Mentiroso | 2–8 seats, Spanish pack | Select one or more own cards and a declared rank, or pass/challenge when allowed. Only a challenged batch is revealed. |
+
+During your Hold'em turn, **Hand odds** opens a copy of your cards and the
+public board. Choose **Calculate odds** to see the chance of winning outright,
+tying for the best hand, or losing at showdown. Unknown opposing hands and
+future board cards are drawn uniformly. The flush result gives the chance
+that your cards and the completed board contain five cards of one suit.
+You can swap your cards or fill in
+future cards to compare a what-if scenario, then reset to the captured hand.
+Scenario edits do not affect play.
 
 Changing settings takes effect on **New table**, which starts a fresh game
 with the default rules and bots, seat one as the human, and fresh 100-chip

@@ -89,3 +89,41 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
 .rc-session{margin:16px 0;padding:16px;background:#182a36;border-radius:12px}.rc-session summary{cursor:pointer}.rc-scoreboard{width:100%;margin:12px 0}.rc-scoreboard td,.rc-scoreboard th{padding:6px;text-align:left}.rc-session ol{max-height:280px;overflow:auto}
 
 .rc-selected{outline:3px solid var(--rc-accent);outline-offset:3px}.rc-highlight{outline:3px solid var(--rc-gold);outline-offset:3px}.rc-selectable:focus-visible{outline:3px solid #fff;outline-offset:5px}.rc-action{min-height:44px;min-width:70px}
+
+.rc-app .rc-analysis-button {
+  margin-top: 14px;
+  min-height: 44px;
+  background: transparent;
+  border-color: #729188;
+}
+.rc-odds-modal .modal-content {
+  background: #182a36;
+  color: var(--rc-ink);
+  border: 1px solid #54716c;
+  border-radius: 14px;
+}
+.rc-odds-modal .modal-header, .rc-odds-modal .modal-footer { border-color: #476159; }
+.rc-odds-modal .modal-title, .rc-odds-results h4 { color: var(--rc-gold); }
+.rc-odds-modal .btn-default {
+  background: #29493f;
+  border-color: #729188;
+  color: var(--rc-ink);
+}
+.rc-odds-modal .btn-primary {
+  background: var(--rc-gold);
+  border-color: var(--rc-gold);
+  color: var(--rc-bg);
+}
+.rc-odds-card-grid .form-control { min-height: 36px; padding: 5px 8px; }
+.rc-odds-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.rc-odds-results { padding: 14px; background: #20323e; border-radius: 10px; }
+.rc-odds-results p { color: var(--rc-muted); }
+.rc-odds-results p:last-child { margin-bottom: 0; }
+.rc-odds-metrics {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 8px;
+}
+.rc-odds-metrics dd { margin: 0; font-variant-numeric: tabular-nums; }
+.rc-odds-metrics small { display: block; color: var(--rc-muted); }

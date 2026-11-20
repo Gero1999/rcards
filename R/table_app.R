@@ -67,7 +67,8 @@ table_app_ui <- function(initial,language) {
         shiny::uiOutput("new_control")),
       shiny::tags$main(shiny::uiOutput("table"),shiny::uiOutput("session_history"),
         shiny::tags$section(class="rc-feedback",`aria-live`="polite",shiny::uiOutput("feedback")),
-        shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),shiny::uiOutput("controls"))),
+        shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
+          shiny::uiOutput("controls"),shiny::uiOutput("analysis_control"))),
       shiny::tags$footer(class="rc-footer",shiny::uiOutput("footer"))))
 }
 
@@ -77,11 +78,19 @@ table_app_server <- function(initial,initial_language) {
     selected <- shiny::reactiveVal(integer())
     lang <- shiny::reactive(console_language(if(is.null(input$language)) initial_language else input$language))
     view <- shiny::reactive(game_table_view(state()$game,state()$seat,lang()))
+    open_holdem_odds <- table_holdem_odds_server("holdem_odds",lang)
     report_error <- function(error) {
       current <- shiny::isolate(state());current$error <- conditionMessage(error);state(current)
     }
     shiny::observeEvent(input$show_help,{
       shiny::showModal(table_help_dialog(view(),lang()))
+    },ignoreInit=TRUE)
+    shiny::observeEvent(input$show_holdem_odds,{
+      v <- view()
+      if(v$game_type=="holdem" && v$your_turn) {
+        current <- state()
+        open_holdem_odds(game_observation(current$game,current$seat))
+      }
     },ignoreInit=TRUE)
     shiny::observeEvent(input$game_kind,{
       choices <- table_player_choices(input$game_kind)
@@ -181,6 +190,12 @@ table_app_server <- function(initial,initial_language) {
       # erase what the player is typing. Only engine turn changes rebuild them.
       current <- state();language <- lang();v <- game_table_view(current$game,current$seat,language)
       table_render_controls(v,current$version,current$paused)
+    })
+    output$analysis_control <- shiny::renderUI({
+      v <- view()
+      if(v$game_type=="holdem" && v$your_turn) {
+        shiny::actionButton("show_holdem_odds",ui("Hand odds",lang()),class="rc-analysis-button")
+      }
     })
     output$capture_controls <- shiny::renderUI({
       v <- view();indices <- selected()
