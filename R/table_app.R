@@ -189,7 +189,7 @@ table_app_server <- function(initial,initial_language) {
       v <- view()
       turn_controls <- shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
         shiny::uiOutput("controls"),shiny::uiOutput("analysis_control"))
-      inline <- v$game_type=="holdem"
+      inline <- v$game_type %in% c("holdem","blackjack")
       shiny::tagList(
         table_render_view(v,state()$version,hand_controls=if(inline) turn_controls),
         shiny::uiOutput("session_history"),
@@ -229,7 +229,9 @@ table_app_server <- function(initial,initial_language) {
         holdem=shiny::actionButton("show_holdem_odds",
           table_button_content(ui("Hand odds",lang()),"chart-simple"),class="rc-analysis-button",
           title=ui("Open showdown odds and what-if cards.",lang())),
-        blackjack=shiny::actionButton("show_blackjack_odds",ui("Compare actions",lang()),class="rc-analysis-button"),
+        blackjack=shiny::actionButton("show_blackjack_odds",
+          table_button_content(ui("Compare actions",lang()),"chart-simple"),class="rc-analysis-button",
+          title=ui("Compare the estimated outcomes of legal moves.",lang())),
         scopa=shiny::actionButton("show_scopa_odds",ui("Compare moves",lang()),class="rc-analysis-button"))
     })
     output$capture_controls <- shiny::renderUI({

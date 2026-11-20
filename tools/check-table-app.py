@@ -206,14 +206,36 @@ def run(args):
         expect(page.locator('.rc-own [data-zone="hand"] .rc-card')).to_have_count(2)
 
         new_table("blackjack", 1, 1, "Blackjack")
-        # Naturals may settle in the constructor, without a player decision.
-        page.locator('[data-rc-action="stand"], #next_hand').first.wait_for(state="visible")
-        if page.locator('[data-rc-action="stand"]').count():
-            expect(page.locator('[data-zone="dealer"] .rc-back')).to_have_count(1)
-            page.locator('[data-rc-action="stand"]').click()
-        else:
+        stand = own.locator('[data-rc-action="stand"]')
+        # Look for a playable opening round even if a natural settles one.
+        for attempt in range(4):
+            stand.or_(page.locator("#next_hand")).first.wait_for(state="visible")
+            if stand.count():
+                break
             expect(page.locator('[data-zone="dealer"] .rc-back')).to_have_count(0)
             expect(page.locator(".rc-result").first).to_be_visible()
+            if attempt < 3:
+                before = version()
+                page.locator("#new_table").click()
+                expect_action_applied(before)
+        viewport = page.viewport_size
+        page.set_viewport_size({"width": 390, "height": 844})
+        action_control(own.locator('[data-rc-action="hit"]'), "hit")
+        action_control(stand, "stand")
+        odds = action_control(own.locator("#show_blackjack_odds"), "Compare actions")
+        if not own.evaluate("(hand) => hand.scrollWidth <= hand.clientWidth"):
+            raise AssertionError("Blackjack hand controls have horizontal overflow on mobile")
+        before = version()
+        expect(page.locator('[data-zone="dealer"] .rc-back')).to_have_count(1)
+        odds.click()
+        comparison = page.get_by_role("dialog", name="Compare actions")
+        expect(comparison.locator("tbody").get_by_role("rowheader", name="stand")).to_be_visible()
+        comparison.get_by_role("button", name="Back to the table").click()
+        expect(comparison).not_to_be_visible()
+        expect(own.locator(".rc-card").first).to_have_attribute("data-rc-version", before)
+        stand.click()
+        expect_action_applied(before)
+        page.set_viewport_size(viewport)
         expect(page.locator("#next_hand")).to_have_text("Next round")
         page.locator("#next_wager").fill("5")
         page.locator("#next_hand").click()
