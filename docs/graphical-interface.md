@@ -42,6 +42,10 @@ It samples unknown cards from the configured shoe and uses a baseline bot for
 any remaining player decisions. The comparison includes additional wagers
 from doubles or splits and shows the sampling interval for each estimate.
 
+In Mentiroso, choose cards and declare their rank directly below your hand.
+When it is your turn to respond, **Challenge** and **Pass** sit next to the
+current claim and covered pile.
+
 During your Scopa turn, **Compare moves** ranks each legal card and capture
 combination by estimated point margin at the end of the current deal. It shows
 the chance that your side finishes the deal ahead. The panel keeps your hand,

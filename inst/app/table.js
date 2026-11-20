@@ -2,6 +2,23 @@
    clicks. No game, private card, or controller state is stored in JavaScript. */
 (function () {
   "use strict";
+  // A selection redraws the hand. Keep a keyboard user on the same card as
+  // long as the turn and card position are still current.
+  window.jQuery(document).on("shiny:value", function (event) {
+    if (event.name !== "table_own_cards") return;
+    var focused = document.activeElement;
+    if (!focused || !focused.matches("#table_own_cards [data-rc-card]")) return;
+    var index = focused.dataset.rcCard;
+    var version = focused.dataset.rcVersion;
+    window.requestAnimationFrame(function () {
+      if (document.activeElement !== document.body) return;
+      var cards = document.querySelectorAll("#table_own_cards [data-rc-card]");
+      var replacement = Array.prototype.find.call(cards, function (card) {
+        return card.dataset.rcCard === index && card.dataset.rcVersion === version;
+      });
+      if (replacement) replacement.focus({preventScroll: true});
+    });
+  });
   document.addEventListener("click", function (event) {
     var action = event.target.closest("[data-rc-action]");
     var card = event.target.closest("[data-rc-card]");
