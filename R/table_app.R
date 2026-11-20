@@ -56,7 +56,8 @@ table_app_ui <- function(initial,language) {
   assets <- system.file("app",package="rcards")
   shiny::fluidPage(
     shiny::tags$head(shiny::tags$title("rcards | Card table"),
-      shiny::includeCSS(file.path(assets,"table.css")),shiny::includeScript(file.path(assets,"table.js"))),
+      shiny::includeCSS(file.path(assets,"table.css")),shiny::includeScript(file.path(assets,"table.js")),
+      shiny::includeScript(file.path(assets,"table_raise.js"))),
     shiny::tags$div(class="rc-app",
       shiny::tags$header(class="rc-header",table_brand_tag(),
         shiny::tags$div(class="rc-header-actions",shiny::uiOutput("help_control"),shiny::uiOutput("heading"))),
@@ -186,15 +187,28 @@ table_app_server <- function(initial,initial_language) {
       shiny::tags$span(class=paste("rc-turn",if(v$your_turn) "human"),label)
     })
     output$table <- shiny::renderUI({
-      v <- view()
-      turn_controls <- shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
-        shiny::uiOutput("controls"),shiny::uiOutput("analysis_control"))
-      inline <- v$game_type %in% c("holdem","blackjack","liar")
+      v <- view();current <- state();version <- current$version
+      contextual <- v$game_type=="holdem"
+      inline <- v$game_type %in% c("blackjack","liar")
       by_pile <- v$game_type=="liar" && identical(v$phase,"response") && v$your_turn
+      board_controls <- NULL
+      if(contextual) {
+        actions <- if(!current$paused) v$legal$actions else character()
+        board_controls <- table_context_actions("rc-board-controls",
+          lapply(intersect(actions,c("check","call")),function(action) table_action_tag(v,action,version)),
+          if("raise" %in% actions) table_raise_control(v$legal,version,v$language))
+        hand_controls <- table_context_actions("rc-hand-controls",
+          if("fold" %in% actions) table_action_tag(v,"fold",version),
+          shiny::uiOutput("analysis_control"))
+        turn_controls <- NULL
+      } else {
+        turn_controls <- shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
+          shiny::uiOutput("controls"),shiny::uiOutput("analysis_control"))
+        hand_controls <- if(inline && !by_pile) turn_controls
+      }
       shiny::tagList(
-        table_render_view(v,state()$version,
-          hand_controls=if(inline && !by_pile) turn_controls,
-          pile_controls=if(by_pile) turn_controls),
+        table_render_view(v,version,hand_controls=hand_controls,
+          pile_controls=if(by_pile) turn_controls,board_controls=board_controls),
         shiny::uiOutput("session_history"),
         shiny::tags$section(class="rc-feedback",`aria-live`="polite",shiny::uiOutput("feedback")),
         if(!inline) turn_controls)
