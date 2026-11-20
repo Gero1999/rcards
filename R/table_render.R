@@ -48,12 +48,17 @@ table_render_zone <- function(zone,version,selected=integer(),highlight=integer(
         indexed=isTRUE(zone$selectable) || zone$id=="table"))))
 }
 
-table_render_view <- function(view,selected=integer(),capture=NULL,version=0L) {
+table_render_center_cards <- function(view,version,selected,capture) {
   language <- view$language;highlight <- integer()
   if(view$game_type=="scopa" && view$your_turn && length(selected)==1L) {
     index <- table_capture_index(capture,selected);options<-view$legal$captures[[selected]]
     if(!is.null(index) && index>=1 && index<=length(options)) highlight <- options[[index]]
   }
+  lapply(view$center,table_render_zone,version=version,highlight=highlight,language=language)
+}
+
+table_render_view <- function(view,version,hand_controls=NULL) {
+  language <- view$language
   opponents <- view$seats[!vapply(view$seats,`[[`,logical(1),"viewer")]
   shiny::tags$section(class="rc-table",`aria-label`=ui("Card table",language),
     shiny::tags$div(class="rc-opponents",lapply(opponents,function(player) {
@@ -64,12 +69,27 @@ table_render_view <- function(view,selected=integer(),capture=NULL,version=0L) {
     shiny::tags$div(class="rc-center",
       shiny::tags$h1(class="rc-game-title",names(table_game_names())[match(view$game_type,table_game_names())],
         if(!is.null(view$phase)) shiny::tags$small(ui(toupper(view$phase),language))),lapply(view$status,function(line) shiny::tags$p(class="rc-status",line)),
-      lapply(view$center,table_render_zone,version=version,highlight=highlight,language=language),
+      shiny::uiOutput("table_center_cards"),
       if(length(view$history)) shiny::tags$details(class="rc-history",shiny::tags$summary(ui("Recent actions",language)),
         shiny::tags$ol(lapply(view$history,shiny::tags$li)))),
     shiny::tags$section(class="rc-own",shiny::tags$h2(paste0(view$seats[[view$viewer]]$name," / ",ui("Your cards",language))),
       shiny::tags$p(class="rc-own-details",paste(view$seats[[view$viewer]]$details,collapse=" | ")),
-      lapply(view$own,table_render_zone,version=version,selected=selected,language=language)))
+      shiny::uiOutput("table_own_cards",class="rc-own-zones"),
+      hand_controls))
+}
+
+table_button_content <- function(label,icon) {
+  shiny::tagList(
+    shiny::tags$span(class="rc-action-icon",`aria-hidden`="true",shiny::icon(icon)),
+    shiny::tags$span(class="rc-action-label",label))
+}
+
+table_action_details <- function(game_type,action) {
+  if(game_type=="holdem") switch(action,
+    fold=c("xmark","Leave this hand."),
+    check=c("check","Stay in the hand without betting."),
+    call=c("equals","Match the current bet."),
+    raise=c("arrow-up","Set a new total for this betting round."))
 }
 
 table_render_controls <- function(view,version,paused=FALSE) {
@@ -96,9 +116,14 @@ table_render_controls <- function(view,version,paused=FALSE) {
       shiny::tags$p(class="rc-help",ui("Select 1 to %s cards.",language,view$selection_limit)),
     if(view$game_type=="scopa") shiny::uiOutput("capture_controls"),
     shiny::tags$div(class="rc-actions",lapply(legal$actions,function(action) {
+      label <- action_label(action,language)
+      if(action=="call") label <- paste(label,legal$to_call)
+      details <- table_action_details(view$game_type,action)
+      if(length(details)) label <- paste0(toupper(substr(label,1L,1L)),substring(label,2L))
       shiny::tags$button(type="button",class=paste("rc-action",if(action %in% c("fold","reject","challenge")) "rc-secondary"),
-        `data-rc-action`=action,`data-rc-version`=version,disabled=if(paused) "disabled" else NULL,
-        paste(action_label(action,language),if(action=="call") legal$to_call else ""))
+        `data-rc-action`=action,`data-rc-version`=version,
+        title=if(length(details)) ui(details[[2L]],language),
+        if(length(details)) table_button_content(label,details[[1L]]) else label)
     })))
 }
 

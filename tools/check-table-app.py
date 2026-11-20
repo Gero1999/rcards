@@ -94,6 +94,19 @@ def run(args):
                 "data-rc-version", previous)
             expect(page.locator(".rc-error")).to_have_count(0)
 
+        def action_control(control, label):
+            expect(control).to_be_visible()
+            label_pattern = re.compile(re.escape(label), re.IGNORECASE)
+            text = control.locator(".rc-action-label")
+            expect(text).to_be_visible()
+            expect(text).to_have_text(label_pattern)
+            expect(control).to_have_accessible_name(label_pattern)
+            expect(control).to_have_attribute("title", re.compile(r"\S"))
+            icon = control.locator(".rc-action-icon")
+            expect(icon).to_be_visible()
+            expect(icon).to_have_attribute("aria-hidden", "true")
+            return control
+
         def new_table(kind, player_count, choice_count, title):
             page.select_option("#game_kind", kind)
             expect(page.locator("#players option")).to_have_count(choice_count)
@@ -133,13 +146,29 @@ def run(args):
         page.select_option("#game_kind", "holdem")
 
         # A fresh default table starts with the human on the small blind.
-        expect(page.locator('[data-rc-action="call"]')).to_be_visible()
+        own = page.locator(".rc-own")
+        action_control(own.locator('[data-rc-action="call"]'), "call 1")
+        fold = action_control(own.locator('[data-rc-action="fold"]'), "fold")
+        odds = action_control(own.locator("#show_holdem_odds"), "Hand odds")
         expect(page.locator(".rc-seat .rc-back")).to_have_count(2)
-        expect(page.locator("#amount")).to_have_attribute("min", "4")
-        expect(page.locator("#amount")).to_have_attribute("max", "100")
+        amount = own.locator("#amount")
+        expect(amount).to_have_attribute("min", "4")
+        expect(amount).to_have_attribute("max", "100")
+        amount.fill("8")
+        before = version()
+        odds.click()
+        comparison = page.get_by_role("dialog", name="Hand odds")
+        expect(comparison.get_by_text("Win at showdown", exact=True)).to_be_visible()
+        comparison.get_by_role("button", name="Back to the table").click()
+        expect(comparison).not_to_be_visible()
+        expect(page.locator(".modal-backdrop")).to_have_count(0)
+        expect(own.locator(".rc-card").first).to_have_attribute("data-rc-version", before)
+        expect(amount).to_have_value("8")
+        amount.fill("4")
         screenshot(page, "table-holdem.png")
         # A fold finishes the hand, then Next hand continues the same table.
-        page.locator('[data-rc-action="fold"]').click()
+        fold.click()
+        expect_action_applied(before)
         expect(page.locator("#next_hand")).to_have_text("Next hand")
         expect(page.locator(".rc-history")).to_contain_text("You / fold")
         page.locator("#next_hand").click()

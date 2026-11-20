@@ -65,10 +65,7 @@ table_app_ui <- function(initial,language) {
         shiny::selectInput("players",ui("Players",language),table_player_choices(type),selected=length(initial$game$players),selectize=FALSE),
         shiny::selectInput("language",ui("Language",language),language_names,selected=language,selectize=FALSE),
         shiny::uiOutput("new_control")),
-      shiny::tags$main(shiny::uiOutput("table"),shiny::uiOutput("session_history"),
-        shiny::tags$section(class="rc-feedback",`aria-live`="polite",shiny::uiOutput("feedback")),
-        shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
-          shiny::uiOutput("controls"),shiny::uiOutput("analysis_control"))),
+      shiny::tags$main(shiny::uiOutput("table")),
       shiny::tags$footer(class="rc-footer",shiny::uiOutput("footer"))))
 }
 
@@ -188,7 +185,26 @@ table_app_server <- function(initial,initial_language) {
         if(state()$paused) ui("Paused",lang()) else if(v$your_turn) ui("Your turn",lang()) else ui("Bots are playing",lang())
       shiny::tags$span(class=paste("rc-turn",if(v$your_turn) "human"),label)
     })
-    output$table <- shiny::renderUI(table_render_view(view(),selected(),input$capture,state()$version))
+    output$table <- shiny::renderUI({
+      v <- view()
+      turn_controls <- shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
+        shiny::uiOutput("controls"),shiny::uiOutput("analysis_control"))
+      inline <- v$game_type=="holdem"
+      shiny::tagList(
+        table_render_view(v,state()$version,hand_controls=if(inline) turn_controls),
+        shiny::uiOutput("session_history"),
+        shiny::tags$section(class="rc-feedback",`aria-live`="polite",shiny::uiOutput("feedback")),
+        if(!inline) turn_controls)
+    })
+    # Card highlights change independently of the numeric and rank inputs.
+    output$table_center_cards <- shiny::renderUI({
+      table_render_center_cards(view(),state()$version,selected(),input$capture)
+    })
+    output$table_own_cards <- shiny::renderUI({
+      v <- view()
+      shiny::tagList(lapply(v$own,table_render_zone,version=state()$version,
+        selected=selected(),language=v$language))
+    })
     output$feedback <- shiny::renderUI({
       current <- state();v <- view()
       shiny::tagList(
@@ -210,7 +226,9 @@ table_app_server <- function(initial,initial_language) {
       v <- view()
       if(!v$your_turn) return(NULL)
       switch(v$game_type,
-        holdem=shiny::actionButton("show_holdem_odds",ui("Hand odds",lang()),class="rc-analysis-button"),
+        holdem=shiny::actionButton("show_holdem_odds",
+          table_button_content(ui("Hand odds",lang()),"chart-simple"),class="rc-analysis-button",
+          title=ui("Open showdown odds and what-if cards.",lang())),
         blackjack=shiny::actionButton("show_blackjack_odds",ui("Compare actions",lang()),class="rc-analysis-button"),
         scopa=shiny::actionButton("show_scopa_odds",ui("Compare moves",lang()),class="rc-analysis-button"))
     })
