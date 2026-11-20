@@ -1,11 +1,38 @@
+# Suit artwork is shared by card identity across every table that uses the deck.
+table_suit_mark <- function(card) {
+  icon <- switch(card$suit,
+    Oros =, Denari = "coin",
+    Copas =, Coppe = "cup",
+    Espadas =, Spade = "sword",
+    Bastos =, Bastoni = "baton",
+    Joker = "joker"
+  )
+  if (is.null(icon)) return(shiny::tags$span(class = "rc-suit-mark", card$symbol))
+  shiny::tags$span(class = paste0("rc-suit-mark rc-suit-", icon))
+}
+
 table_card_tag <- function(card,index,zone,version,selectable=FALSE,selected=FALSE,highlight=FALSE,language="en",indexed=selectable) {
   classes <- paste("rc-card",if(card$back) "rc-back" else if(card$suit %in% c("Hearts","Diamonds")) "rc-red" else "rc-black",
     if(selectable) "rc-selectable",if(selected) "rc-selected",if(highlight) "rc-highlight")
-  label <- if(card$back) ui("Covered card",language) else paste0(index,": ",card$label)
-  content <- if(card$back) shiny::tags$span(class="rc-back-mark","rc") else shiny::tagList(
-    shiny::tags$span(class="rc-rank",card$value),shiny::tags$span(class="rc-suit",card$symbol),
-    shiny::tags$span(class="rc-rank rc-bottom",card$value),
-    if(indexed) shiny::tags$span(class="rc-index",index))
+  if (card$back) {
+    label <- ui("Covered card", language)
+    content <- shiny::tags$span(class = "rc-back-mark", `aria-hidden` = "true", "rc")
+  } else {
+    description <- card$label
+    suffix <- paste0(" ", card$symbol)
+    if (endsWith(description, suffix)) {
+      description <- substr(description, 1L, nchar(description) - nchar(suffix))
+    }
+    label <- paste0(index, ": ", description)
+    rank <- if (card$value == "Joker" && card$suit == "Joker") "JK" else card$value
+    suit <- table_suit_mark(card)
+    content <- shiny::tagList(
+      shiny::tags$span(class = "rc-rank", `aria-hidden` = "true", rank, suit),
+      shiny::tags$span(class = "rc-suit", `aria-hidden` = "true", suit),
+      shiny::tags$span(class = "rc-rank rc-bottom", `aria-hidden` = "true", rank, suit),
+      if (indexed) shiny::tags$span(class = "rc-index", `aria-hidden` = "true", index)
+    )
+  }
   shiny::tags$button(type="button",class=classes,title=label,`aria-label`=label,
     `aria-pressed`=if(selectable) tolower(as.character(selected)) else NULL,
     `data-rc-card`=if(selectable) as.character(index) else NULL,`data-rc-zone`=zone,
