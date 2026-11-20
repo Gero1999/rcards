@@ -40,6 +40,13 @@ It samples unknown cards from the configured shoe and uses a baseline bot for
 any remaining player decisions. The comparison includes additional wagers
 from doubles or splits and shows the sampling interval for each estimate.
 
+During your Scopa turn, **Compare moves** ranks each legal card and capture
+combination by estimated point margin at the end of the current deal. It shows
+the chance that your side finishes the deal ahead. The panel keeps your hand,
+the table, and public captures fixed, samples plausible opposing hands and
+stock, and uses baseline bots for the remaining moves. You return to the
+same table and selection when you close it.
+
 Changing settings takes effect on **New table**, which starts a fresh game
 with the default rules and bots, seat one as the human, and fresh 100-chip
 stacks where applicable. **Pause** stops automatic bot actions; **Resume**
@@ -155,9 +162,9 @@ Chromium installed:
 python tools/check-table-app.py --chromium /path/to/chromium
 ```
 
-The runner exercises all five game controls, language switching, and a narrow
-mobile viewport. It accepts only a loopback app URL, blocks external HTTP
-requests, and reports browser errors. `--screenshots /tmp/rcards-preview`
+The runner exercises all five game controls, Scopa move comparison, language
+switching, and a narrow mobile viewport. It accepts only a loopback app URL,
+blocks external HTTP requests, and reports browser errors. `--screenshots /tmp/rcards-preview`
 optionally saves local previews. It uses newly generated local games and
 does not require credentials or external services.
 

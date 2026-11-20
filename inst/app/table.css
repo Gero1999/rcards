@@ -134,3 +134,12 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
   white-space: normal;
 }
 .rc-odds-modal .table td { font-variant-numeric: tabular-nums; }
+@media (max-width: 650px) {
+  .rc-scopa-odds .table { table-layout: fixed; }
+  .rc-scopa-odds .table-responsive .table th,
+  .rc-scopa-odds .table-responsive .table td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    padding: 6px;
+  }
+}
