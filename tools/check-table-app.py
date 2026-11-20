@@ -157,6 +157,21 @@ def run(args):
         expect(page.locator('input[name="capture"]').first).to_be_visible()
         page.locator('input[name="capture"]').first.check()
         before = version()
+        viewport = page.viewport_size
+        page.set_viewport_size({"width": 390, "height": 844})
+        page.locator("#show_scopa_odds").click()
+        comparison = page.get_by_role("dialog", name="Compare moves")
+        expect(comparison.locator("tbody tr").first).to_be_visible()
+        if not comparison.locator(".table-responsive").evaluate(
+                "(table) => table.scrollWidth <= table.clientWidth"):
+            raise AssertionError("Mobile Scopa comparison has horizontal overflow")
+        comparison.locator(".modal-footer button").click()
+        expect(comparison).not_to_be_visible()
+        page.set_viewport_size(viewport)
+        expect(page.locator('[data-rc-card="1"][data-rc-zone="hand"]')).to_have_attribute(
+            "aria-pressed", "true")
+        expect(page.locator('input[name="capture"]').first).to_be_checked()
+        expect(page.locator(".rc-own .rc-card").first).to_have_attribute("data-rc-version", before)
         page.locator('[data-rc-action="play"]').click()
         expect_action_applied(before)
         expect(page.locator('.rc-own [data-zone="hand"] .rc-card')).to_have_count(2)
@@ -220,7 +235,7 @@ def run(args):
         browser.close()
         if any(report.values()):
             raise AssertionError("Browser reported errors or attempted non-local traffic")
-        print("Passed: five games, continued poker/Blackjack, logo, contextual Help, languages and mobile layout.")
+        print("Passed: five games, Scopa move comparison, continued poker/Blackjack, logo, contextual Help, languages and mobile layout.")
 
 
 if __name__ == "__main__":
