@@ -24,9 +24,13 @@ of the rcards local Shiny interface with a seeded three-player Scopa game.
 The player names and cards are generated demonstration data. The screenshot
 contains the app's own HTML/CSS card faces and backs.
 
+[`man/figures/table-analysis.png`](../man/figures/table-analysis.png) places two
+captures of the local Shiny interface side by side to show the Hold'em and
+Blackjack analysis buttons.
+
 ## License
 
-The logo and table preview are distributed under the repository's
+The logo and table previews are distributed under the repository's
 [Apache License 2.0](../LICENSE). No third-party artwork or font files are
 bundled with them. This provenance record does not claim a trademark search or
 legal clearance.

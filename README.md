@@ -14,10 +14,10 @@ into one R package.
 [Statistics](#probabilities-and-simulations) · [Documentation](#documentation)
 
 <p align="center">
-  <img src="man/figures/table-scopa.png" alt="The rcards graphical Scopa table with three players, covered opponents, public table cards, and the human hand" width="960">
+  <img src="man/figures/table-scopa.png" alt="The rcards Scopa table with coin, cup, sword, and baton suit marks on the public cards and the human hand" width="960">
 </p>
 
-*A local Scopa table: your cards, public information, and a choice of legal moves.*
+*Scopa uses coin, cup, sword, and baton marks for the four Italian suits.*
 
 ## Start playing
 
@@ -47,6 +47,14 @@ The graphical app runs locally in your browser and keeps each session in
 memory. See [graphical play](docs/graphical-interface.md) for configured games,
 controls, and session limits. **Help** explains the current game and links to
 bug reports and new-game suggestions in this repository.
+
+During your turn, open **Hand odds** in Texas Hold'em to explore showdown
+probabilities and what-if cards. In Blackjack, use **Compare actions** to see
+the estimated net profit for each legal move.
+
+<p align="center">
+  <img src="man/figures/table-analysis.png" alt="The Hold'em Hand odds button and the Blackjack Compare actions button below the in-game controls" width="960">
+</p>
 
 ### Prefer the console?
 
