@@ -127,3 +127,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
 }
 .rc-odds-metrics dd { margin: 0; font-variant-numeric: tabular-nums; }
 .rc-odds-metrics small { display: block; color: var(--rc-muted); }
+.rc-odds-modal .table-responsive { border: 0; }
+.rc-odds-modal .table th, .rc-odds-modal .table td {
+  border-color: #476159;
+  padding: 8px;
+  white-space: normal;
+}
+.rc-odds-modal .table td { font-variant-numeric: tabular-nums; }

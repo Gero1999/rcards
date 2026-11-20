@@ -92,6 +92,18 @@ table_app_server <- function(initial,initial_language) {
         open_holdem_odds(game_observation(current$game,current$seat))
       }
     },ignoreInit=TRUE)
+    shiny::observeEvent(input$show_blackjack_odds,{
+      v <- view()
+      if(v$game_type=="blackjack" && v$your_turn) {
+        current <- state()
+        tryCatch({
+          observation <- game_observation(current$game,current$seat)
+          shiny::showModal(table_blackjack_odds_dialog(observation,lang()))
+        },error=function(error) {
+          shiny::showNotification(console_error(conditionMessage(error),lang()),type="error")
+        })
+      }
+    },ignoreInit=TRUE)
     shiny::observeEvent(input$game_kind,{
       choices <- table_player_choices(input$game_kind)
       n <- suppressWarnings(as.integer(input$players))
@@ -193,9 +205,10 @@ table_app_server <- function(initial,initial_language) {
     })
     output$analysis_control <- shiny::renderUI({
       v <- view()
-      if(v$game_type=="holdem" && v$your_turn) {
-        shiny::actionButton("show_holdem_odds",ui("Hand odds",lang()),class="rc-analysis-button")
-      }
+      if(!v$your_turn) return(NULL)
+      switch(v$game_type,
+        holdem=shiny::actionButton("show_holdem_odds",ui("Hand odds",lang()),class="rc-analysis-button"),
+        blackjack=shiny::actionButton("show_blackjack_odds",ui("Compare actions",lang()),class="rc-analysis-button"))
     })
     output$capture_controls <- shiny::renderUI({
       v <- view();indices <- selected()

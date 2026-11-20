@@ -34,6 +34,12 @@ You can swap your cards or fill in
 future cards to compare a what-if scenario, then reset to the captured hand.
 Scenario edits do not affect play.
 
+During your Blackjack turn, **Compare actions** estimates the expected net
+profit in chips and the chance of finishing ahead for each available action.
+It samples unknown cards from the configured shoe and uses a baseline bot for
+any remaining player decisions. The comparison includes additional wagers
+from doubles or splits and shows the sampling interval for each estimate.
+
 Changing settings takes effect on **New table**, which starts a fresh game
 with the default rules and bots, seat one as the human, and fresh 100-chip
 stacks where applicable. **Pause** stops automatic bot actions; **Resume**
