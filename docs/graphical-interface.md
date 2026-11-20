@@ -38,9 +38,10 @@ You can swap your cards or fill in
 future cards to compare a what-if scenario, then reset to the captured hand.
 Scenario edits do not affect play.
 
-During your Blackjack turn, the legal moves and **Compare actions** sit below
-your cards. The comparison estimates the expected net profit in chips and the
-chance of finishing ahead for each available action.
+During your Blackjack turn, **Hit** and **Double** sit by the covered shoe.
+**Stand**, **Split**, and **Compare actions** sit by your active hand.
+**Double** and **Split** show the extra wager. The comparison estimates the
+expected net profit in chips and the chance of finishing ahead for each action.
 It samples unknown cards from the configured shoe and uses a baseline bot for
 any remaining player decisions. The comparison includes additional wagers
 from doubles or splits and shows the sampling interval for each estimate.

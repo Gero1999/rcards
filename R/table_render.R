@@ -70,11 +70,14 @@ table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL
   language <- view$language
   board_cards <- shiny::uiOutput("table_center_cards")
   own_cards <- shiny::uiOutput("table_own_cards",class="rc-own-zones")
-  if(view$game_type=="holdem") {
+  if(view$game_type %in% c("holdem","blackjack")) {
+    stock <- if(view$game_type=="holdem") table_stock_tag("stock","Deck",language,version) else
+      table_stock_tag("shoe","Shoe",language,version)
     board_cards <- shiny::tags$div(class="rc-board-layout",
-      shiny::tags$div(class="rc-board-cards",
-        table_stock_tag("stock","Deck",language,version),board_cards),
+      shiny::tags$div(class="rc-board-cards",stock,board_cards),
       board_controls)
+  }
+  if(view$game_type=="holdem") {
     own_cards <- shiny::tags$div(class="rc-hand-layout",own_cards,hand_controls)
     hand_controls <- NULL
   }
@@ -138,6 +141,12 @@ table_action_tag <- function(view,action,version,label=NULL,disabled=FALSE) {
 
 table_context_actions <- function(class,...) {
   shiny::tags$div(class=paste(class,"rc-context-controls"),shiny::tags$div(class="rc-actions",...))
+}
+
+table_blackjack_action_tag <- function(view,action,version,wager) {
+  key <- switch(action,double="Double +%s",split="Split +%s")
+  label <- if(!is.null(key)) ui(key,view$language,format(wager,trim=TRUE,scientific=FALSE))
+  table_action_tag(view,action,version,label=label)
 }
 
 table_render_controls <- function(view,version,paused=FALSE) {

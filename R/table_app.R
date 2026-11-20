@@ -76,6 +76,11 @@ table_app_server <- function(initial,initial_language) {
     selected <- shiny::reactiveVal(integer())
     lang <- shiny::reactive(console_language(if(is.null(input$language)) initial_language else input$language))
     view <- shiny::reactive(game_table_view(state()$game,state()$seat,lang()))
+    blackjack_wager <- shiny::reactive({
+      current <- state()
+      observation <- game_observation(current$game,current$seat)
+      observation$hands[[observation$active_hand]]$bet
+    })
     open_holdem_odds <- table_holdem_odds_server("holdem_odds",lang)
     report_error <- function(error) {
       current <- shiny::isolate(state());current$error <- conditionMessage(error);state(current)
@@ -188,18 +193,24 @@ table_app_server <- function(initial,initial_language) {
     })
     output$table <- shiny::renderUI({
       v <- view();current <- state();version <- current$version
-      contextual <- v$game_type=="holdem"
-      inline <- v$game_type %in% c("blackjack","liar")
+      contextual <- v$game_type %in% c("holdem","blackjack")
+      inline <- v$game_type=="liar"
       by_pile <- v$game_type=="liar" && identical(v$phase,"response") && v$your_turn
       board_controls <- NULL
       if(contextual) {
         actions <- if(!current$paused) v$legal$actions else character()
-        board_controls <- table_context_actions("rc-board-controls",
-          lapply(intersect(actions,c("check","call")),function(action) table_action_tag(v,action,version)),
-          if("raise" %in% actions) table_raise_control(v$legal,version,v$language))
-        hand_controls <- table_context_actions("rc-hand-controls",
-          if("fold" %in% actions) table_action_tag(v,"fold",version),
-          shiny::uiOutput("analysis_control"))
+        if(v$game_type=="holdem") {
+          board_controls <- table_context_actions("rc-board-controls",
+            lapply(intersect(actions,c("check","call")),function(action) table_action_tag(v,action,version)),
+            if("raise" %in% actions) table_raise_control(v$legal,version,v$language))
+          hand_controls <- table_context_actions("rc-hand-controls",
+            if("fold" %in% actions) table_action_tag(v,"fold",version),
+            shiny::uiOutput("analysis_control"))
+        } else {
+          board_controls <- table_context_actions("rc-board-controls",lapply(intersect(actions,c("hit","double")),
+            function(action) table_blackjack_action_tag(v,action,version,blackjack_wager())))
+          hand_controls <- NULL
+        }
         turn_controls <- NULL
       } else {
         turn_controls <- shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
@@ -218,9 +229,17 @@ table_app_server <- function(initial,initial_language) {
       table_render_center_cards(view(),state()$version,selected(),input$capture)
     })
     output$table_own_cards <- shiny::renderUI({
-      v <- view()
-      shiny::tagList(lapply(v$own,table_render_zone,version=state()$version,
-        selected=selected(),language=v$language))
+      v <- view();current <- state();version <- current$version
+      zones <- lapply(v$own,table_render_zone,version=version,selected=selected(),language=v$language)
+      if(v$game_type!="blackjack" || !v$your_turn) return(shiny::tagList(zones))
+      active <- v$legal$hand
+      actions <- if(!current$paused) intersect(v$legal$actions,c("stand","split")) else character()
+      shiny::tagList(shiny::tags$div(class="rc-hand-layout",
+        shiny::tags$div(class="rc-own-zones",zones[[active]]),
+        table_context_actions("rc-hand-controls",
+          lapply(actions,function(action) table_blackjack_action_tag(v,action,version,blackjack_wager())),
+          shiny::uiOutput("analysis_control"))),
+        zones[-active])
     })
     output$feedback <- shiny::renderUI({
       current <- state();v <- view()
