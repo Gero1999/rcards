@@ -82,20 +82,27 @@ table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL
     hand_controls <- NULL
   }
   opponents <- view$seats[!vapply(view$seats,`[[`,logical(1),"viewer")]
+  own_name <- view$seats[[view$viewer]]$name
   shiny::tags$section(class="rc-table",`aria-label`=ui("Card table",language),
     shiny::tags$div(class="rc-opponents",lapply(opponents,function(player) {
-      shiny::tags$section(class=paste("rc-seat",if(player$active) "rc-active-seat"),
-        shiny::tags$h2(player$name),shiny::tags$p(paste(player$details,collapse=" | ")),
+      shiny::tags$section(class=paste("rc-seat",if(player$active) "rc-active-seat"),`data-rc-seat`=player$seat,
+        shiny::tags$h2(player$name,if(player$seat %in% view$dealer) table_dealer_tag(language)),
+        shiny::tags$p(paste(player$details,collapse=" | ")),
         lapply(player$hands,table_render_zone,version=version,language=language))
     })),
     shiny::tags$div(class="rc-center",
       shiny::tags$h1(class="rc-game-title",names(table_game_names())[match(view$game_type,table_game_names())],
         if(!is.null(view$phase)) shiny::tags$small(ui(toupper(view$phase),language))),lapply(view$status,function(line) shiny::tags$p(class="rc-status",line)),
+      if(!is.null(view$pot)) table_pot_tag(view$pot,language),
       board_cards,
       pile_controls,
+      if(length(view$table_details)) shiny::tags$details(class="rc-table-details",
+        shiny::tags$summary(ui("Table details",language)),shiny::tags$p(view$table_details)),
       if(length(view$history)) shiny::tags$details(class="rc-history",shiny::tags$summary(ui("Recent actions",language)),
         shiny::tags$ol(lapply(view$history,shiny::tags$li)))),
-    shiny::tags$section(class="rc-own",shiny::tags$h2(paste0(view$seats[[view$viewer]]$name," / ",ui("Your cards",language))),
+    shiny::tags$section(class="rc-own",`data-rc-seat`=view$viewer,
+      shiny::tags$h2(if(view$game_type=="holdem") own_name else paste0(own_name," / ",ui("Your cards",language)),
+        if(view$viewer %in% view$dealer) table_dealer_tag(language)),
       shiny::tags$p(class="rc-own-details",paste(view$seats[[view$viewer]]$details,collapse=" | ")),
       own_cards,
       hand_controls))

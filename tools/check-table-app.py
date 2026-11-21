@@ -150,6 +150,8 @@ def run(args):
         board_controls = page.locator(".rc-board-controls")
         hand_controls = own.locator(".rc-hand-controls")
         action_control(board_controls.locator('[data-rc-action="call"]'), "call 1")
+        expect(page.locator(".rc-pot-display")).to_contain_text("3")
+        expect(own.locator(".rc-dealer-marker")).to_be_visible()
         fold = action_control(hand_controls.locator('[data-rc-action="fold"]'), "fold")
         odds = action_control(hand_controls.locator("#show_holdem_odds"), "Hand odds")
         raise_toggle = action_control(board_controls.locator("[data-rc-raise-toggle]"), "Raise")
@@ -229,8 +231,9 @@ def run(args):
         expect(page.locator("#pause_table")).to_have_text("Pause")
         expect(banner).not_to_be_visible()
         page.locator("#next_hand").click()
-        expect(page.locator(".rc-status").first).to_contain_text(
+        expect(page.locator(".rc-table-details")).to_contain_text(
             re.compile(r"Hand 2\s*\|\s*Dealer Bot 1\s*\|\s*Blinds 1 / 2"))
+        expect(page.locator(".rc-seat .rc-dealer-marker")).to_be_visible()
         expect(page.locator(".rc-error")).to_have_count(0)
         expect(banner).to_have_count(0)
         screenshot(page, "table-holdem-next-hand.png")

@@ -44,6 +44,10 @@ At settlement, a brief banner announces the Hold'em pot awards. **Next hand**
 stays available while the banner appears. Review the outcome in **Recent
 actions** or **Session history**.
 
+The chip stack by the board shows the pot. **Call** shows the cost of staying
+in, and your remaining stack is beside your hand. A dealer button marks the
+seat with the button. Hand number and blinds are under **Table details**.
+
 During your Blackjack turn, **Hit** and **Double** sit by the covered shoe.
 **Stand**, **Split**, and **Compare actions** sit by your active hand.
 **Double** and **Split** show the extra wager. The comparison estimates the

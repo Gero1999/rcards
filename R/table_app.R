@@ -205,8 +205,14 @@ table_app_server <- function(initial,initial_language) {
     })
     output$table <- shiny::renderUI({
       v <- view();current <- state();version <- current$version
-      if(v$game_type=="holdem" && v$hand_complete)
-        v$history <- c(v$history,table_result_text(current$game,v$language))
+      if(v$game_type=="holdem") {
+        observation <- game_observation(current$game,current$seat)
+        v$dealer <- observation$dealer
+        if(!v$hand_complete) v$pot <- observation$pot
+        v$table_details <- v$status[1L]
+        v$status <- character()
+        if(v$hand_complete) v$history <- c(v$history,table_result_text(current$game,v$language))
+      }
       contextual <- v$game_type %in% c("holdem","blackjack")
       inline <- v$game_type=="liar"
       by_pile <- v$game_type=="liar" && identical(v$phase,"response") && v$your_turn

@@ -151,7 +151,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
 .rc-app .btn.rc-primary,.rc-app .btn.rc-primary:hover,.rc-app .btn.rc-primary:focus{background:#f0cc81;color:#242d2d;border-color:#f0cc81}
 .rc-app .rc-footer .btn{background:transparent}.rc-center .rc-cards{row-gap:28px;padding-bottom:18px}
 .rc-game-title{font:26px Georgia,serif;color:var(--rc-gold);margin:0 0 15px}.rc-game-title small{font:11px system-ui,sans-serif;letter-spacing:1px;color:var(--rc-muted);margin-left:14px}
-.rc-own-details{font-size:12px;color:var(--rc-muted)}.rc-history{font-size:12px;color:var(--rc-muted);max-width:500px;margin:0 auto 18px}.rc-history summary{cursor:pointer}.rc-history ol{text-align:left;line-height:1.8}
+.rc-own-details{font-size:12px;color:var(--rc-muted)}:is(.rc-history,.rc-table-details){font-size:12px;color:var(--rc-muted);max-width:500px;margin:0 auto 18px}:is(.rc-history,.rc-table-details) summary{cursor:pointer}.rc-history ol{text-align:left;line-height:1.8}
 .rc-brand .rc-logo{display:block;width:96px;height:auto}.rc-header-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:flex-end}
 .rc-footer>.shiny-input-container{width:170px;margin:0}.rc-help-modal .modal-content{background:#182a36;color:#edf4ed;border:1px solid #54716c;border-radius:14px}
 .rc-help-modal .modal-header,.rc-help-modal .modal-footer{border-color:#476159}.rc-help-modal .close{color:#edf4ed;opacity:1}.rc-help-modal .modal-title{color:#f0cc81}
@@ -177,6 +177,63 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
 .rc-table .rc-analysis-button:hover, .rc-table .rc-analysis-button:focus-visible {
   background: #24483d;
   color: var(--rc-gold);
+}
+.rc-pot-display {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  max-width: 100%;
+  min-height: 34px;
+  margin: 4px auto 6px;
+  padding: 5px 12px;
+  border: 1px solid #628275;
+  border-radius: 999px;
+  background: #103a31;
+  color: var(--rc-gold);
+  text-transform: capitalize;
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.rc-chip-stack {
+  display: inline-block;
+  position: relative;
+  flex: none;
+  width: 26px;
+  height: 17px;
+}
+.rc-chip-stack::before, .rc-chip-stack::after {
+  position: absolute;
+  inset-inline: 0;
+  height: 12px;
+  border-radius: 50%;
+  content: "";
+}
+.rc-chip-stack::before {
+  bottom: 0;
+  border: 1px solid #f1c988;
+  background: #92593a;
+  box-shadow: 0 2px #583727;
+}
+.rc-chip-stack::after {
+  top: 0;
+  border: 2px dashed #ffdfaa;
+  background: #a54839;
+  box-shadow: inset 0 0 0 1px #7f3029;
+}
+.rc-dealer-marker {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-inline-start: 6px;
+  border: 1px solid #f7dca0;
+  border-radius: 50%;
+  background: var(--rc-gold);
+  color: var(--rc-bg);
+  font: 750 11px/1 system-ui, sans-serif;
+  vertical-align: middle;
 }
 .rc-board-layout, .rc-hand-layout {
   display: grid;
