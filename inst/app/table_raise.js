@@ -36,11 +36,6 @@
       opened.querySelector("#amount").focus();
       return;
     }
-    var cancel = event.target.closest("[data-rc-raise-cancel]");
-    if (cancel) {
-      close(cancel.closest("[data-rc-raise-editor]"));
-      return;
-    }
     var confirm = event.target.closest("[data-rc-raise-label]");
     if (!confirm) return;
     var editor = confirm.closest("[data-rc-raise-editor]");

@@ -28,6 +28,8 @@ German (`de`), and Italian (`it`) are selectable during play.
 During your Hold'em turn, **Call**, **Check**, and **Raise** sit beside the
 board and covered deck. Choose **Raise** to open the amount field and see its
 legal range, then use **Raise to** to confirm the total for the betting round.
+Choosing another legal move dismisses the pending raise. Press Escape in the
+editor to close it and return focus to **Raise**.
 **Fold** and **Hand odds** sit beside your hand. **Hand odds** opens a copy of
 your cards and the public board. Choose **Calculate odds**
 to see the chance of winning outright, tying for the best hand, or losing at

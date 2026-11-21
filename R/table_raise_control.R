@@ -20,7 +20,5 @@ table_raise_control <- function(legal, version, language) {
       shiny::tags$button(type = "button", class = "rc-action rc-raise-confirm",
         `data-rc-action` = "raise", `data-rc-version` = version,
         `data-rc-raise-label` = ui("Raise to %s", language), title = description,
-        table_button_content(ui("Raise to %s", language, minimum), details[[1L]])),
-      shiny::tags$button(type = "button", class = "rc-action rc-secondary rc-raise-cancel",
-        `data-rc-raise-cancel` = "", ui("Cancel", language))))
+        table_button_content(ui("Raise to %s", language, minimum), details[[1L]]))))
 }

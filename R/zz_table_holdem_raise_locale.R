@@ -23,13 +23,5 @@ locale_catalog <- c(locale_catalog, list(
     pt = "Total do aumento (de %s a %s)",
     zh = "\u52a0\u6ce8\u603b\u989d\uff08%s \u81f3 %s\uff09",
     `zh-Hant` = "\u52a0\u6ce8\u7e3d\u984d\uff08%s \u81f3 %s\uff09"
-  ),
-  "Cancel" = c(
-    es = "Cancelar",
-    de = "Abbrechen",
-    it = "Annulla",
-    pt = "Cancelar",
-    zh = "\u53d6\u6d88",
-    `zh-Hant` = "\u53d6\u6d88"
   )
 ))
