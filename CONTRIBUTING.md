@@ -1,6 +1,6 @@
-## Contributing to rcards
+## Contributing to cardgame
 
-Thank you for your interest in contributing to the rcards project! We welcome contributions of all kinds, including bug reports, feature requests, code improvements and documentation updates.
+Thank you for your interest in contributing to the cardgame project! We welcome contributions of all kinds, including bug reports, feature requests, code improvements and documentation updates.
 
 ### How to Contribute
 

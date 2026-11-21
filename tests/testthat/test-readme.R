@@ -1,5 +1,5 @@
 test_that("the README quick start runs through the public API", {
-  script <- system.file("examples", "getting-started.R", package = "rcards")
+  script <- system.file("examples", "getting-started.R", package = "cardgame")
   code <- readLines(script)
   readme_path <- testthat::test_path("..", "..", "README.md")
   if (file.exists(readme_path)) {

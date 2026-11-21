@@ -5,6 +5,7 @@ eq_hand <- function(text) {
 
 test_that("exact poker equity handles board ties and known opposing hands", {
   result <- poker_equity(eq_hand("2h 3d"),eq_hand("Ts Js Qs Ks As"),method="exact")
+  expect_s3_class(result,"rcards_estimate")
   expect_equal(result$method,"exact")
   expect_equal(result$estimates$estimate,c(0,1,0,0.5))
   expect_true(all(result$estimates$standard_error==0))

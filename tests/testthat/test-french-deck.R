@@ -7,7 +7,7 @@ test_that("deck construction is generic and empty by default", {
 
 test_that("French data contains 52 standard cards and two optional jokers", {
   e <- new.env()
-  data("deck_french", package = "rcards", envir = e)
+  data("deck_french", package = "cardgame", envir = e)
   french <- e$deck_french
   standard <- deck(cards = attr(french, "main_cards"))
   expect_length(standard, 52)

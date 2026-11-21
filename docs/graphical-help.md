@@ -9,7 +9,7 @@ The Help button opens an accessible dialog with three sections:
 
 - An explanation of local human-versus-bot play, legal controls, and session resets.
 - Instructions for the game currently at the table, including its continuation controls.
-- Links to report bugs or propose a game in the rcards GitHub repository.
+- Links to report bugs or propose a game in the `Gero1999/rcards` GitHub repository.
 
 Instructions follow the app's selected English, Spanish, German, or Italian
 language. Game selection for a future table does not change the help until that

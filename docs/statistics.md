@@ -91,7 +91,7 @@ Blackjack profit and Scopa action estimates currently use rollouts; exact
 Blackjack dynamic programming and learned opponent ranges are future work.
 
 An optional local benchmark is installed at `benchmarks/statistics.R`. Run
-`source(system.file("benchmarks", "statistics.R", package="rcards"))` to compare
+`source(system.file("benchmarks", "statistics.R", package="cardgame"))` to compare
 small exact/sample/rollout workloads. It reports elapsed seconds and evaluated
 samples/runs; these workloads differ and are not interchangeable accuracy tests.
 No network calls or extra benchmark packages are used. For bots that retain

@@ -4,8 +4,8 @@ Install `shiny` separately; it is an optional suggested dependency. From an
 installed package or a checkout loaded with `pkgload::load_all()`:
 
 ```r
-rcards::play_app()  # default: one Hold'em hand, You versus a bot
-rcards::play_app(rcards::scopa_game(seed = 42), language = "it")
+cardgame::play_app()  # default: one Hold'em hand, You versus a bot
+cardgame::play_app(cardgame::scopa_game(seed = 42), language = "it")
 ```
 
 The browser uses a shared felt table, face-up own cards, covered opponents,
@@ -138,14 +138,14 @@ Custom controllers run as trusted R code. Use `launch = FALSE` to obtain the
 Shiny application object for local testing or a custom local launch:
 
 ```r
-app <- rcards::play_app(launch = FALSE)
+app <- cardgame::play_app(launch = FALSE)
 shiny::runApp(app, host = "127.0.0.1", port = 8765, launch.browser = FALSE)
 ```
 
 Console play and automated simulations keep their existing interfaces. The
 optional app adds no work to either path.
 
-The header displays the original rcards logo. **Help** opens instructions for
+The header displays the original hex logo. **Help** opens instructions for
 the game actually at the table, an app overview, and links to report bugs or
 suggest games. It follows the selected language and leaves game state intact.
 See [in-app help](graphical-help.md) for details.
@@ -204,9 +204,9 @@ python tools/check-table-app.py --chromium /path/to/chromium
 
 The runner exercises all five game controls, Scopa move comparison, language
 switching, and a narrow mobile viewport. It accepts only a loopback app URL,
-blocks external HTTP requests, and reports browser errors. `--screenshots /tmp/rcards-preview`
-optionally saves local previews. It uses newly generated local games and
-does not require credentials or external services.
+blocks external HTTP requests, and reports browser errors.
+`--screenshots /tmp/cardgame-preview` optionally saves local previews. It uses
+newly generated local games and does not require credentials or external services.
 
 ## Session scoreboard
 

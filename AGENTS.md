@@ -1,4 +1,4 @@
-# rcards development
+# cardgame development
 
 Use the existing task checkout. Do not create a worktree unless requested.
 

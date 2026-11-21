@@ -6,6 +6,7 @@ test_that("help selects the current game and every supported language", {
     text <- table_help_text(language)
     expect_named(text,names(table_help_text("en")))
     expect_equal(text$help,unname(labels[language]))
+    expect_match(text$about_title,"cardgame",fixed=TRUE)
     expect_setequal(names(text$games),games)
     for(type in games) {
       html <- as.character(table_help_dialog(list(game_type=type),language))
@@ -49,7 +50,7 @@ test_that("the app brand embeds the original logo without network or font depend
   skip_if_not_installed("shiny")
   brand <- table_brand_tag()
   image <- brand$children[[1]]
-  expect_equal(image$attribs$alt,"rcards")
+  expect_equal(image$attribs$alt,"cardgame")
   expect_match(image$attribs$src,"^data:image/svg\\+xml;charset=UTF-8,")
   svg <- utils::URLdecode(sub("^data:image/svg\\+xml;charset=UTF-8,","",image$attribs$src))
   expect_match(svg,"rcards logo",fixed=TRUE)

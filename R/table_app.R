@@ -53,9 +53,9 @@ table_game_names <- function() c("Texas Hold'em"="holdem","Mus"="mus","Blackjack
 
 table_app_ui <- function(initial,language) {
   type <- game_table_view(initial$game,initial$seat)$game_type
-  assets <- system.file("app",package="rcards")
+  assets <- system.file("app",package="cardgame")
   shiny::fluidPage(
-    shiny::tags$head(shiny::tags$title("rcards | Card table"),
+    shiny::tags$head(shiny::tags$title("cardgame | Card table"),
       shiny::includeCSS(file.path(assets,"table.css")),shiny::includeScript(file.path(assets,"table.js")),
       shiny::includeScript(file.path(assets,"table_raise.js")),
       shiny::includeScript(file.path(assets,"table_events.js")),

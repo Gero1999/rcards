@@ -1,4 +1,4 @@
-# Run from the repository root after loading rcards.
+# Run from the repository root after loading cardgame.
 # French deck values and suits.
 card_values <- c("A", as.character(2:10), "J", "Q", "K")
 card_suits <- c("Hearts", "Diamonds", "Clubs", "Spades")

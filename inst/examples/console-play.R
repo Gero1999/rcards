@@ -1,10 +1,10 @@
 # Source this file in an interactive R session to play one hand against a bot.
 # Batch scripts can use play() with policy functions or injected console callbacks.
 if (interactive()) {
-  players <- list(rcards::player("You", points = 100),
-                  rcards::player("Bot", points = 100))
-  played <- rcards::play(
-    rcards::holdem_hand(players, seed = 42),
-    list(rcards::console_player(), rcards::poker_bot(seed = 1))
+  players <- list(cardgame::player("You", points = 100),
+                  cardgame::player("Bot", points = 100))
+  played <- cardgame::play(
+    cardgame::holdem_hand(players, seed = 42),
+    list(cardgame::console_player(), cardgame::poker_bot(seed = 1))
   )
 }

@@ -3,13 +3,13 @@
 ## No-limit Texas Hold'em
 
 ```r
-players <- list(rcards::player("Alice", points = 100),
-                rcards::player("Bob", points = 100))
-hand <- rcards::holdem_hand(players, seed = 42)
+players <- list(cardgame::player("Alice", points = 100),
+                cardgame::player("Bob", points = 100))
+hand <- cardgame::holdem_hand(players, seed = 42)
 while (!hand$complete) {
-  legal <- rcards::holdem_legal_actions(hand)
+  legal <- cardgame::holdem_legal_actions(hand)
   action <- if ("check" %in% legal$actions) "check" else "call"
-  hand <- rcards::holdem_action(hand, action)
+  hand <- cardgame::holdem_action(hand, action)
 }
 hand$payouts
 ```
@@ -36,11 +36,11 @@ standard error. Opponents are modeled with uniform random holdings, not inferred
 ranges. Increasing the sampling budget improves precision at a runtime cost.
 
 ```r
-bots <- list(rcards::poker_bot(risk = 0.4, adaptability = 0.2,
+bots <- list(cardgame::poker_bot(risk = 0.4, adaptability = 0.2,
                               variation = 0.05, equity_samples = 128, seed = 1),
-             rcards::poker_bot(risk = 0.7, adaptability = 0.4,
+             cardgame::poker_bot(risk = 0.7, adaptability = 0.4,
                               variation = 0.1, equity_samples = 128, seed = 2))
-result <- rcards::simulate_poker_game(players, bots, hands = 3, seed = 42)
+result <- cardgame::simulate_poker_game(players, bots, hands = 3, seed = 42)
 result$net_chips
 ```
 
@@ -65,11 +65,11 @@ Custom policy functions can replace bots and receive only the safe observation.
 ## Configurable Mus
 
 ```r
-game <- rcards::mus_game(c("Alice", "Bob", "Carol", "Dan"),
-                        rules = rcards::mus_rules(kings = 8, points_to_win = 40),
+game <- cardgame::mus_game(c("Alice", "Bob", "Carol", "Dan"),
+                        rules = cardgame::mus_rules(kings = 8, points_to_win = 40),
                         seed = 42)
-game <- rcards::mus_action(game, "cut")
-while (!game$hand_complete) game <- rcards::mus_action(game, "pass")
+game <- cardgame::mus_action(game, "cut")
+while (!game$hand_complete) game <- cardgame::mus_action(game, "pass")
 game$scores
 ```
 
@@ -113,7 +113,7 @@ the game before pending wagers settle. Reaching the target ends the game. Otherw
 ## English and Spanish displays
 
 ```r
-rcards::translate_card(rcards::card("A", "Spades"), "es")$display
+cardgame::translate_card(cardgame::card("A", "Spades"), "es")$display
 # "As de Picas ..." followed by the spade symbol
 ```
 

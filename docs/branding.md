@@ -2,10 +2,11 @@
 
 ## Logo
 
-[`man/figures/logo.svg`](../man/figures/logo.svg) was created for rcards from
-simple geometric paths, rectangles, and circles. An AI-assisted visual concept
-informed the design; the committed asset is editable SVG source. The navy,
-green, gold, and ivory palette follows the package's graphical table.
+[`man/figures/logo.svg`](../man/figures/logo.svg) was created for the package
+under its original name, `rcards`, from simple geometric paths, rectangles,
+and circles. An AI-assisted visual concept informed the design. The committed
+asset is editable SVG source. The navy, green, gold, and ivory palette follows
+the package's graphical table.
 
 The mark combines three cards: `r` on the left, a spade with a gold diamond in
 the middle, and `cards` on the right. The lettering is drawn directly as
@@ -20,7 +21,7 @@ Keep that copy byte-for-byte identical when updating the logo.
 ## Table preview
 
 [`man/figures/table-scopa.png`](../man/figures/table-scopa.png) is a screenshot
-of the rcards local Shiny interface with a seeded three-player Scopa game.
+of the local Shiny interface with a seeded three-player Scopa game.
 The player names and cards are generated demonstration data. The screenshot
 contains the app's own HTML/CSS card faces and backs.
 

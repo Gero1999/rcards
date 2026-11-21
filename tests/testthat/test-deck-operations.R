@@ -1,6 +1,6 @@
 test_french_deck <- function(include_optional = FALSE, language = "en") {
   e <- new.env()
-  data("deck_french", package = "rcards", envir = e)
+  data("deck_french", package = "cardgame", envir = e)
   deck(cards = attr(e$deck_french, "main_cards"),
        optional_cards = attr(e$deck_french, "optional_cards"),
        language = language, include_optional = include_optional)
@@ -58,7 +58,7 @@ test_that("returning an optional card preserves its classification", {
   expect_length(attr(returned$deck, "main_cards"), 0)
 })
 
-test_that("rcards tables do not replace base table printing", {
-  expect_s3_class(rcards::table(), "rcards_table")
+test_that("cardgame tables retain their class and do not replace base table printing", {
+  expect_s3_class(cardgame::table(), "rcards_table")
   expect_output(print(base::table(c("a", "a"))), "2")
 })

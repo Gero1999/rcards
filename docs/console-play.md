@@ -12,12 +12,12 @@ constructor remains a general container; it does not implement particular rules.
 Run in an interactive R session:
 
 ```r
-players <- list(rcards::player("You", points = 100),
-                rcards::player("Bot", points = 100))
-played <- rcards::play(
-  rcards::holdem_hand(players, seed = 42),
-  list(rcards::console_player(),
-       rcards::poker_bot(risk = 0.6, equity_samples = 128, seed = 1))
+players <- list(cardgame::player("You", points = 100),
+                cardgame::player("Bot", points = 100))
+played <- cardgame::play(
+  cardgame::holdem_hand(players, seed = 42),
+  list(cardgame::console_player(),
+       cardgame::poker_bot(risk = 0.6, equity_samples = 128, seed = 1))
 )
 ```
 
@@ -52,11 +52,11 @@ locally, without network or API calls.
 ## Four-player Mus
 
 ```r
-mus <- rcards::mus_game(c("Alice", "Bob", "Carol", "Dan"),
-                       rules = rcards::mus_rules(kings = 8, points_to_win = 40),
+mus <- cardgame::mus_game(c("Alice", "Bob", "Carol", "Dan"),
+                       rules = cardgame::mus_rules(kings = 8, points_to_win = 40),
                        seed = 42)
-controllers <- rep(list(rcards::console_player(language = "es")), 4)
-played <- rcards::play(mus, controllers)
+controllers <- rep(list(cardgame::console_player(language = "es")), 4)
+played <- cardgame::play(mus, controllers)
 ```
 
 The active seat gets its own four cards, partner, mano, phase, score, stake, and
@@ -80,10 +80,10 @@ played$result  # public summary
 played$game    # full engine state; do not pass this directly to a controller
 
 # Resume at the saved turn, preserving bot/policy state:
-played <- rcards::play(played$game, played$controllers)
+played <- cardgame::play(played$game, played$controllers)
 
 # Advance a finished Mus hand with retained scores:
-next_hand <- rcards::game_next_hand(played$game)
+next_hand <- cardgame::game_next_hand(played$game)
 ```
 
 `game_next_hand()` requires a finished Mus hand whose score target has not been
@@ -109,7 +109,7 @@ passive <- function(observation) {
 For a controller with its own memory:
 
 ```r
-counter <- rcards::policy_player(function(observation, state) {
+counter <- cardgame::policy_player(function(observation, state) {
   action <- if ("check" %in% observation$legal$actions) "check" else "call"
   list(decision = list(action = action), state = state + 1L)
 }, state = 0L)
@@ -131,7 +131,7 @@ The default reader requires interactive R and does not silently hang an Rscript.
 ```r
 inputs <- c("invalid", "q")
 index <- 0L
-human <- rcards::console_player(
+human <- cardgame::console_player(
   read = function(prompt) {
     index <<- index + 1L
     if (index > length(inputs)) return(character()) # EOF
@@ -178,12 +178,12 @@ adds a compact suit-name legend. Simulation results remain structured objects.
 ## One human with three Mus bots
 
 ```r
-game <- rcards::mus_game(c("You", "Opponent bot", "Partner bot", "Other bot"),
-                        rules = rcards::mus_rules(kings = 8, points_to_win = 40),
+game <- cardgame::mus_game(c("You", "Opponent bot", "Partner bot", "Other bot"),
+                        rules = cardgame::mus_rules(kings = 8, points_to_win = 40),
                         seed = 42)
-controllers <- c(list(rcards::console_player()),
-                 lapply(1:3, function(i) rcards::mus_bot(seed = i)))
-played <- rcards::play(game, controllers)
+controllers <- c(list(cardgame::console_player()),
+                 lapply(1:3, function(i) cardgame::mus_bot(seed = i)))
+played <- cardgame::play(game, controllers)
 ```
 
 Seat 3 is your partner; seats 2 and 4 are opponents. Use `until = "game"` to play
@@ -203,9 +203,9 @@ controller diagnostics fall back to English. See [language policy](languages.md)
 ## Blackjack
 
 ```r
-played <- rcards::play(
-  rcards::blackjack_game(list(rcards::player("You",points=100))),
-  list(rcards::console_player(language="it"))
+played <- cardgame::play(
+  cardgame::blackjack_game(list(cardgame::player("You",points=100))),
+  list(cardgame::console_player(language="it"))
 )
 ```
 
@@ -216,10 +216,10 @@ This is one round, not a continuing casino session.
 ## Multiplayer Scopa
 
 ```r
-played <- rcards::play(
-  rcards::scopa_game(c("You","Bot 1","Partner","Bot 2")),
-  c(list(rcards::console_player(language="it")),
-    rep(list(rcards::scopa_bot()),3)),
+played <- cardgame::play(
+  cardgame::scopa_game(c("You","Bot 1","Partner","Bot 2")),
+  c(list(cardgame::console_player(language="it")),
+    rep(list(cardgame::scopa_bot()),3)),
   until="game"
 )
 ```
@@ -233,10 +233,10 @@ Two- and three-player games use the same interface with fewer controllers.
 ## Mentiroso (Liar)
 
 ```r
-played <- rcards::play(
-  rcards::liar_game(c("You","Bot 1","Bot 2")),
-  c(list(rcards::console_player(language="es")),
-    rep(list(rcards::liar_bot()),2))
+played <- cardgame::play(
+  cardgame::liar_game(c("You","Bot 1","Bot 2")),
+  c(list(cardgame::console_player(language="es")),
+    rep(list(cardgame::liar_bot()),2))
 )
 ```
 

@@ -1,20 +1,20 @@
 <p align="center">
-  <img src="man/figures/logo.svg" alt="rcards: r on the left card, a spade in the middle, and cards on the right, inside a hexagon" width="208" height="241">
+  <img src="man/figures/logo.svg" alt="cardgame hex logo with r on the left card, a spade in the middle, and cards on the right" width="208" height="241">
 </p>
 
-# rcards
+# cardgame
 
 **Play, simulate, and explore card games in R.**
 
 Take a seat at a card table, build a bot, or ask how likely a hand is to win.
-`rcards` brings five games, console and browser play, and statistical tools
+`cardgame` brings five games, console and browser play, and statistical tools
 into one R package.
 
 [Start playing](#start-playing) · [Games](#supported-games) ·
 [Statistics](#probabilities-and-simulations) · [Documentation](#documentation)
 
 <p align="center">
-  <img src="man/figures/table-scopa.png" alt="The rcards Scopa table with coin, cup, sword, and baton suit marks on the public cards and the human hand" width="960">
+  <img src="man/figures/table-scopa.png" alt="The cardgame Scopa table with coin, cup, sword, and baton suit marks on the public cards and the human hand" width="960">
 </p>
 
 *Scopa uses coin, cup, sword, and baton marks for the four Italian suits.*
@@ -27,7 +27,7 @@ in its root, and load the current source:
 ```r
 install.packages(c("pkgload", "testthat", "shiny"))  # once; omit shiny for console-only play
 pkgload::load_all(".")
-rcards::play_app()
+cardgame::play_app()
 ```
 
 Choose a game, player count, and language, then click **New table**. You play
@@ -63,9 +63,9 @@ With `pkgload` and `testthat` installed, load the checkout with
 with Italian prompts:
 
 ```r
-rcards::play_session(
-  rcards::blackjack_game(list(rcards::player("You", points = 100))),
-  list(rcards::console_player(language = "it"))
+cardgame::play_session(
+  cardgame::blackjack_game(list(cardgame::player("You", points = 100))),
+  list(cardgame::console_player(language = "it"))
 )
 ```
 
@@ -95,9 +95,9 @@ Start with a question about a hand. For example, estimate the showdown equity
 of suited ace–king against one uniformly random opponent:
 
 ```r
-hole <- list(rcards::card("A", "Spades"),
-             rcards::card("K", "Spades"))
-equity <- rcards::poker_equity(hole, n = 1000, seed = 42)
+hole <- list(cardgame::card("A", "Spades"),
+             cardgame::card("K", "Spades"))
+equity <- cardgame::poker_equity(hole, n = 1000, seed = 42)
 equity$estimates
 ```
 
@@ -108,7 +108,7 @@ and sampling uncertainty; more samples reduce sampling noise.
 For known outs, use exact counting instead of simulation:
 
 ```r
-rcards::draw_probability(successes = 9, remaining = 47, draws = 1)
+cardgame::draw_probability(successes = 9, remaining = 47, draws = 1)
 # 9 / 47: the chance of hitting one of nine outs on the next card
 ```
 
@@ -125,16 +125,16 @@ Build and deal a deck through the foundation API:
 
 ```r
 set.seed(42)
-utils::data("deck_french", package = "rcards", envir = environment())
-pack <- rcards::deck(cards = attr(deck_french, "main_cards"))
-pack <- rcards::shuffle(pack)
-alice <- rcards::player(name = "Alice")
+utils::data("deck_french", package = "cardgame", envir = environment())
+pack <- cardgame::deck(cards = attr(deck_french, "main_cards"))
+pack <- cardgame::shuffle(pack)
+alice <- cardgame::player(name = "Alice")
 
-dealt <- rcards::take_cards(alice, pack, n = 5)
+dealt <- cardgame::take_cards(alice, pack, n = 5)
 stopifnot(length(dealt$player$hand) == 5L, length(dealt$deck) == 47L)
 
 # Return two cards to the bottom of the remaining deck.
-returned <- rcards::leave_cards(dealt$player, dealt$deck, c(1, 2))
+returned <- cardgame::leave_cards(dealt$player, dealt$deck, c(1, 2))
 stopifnot(length(returned$player$hand) == 3L, length(returned$deck) == 49L)
 print(returned$player)
 print(returned$deck)
@@ -161,7 +161,7 @@ with two optional jokers; the Spanish main pack has 40 cards with optional
 | Extend the package | [Contributing](CONTRIBUTING.md) · [Game development guide](AGENTS.md) |
 | Reuse the artwork | [Asset provenance and license](docs/branding.md) |
 
-Use R help, such as `?rcards::play_app` or `?rcards::poker_equity`, for function
+Use R help, such as `?cardgame::play_app` or `?cardgame::poker_equity`, for function
 arguments. Runnable examples are installed under `examples/`, including
 `graphical-play.R`, `holdem.R`, `mus.R`, and `statistics.R`.
 
@@ -172,11 +172,11 @@ install.packages("testthat")  # once
 testthat::test_local()
 ```
 
-Build and check from the parent directory:
+Build and check from the parent directory of the `rcards` checkout:
 
 ```sh
 R CMD build rcards
-R CMD check --no-manual rcards_0.0.0.9000.tar.gz
+R CMD check --no-manual cardgame_0.0.0.9000.tar.gz
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the

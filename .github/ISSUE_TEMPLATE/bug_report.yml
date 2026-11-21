@@ -25,4 +25,4 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Include sessionInfo() and the installed rcards version or commit.
+      description: Include sessionInfo() and the installed cardgame version or commit.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Smoke-test a running, fresh rcards::play_app() with local browser traffic.
+"""Smoke-test a running, fresh cardgame::play_app() with local browser traffic.
 
 Requires Python Playwright and Chromium. Start the R app separately; this
 script never installs dependencies or launches a server. Optional screenshots
@@ -150,6 +150,8 @@ def run(args):
             expect(page.locator(".modal-backdrop")).to_have_count(0)
 
         # The brand embeds the original SVG; loading it must not request a CDN.
+        expect(page).to_have_title("cardgame | Card table")
+        expect(page.locator(".rc-logo")).to_have_attribute("alt", "cardgame")
         expect(page.locator(".rc-logo")).to_have_attribute("src", re.compile(r"^data:image/svg\+xml"))
         page.wait_for_function("document.querySelector('.rc-logo').complete && document.querySelector('.rc-logo').naturalWidth > 0")
         open_help("holdem")
@@ -500,7 +502,7 @@ def run(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", type=local_url, default="http://127.0.0.1:8765/",
-                        help="Fresh default rcards app; loopback addresses only")
+                        help="Fresh default cardgame app; loopback addresses only")
     parser.add_argument("--chromium", help="Optional Chromium executable path")
     parser.add_argument("--screenshots", help="Optional output directory for screenshots")
     run(parser.parse_args())
