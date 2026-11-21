@@ -253,7 +253,7 @@ def run(args):
         expect(page.locator('.rc-own [data-zone="hand"] .rc-card')).to_have_count(2)
 
         new_table("blackjack", 1, 1, "Blackjack")
-        stand = own.locator('[data-rc-action="stand"]')
+        stand = hand_controls.locator('[data-rc-action="stand"]')
         # Look for a playable opening round even if a natural settles one.
         for attempt in range(4):
             stand.or_(page.locator("#next_hand")).first.wait_for(state="visible")
@@ -267,9 +267,18 @@ def run(args):
                 expect_action_applied(before)
         viewport = page.viewport_size
         page.set_viewport_size({"width": 390, "height": 844})
-        action_control(own.locator('[data-rc-action="hit"]'), "hit")
+        shoe = page.locator('.rc-board-cards .rc-stock[data-zone="shoe"]')
+        expect(shoe).to_be_visible()
+        expect(shoe.locator(".rc-rank, .rc-suit")).to_have_count(0)
+        action_control(board_controls.locator('[data-rc-action="hit"]'), "hit")
+        double = board_controls.locator('[data-rc-action="double"]')
+        if page.locator('[data-rc-action="double"]').count():
+            action_control(double, "double")
         action_control(stand, "stand")
-        odds = action_control(own.locator("#show_blackjack_odds"), "Compare actions")
+        split = hand_controls.locator('[data-rc-action="split"]')
+        if page.locator('[data-rc-action="split"]').count():
+            action_control(split, "split")
+        odds = action_control(hand_controls.locator("#show_blackjack_odds"), "Compare actions")
         if not own.evaluate("(hand) => hand.scrollWidth <= hand.clientWidth"):
             raise AssertionError("Blackjack hand controls have horizontal overflow on mobile")
         before = version()
