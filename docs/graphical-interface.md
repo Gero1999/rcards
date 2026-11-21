@@ -25,8 +25,11 @@ German (`de`), and Italian (`it`) are selectable during play.
 | Scopa | Two or three individual players; four in teams | Select one own card, then a numbered capture option. Table positions and the chosen capture are highlighted. |
 | Mentiroso | 2–8 seats, Spanish pack | Select one or more own cards and a declared rank, or pass/challenge when allowed. Only a challenged batch is revealed. |
 
-During your Hold'em turn, betting controls sit below your hand. **Hand odds**
-opens a copy of your cards and the public board. Choose **Calculate odds**
+During your Hold'em turn, **Call**, **Check**, and **Raise** sit beside the
+board and covered deck. Choose **Raise** to open the amount field and see its
+legal range, then use **Raise to** to confirm the total for the betting round.
+**Fold** and **Hand odds** sit beside your hand. **Hand odds** opens a copy of
+your cards and the public board. Choose **Calculate odds**
 to see the chance of winning outright, tying for the best hand, or losing at
 showdown. Unknown opposing hands and
 future board cards are drawn uniformly. The flush result gives the chance

@@ -54,11 +54,30 @@ table_render_center_cards <- function(view,version,selected,capture) {
     index <- table_capture_index(capture,selected);options<-view$legal$captures[[selected]]
     if(!is.null(index) && index>=1 && index<=length(options)) highlight <- options[[index]]
   }
-  lapply(view$center,table_render_zone,version=version,highlight=highlight,language=language)
+  zones <- view$center
+  if(view$game_type=="holdem") zones <- Filter(function(zone) length(zone$cards)>0L,zones)
+  lapply(zones,table_render_zone,version=version,highlight=highlight,language=language)
 }
 
-table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL) {
+table_stock_tag <- function(zone,label,language,version) {
+  shiny::tags$div(class="rc-stock",`data-zone`=zone,
+    shiny::tags$h3(ui(label,language)),
+    shiny::tags$div(class="rc-stock-back",`aria-hidden`="true",
+      table_card_tag(list(back=TRUE),1L,zone,version,language=language)))
+}
+
+table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL,board_controls=NULL) {
   language <- view$language
+  board_cards <- shiny::uiOutput("table_center_cards")
+  own_cards <- shiny::uiOutput("table_own_cards",class="rc-own-zones")
+  if(view$game_type=="holdem") {
+    board_cards <- shiny::tags$div(class="rc-board-layout",
+      shiny::tags$div(class="rc-board-cards",
+        table_stock_tag("stock","Deck",language,version),board_cards),
+      board_controls)
+    own_cards <- shiny::tags$div(class="rc-hand-layout",own_cards,hand_controls)
+    hand_controls <- NULL
+  }
   opponents <- view$seats[!vapply(view$seats,`[[`,logical(1),"viewer")]
   shiny::tags$section(class="rc-table",`aria-label`=ui("Card table",language),
     shiny::tags$div(class="rc-opponents",lapply(opponents,function(player) {
@@ -69,13 +88,13 @@ table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL
     shiny::tags$div(class="rc-center",
       shiny::tags$h1(class="rc-game-title",names(table_game_names())[match(view$game_type,table_game_names())],
         if(!is.null(view$phase)) shiny::tags$small(ui(toupper(view$phase),language))),lapply(view$status,function(line) shiny::tags$p(class="rc-status",line)),
-      shiny::uiOutput("table_center_cards"),
+      board_cards,
       pile_controls,
       if(length(view$history)) shiny::tags$details(class="rc-history",shiny::tags$summary(ui("Recent actions",language)),
         shiny::tags$ol(lapply(view$history,shiny::tags$li)))),
     shiny::tags$section(class="rc-own",shiny::tags$h2(paste0(view$seats[[view$viewer]]$name," / ",ui("Your cards",language))),
       shiny::tags$p(class="rc-own-details",paste(view$seats[[view$viewer]]$details,collapse=" | ")),
-      shiny::uiOutput("table_own_cards",class="rc-own-zones"),
+      own_cards,
       hand_controls))
 }
 
@@ -103,6 +122,24 @@ table_action_details <- function(game_type,action) {
       challenge=c("magnifying-glass","Challenge the latest claim.")))
 }
 
+table_action_tag <- function(view,action,version,label=NULL,disabled=FALSE) {
+  language <- view$language
+  details <- table_action_details(view$game_type,action)
+  if(is.null(label)) {
+    label <- action_label(action,language)
+    if(action=="call") label <- paste(label,view$legal$to_call)
+    if(length(details)) label <- paste0(toupper(substr(label,1L,1L)),substring(label,2L))
+  }
+  shiny::tags$button(type="button",class=paste("rc-action",if(action %in% c("fold","reject","challenge")) "rc-secondary"),
+    `data-rc-action`=action,`data-rc-version`=version,disabled=if(disabled) "disabled",
+    title=if(length(details)) ui(details[[2L]],language),
+    if(length(details)) table_button_content(label,details[[1L]]) else label)
+}
+
+table_context_actions <- function(class,...) {
+  shiny::tags$div(class=paste(class,"rc-context-controls"),shiny::tags$div(class="rc-actions",...))
+}
+
 table_render_controls <- function(view,version,paused=FALSE) {
   language <- view$language
   if(view$hand_complete) return(shiny::tags$p(ui("Review the result, then continue or start a new table.",language)))
@@ -112,29 +149,14 @@ table_render_controls <- function(view,version,paused=FALSE) {
   shiny::tagList(
     if(view$selection_limit>0 && view$game_type!="liar")
       shiny::tags$p(ui("Select your cards, then choose an action.",language)),
-    if(any(c("raise","bet") %in% legal$actions)) {
-      poker <- view$game_type=="holdem"
-      minimum <- if(poker) legal$min_raise_to else legal$min_stake
-      shiny::numericInput("amount",ui(if(poker) "Raise TO total this betting round" else "Total stake",language),
-        value=minimum,min=minimum,max=if(poker) legal$max_raise_to else NA,step=1)
-    },
-    if(view$game_type=="holdem" && "raise" %in% legal$actions)
-      shiny::tags$p(class="rc-help",ui("Total includes chips already in this round; enter the new total, not extra chips.",language)),
+    if(any(c("raise","bet") %in% legal$actions))
+      shiny::numericInput("amount",ui("Total stake",language),value=legal$min_stake,min=legal$min_stake,step=1),
     if(view$game_type=="liar" && "claim" %in% legal$actions)
       shiny::selectInput("rank",ui("Declared rank",language),choices=if(length(legal$ranks)>1L)
         c(stats::setNames("",ui("choose a rank",language)),stats::setNames(legal$ranks,legal$ranks)) else legal$ranks,
         selected=if(length(legal$ranks)==1L) legal$ranks else "",selectize=FALSE),
     if(view$game_type=="scopa") shiny::uiOutput("capture_controls"),
-    shiny::tags$div(class="rc-actions",lapply(legal$actions,function(action) {
-      label <- action_label(action,language)
-      if(action=="call") label <- paste(label,legal$to_call)
-      details <- table_action_details(view$game_type,action)
-      if(length(details)) label <- paste0(toupper(substr(label,1L,1L)),substring(label,2L))
-      shiny::tags$button(type="button",class=paste("rc-action",if(action %in% c("fold","reject","challenge")) "rc-secondary"),
-        `data-rc-action`=action,`data-rc-version`=version,
-        title=if(length(details)) ui(details[[2L]],language),
-        if(length(details)) table_button_content(label,details[[1L]]) else label)
-    })))
+    shiny::tags$div(class="rc-actions",lapply(legal$actions,function(action) table_action_tag(view,action,version))))
 }
 
 # Bind capture values to their selected hand position so an old radio value
