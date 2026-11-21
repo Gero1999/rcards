@@ -172,6 +172,8 @@ def run(args):
         odds = action_control(hand_controls.locator("#show_holdem_odds"), "Hand odds")
         raise_toggle = action_control(board_controls.locator("[data-rc-raise-toggle]"), "Raise")
         expect(page.locator(".rc-seat .rc-back")).to_have_count(2)
+        expect(page.locator(".rc-seat-hands-covered .rc-back:visible")).to_have_count(2)
+        expect(page.locator(".rc-seat-summary:visible")).to_have_count(0)
         stock = page.locator('.rc-stock[data-zone="stock"]')
         expect(stock).to_be_visible()
         expect(stock.locator(".rc-rank, .rc-suit")).to_have_count(0)
@@ -204,6 +206,9 @@ def run(args):
 
         viewport = page.viewport_size
         page.set_viewport_size({"width": 390, "height": 844})
+        expect(page.locator(".rc-seat-summary .rc-seat-count")).to_have_text("2 cards")
+        expect(page.locator(".rc-seat-summary")).to_be_visible()
+        expect(page.locator(".rc-seat-hands-covered")).not_to_be_visible()
         raise_toggle.click()
         expect(amount).to_have_value("4")
         amount.fill("8")
@@ -224,6 +229,23 @@ def run(args):
         expect(page.locator('[data-zone="board"] .rc-card')).to_have_count(3)
         page.wait_for_function("window.tableMotion.dealt === 3")
         expect(page.locator('[data-rc-motion="deal"]')).to_have_count(0)
+
+        # The compact display must still show both opposing cards at showdown.
+        page.set_viewport_size({"width": 390, "height": 844})
+        passive = board_controls.locator('[data-rc-action="call"], [data-rc-action="check"]')
+        next_hand = page.locator("#next_hand")
+        for _ in range(5):
+            expect(passive.or_(next_hand).first).to_be_visible()
+            if next_hand.is_visible():
+                break
+            before = version()
+            passive.click()
+            expect_action_applied(before)
+        expect(next_hand).to_be_visible()
+        revealed = page.locator(".rc-seat .rc-card:not(.rc-back):visible")
+        expect(revealed).to_have_count(2)
+        expect(page.locator(".rc-seat-summary")).to_have_count(0)
+        page.set_viewport_size(viewport)
 
         # Reset the session so the independent Fold path starts from the same blinds.
         page.reload(wait_until="networkidle")
@@ -397,10 +419,26 @@ def run(args):
         open_help("liar")
         close_help()
 
+        # Three covered opponents keep their names, counts, and active seat on mobile.
+        before = version()
+        new_table("liar", 4, 7, "Mentiroso")
+        expect_action_applied(before)
+        opponents = page.locator(".rc-opponents .rc-seat")
+        expect(opponents.locator("h2")).to_have_text(["Bot 1", "Bot 2", "Bot 3"])
+        expect(opponents.locator(".rc-seat-hands-covered .rc-back:visible")).to_have_count(30)
+        expect(opponents.locator(".rc-seat-summary:visible")).to_have_count(0)
+        page.set_viewport_size({"width": 390, "height": 844})
+        summaries = opponents.locator(".rc-seat-summary:visible")
+        expect(summaries).to_have_count(3)
+        expect(summaries.locator(".rc-seat-count")).to_have_text(["10 cards"] * 3)
+        expect(summaries.locator(".rc-seat-fan[aria-hidden=true] .rc-seat-back")).to_have_count(6)
+        expect(opponents.locator(".rc-seat-hands-covered:visible")).to_have_count(0)
+        expect(opponents.locator(".rc-rank, .rc-suit")).to_have_count(0)
+
         page.select_option("#language", "it")
         expect(page.locator('label[for="language"]')).to_have_text("Lingua")
         expect(page.locator("#show_help")).to_have_text("Aiuto")
-        page.set_viewport_size({"width": 390, "height": 844})
+        expect(summaries.locator(".rc-seat-count")).to_have_text(["10 carte"] * 3)
         expect(page.locator(".rc-app")).to_be_visible()
         if not page.evaluate("document.documentElement.scrollWidth <= window.innerWidth"):
             raise AssertionError("Mobile viewport has horizontal overflow")
@@ -413,6 +451,21 @@ def run(args):
             raise AssertionError("Mobile Help dialog extends beyond the viewport")
         screenshot(page, "table-mobile-help.png")
         close_help()
+
+        # Observe the first responder before the automatic bot timer advances.
+        page.evaluate("""() => {
+          const observer = new MutationObserver(() => {
+            const active = document.querySelector('.rc-seat.rc-active-seat .rc-seat-summary');
+            if (!active || !active.getBoundingClientRect().width) return;
+            window.firstMobileOpponent = active.closest('.rc-seat').dataset.rcSeat;
+            observer.disconnect();
+          });
+          observer.observe(document.querySelector('#table'), {childList: true, subtree: true});
+        }""")
+        rank.select_option(card.locator(".rc-rank").first.inner_text().strip())
+        card.click()
+        claim.click()
+        page.wait_for_function("window.firstMobileOpponent === '2'")
 
         report = {"page_errors": errors, "console_errors": console_errors,
                   "failed_requests": failed, "blocked_external_requests": external}

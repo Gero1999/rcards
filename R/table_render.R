@@ -88,10 +88,18 @@ table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL
   shiny::tags$section(class="rc-table",`aria-label`=ui("Card table",language),`data-rc-hand`=view$motion_hand,
     `data-rc-board-size`=if(!is.null(view$motion_hand)) length(view$center[[1L]]$cards),
     shiny::tags$div(class="rc-opponents",lapply(opponents,function(player) {
+      cards <- if(length(player$hands)==1L) player$hands[[1L]]$cards
+      covered_count <- if(length(cards) && all(vapply(cards,function(card) isTRUE(card$back),logical(1)))) length(cards)
       shiny::tags$section(class=paste("rc-seat",if(player$active) "rc-active-seat"),`data-rc-seat`=player$seat,
         shiny::tags$h2(player$name,if(player$seat %in% view$dealer) table_dealer_tag(language)),
-        shiny::tags$p(paste(player$details,collapse=" | ")),
-        lapply(player$hands,table_render_zone,version=version,language=language))
+        shiny::tags$p(class=if(view$game_type=="liar") "rc-seat-detail-count",paste(player$details,collapse=" | ")),
+        shiny::tags$div(class=paste("rc-seat-hands",if(length(covered_count)) "rc-seat-hands-covered"),
+          lapply(player$hands,table_render_zone,version=version,language=language)),
+        if(length(covered_count)) shiny::tags$div(class="rc-seat-summary",
+          shiny::tags$span(class="rc-seat-fan",`aria-hidden`="true",
+            lapply(seq_len(min(2L,covered_count)),function(i) shiny::tags$span(class="rc-seat-back"))),
+          shiny::tags$span(class="rc-seat-count",if(covered_count==1L) ui("1 card",language) else
+            ui("%s cards",language,covered_count))))
     })),
     shiny::tags$div(class="rc-center",
       shiny::tags$h1(class="rc-game-title",names(table_game_names())[match(view$game_type,table_game_names())],

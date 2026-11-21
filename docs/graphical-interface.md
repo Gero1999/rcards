@@ -15,6 +15,10 @@ Spanish and Italian suits use local coin, cup, sword, and baton marks. There
 are no external image or API requests. English (`en`), Spanish (`es`),
 German (`de`), and Italian (`it`) are selectable during play.
 
+On narrow screens, covered opponent hands use a small fan of card backs and
+an exact card count. Revealed hands remain readable at showdown, and the
+active seat stays highlighted.
+
 ## Games and controls
 
 | Game | Default table options | Human controls |
