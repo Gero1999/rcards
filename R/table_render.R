@@ -155,15 +155,18 @@ table_render_controls <- function(view,version,paused=FALSE) {
   if(paused) return(shiny::tags$p(role="status",ui("Resume play first",language)))
   if(!view$your_turn) return(shiny::tags$p(ui("Bots are playing",language)))
   legal <- view$legal
+  if(view$game_type=="liar" && "claim" %in% legal$actions) {
+    rank <- if(length(legal$ranks)==1L) shiny::tags$span(class="rc-claim-rank",ui("Rank %s",language,legal$ranks)) else
+      shiny::selectInput("rank",ui("Declared rank",language),
+        choices=c(stats::setNames("",ui("choose a rank",language)),stats::setNames(legal$ranks,legal$ranks)),
+        selected="",selectize=FALSE)
+    return(shiny::tags$div(class="rc-claim-row",rank,shiny::uiOutput("claim_control")))
+  }
   shiny::tagList(
-    if(view$selection_limit>0 && view$game_type!="liar")
+    if(view$selection_limit>0)
       shiny::tags$p(ui("Select your cards, then choose an action.",language)),
     if(any(c("raise","bet") %in% legal$actions))
       shiny::numericInput("amount",ui("Total stake",language),value=legal$min_stake,min=legal$min_stake,step=1),
-    if(view$game_type=="liar" && "claim" %in% legal$actions)
-      shiny::selectInput("rank",ui("Declared rank",language),choices=if(length(legal$ranks)>1L)
-        c(stats::setNames("",ui("choose a rank",language)),stats::setNames(legal$ranks,legal$ranks)) else legal$ranks,
-        selected=if(length(legal$ranks)==1L) legal$ranks else "",selectize=FALSE),
     if(view$game_type=="scopa") shiny::uiOutput("capture_controls"),
     shiny::tags$div(class="rc-actions",lapply(legal$actions,function(action) table_action_tag(view,action,version))))
 }

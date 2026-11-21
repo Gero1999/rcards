@@ -307,17 +307,32 @@ def run(args):
         close_help()
 
         new_table("liar", 2, 7, "Mentiroso")
-        claim = action_control(own.locator('[data-rc-action="claim"]'), "claim")
-        rank = own.locator("#rank")
+        claim_row = own.locator(".rc-claim-row")
+        claim = action_control(claim_row.locator('[data-rc-action="claim"]'), "Claim")
+        expect(claim).to_be_disabled()
+        rank = claim_row.locator("#rank")
         card = own.locator('[data-rc-card="1"][data-rc-zone="hand"]')
         # A truthful claim ensures the other player leads the next claim.
         card_count = own.locator(".rc-card").count()
         rank_value = card.locator(".rc-rank").first.inner_text().strip()
-        rank.select_option(rank_value)
         card.press("Space")
         expect(card).to_have_attribute("aria-pressed", "true")
         expect(card).to_be_focused()
+        expect(claim).to_have_accessible_name("Claim 1 card")
+        expect(claim).to_be_disabled()
+        rank.select_option(rank_value)
+        expect(claim).to_be_enabled()
+        card.press("Space")
+        expect(card).to_have_attribute("aria-pressed", "false")
+        expect(claim).to_be_disabled()
         expect(rank).to_have_value(rank_value)
+        card.press("Space")
+        expect(claim).to_have_accessible_name("Claim 1 card")
+        expect(claim).to_be_enabled()
+        viewport = page.viewport_size
+        page.set_viewport_size({"width": 390, "height": 844})
+        if not claim_row.evaluate("(row) => row.scrollWidth <= row.clientWidth"):
+            raise AssertionError("Mentiroso claim controls have horizontal overflow on mobile")
         before = version()
         claim.click()
         expect_action_applied(before)
@@ -334,6 +349,7 @@ def run(args):
         expect_action_applied(before)
         expect(page.locator(".rc-history")).to_contain_text("You / challenge")
         expect(center.locator('[data-zone="reveal"] .rc-card').first).to_be_visible()
+        page.set_viewport_size(viewport)
         open_help("liar")
         close_help()
 
@@ -360,7 +376,7 @@ def run(args):
         browser.close()
         if any(report.values()):
             raise AssertionError("Browser reported errors or attempted non-local traffic")
-        print("Passed: five games, card-adjacent actions, three analysis dialogs, Mentiroso responses, continued poker/Blackjack, logo, contextual Help, languages and mobile layout.")
+        print("Passed: five games, board and hand action placement, Raise confirmation, three analysis dialogs, Mentiroso responses, continued poker/Blackjack, logo, contextual Help, languages and mobile layout.")
 
 
 if __name__ == "__main__":

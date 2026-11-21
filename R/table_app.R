@@ -213,8 +213,10 @@ table_app_server <- function(initial,initial_language) {
         }
         turn_controls <- NULL
       } else {
-        turn_controls <- shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
-          shiny::uiOutput("controls"),shiny::uiOutput("analysis_control"))
+        claiming <- inline && !current$paused && "claim" %in% v$legal$actions
+        turn_controls <- if(claiming) shiny::uiOutput("controls") else
+          shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
+            shiny::uiOutput("controls"),shiny::uiOutput("analysis_control"))
         hand_controls <- if(inline && !by_pile) turn_controls
       }
       shiny::tagList(
@@ -251,9 +253,7 @@ table_app_server <- function(initial,initial_language) {
       v <- view()
       if(v$selection_limit==0 || !v$your_turn) return(NULL)
       count <- length(selected())
-      text <- if(v$game_type=="liar" && count==0)
-        ui("Select 1 to %s cards.",lang(),v$selection_limit) else
-        ui("Selected %s of %s cards",lang(),count,v$selection_limit)
+      text <- ui("Selected %s of %s cards",lang(),count,v$selection_limit)
       shiny::tags$p(role="status",`aria-live`="polite",text)
     })
     output$controls <- shiny::renderUI({
@@ -261,6 +261,15 @@ table_app_server <- function(initial,initial_language) {
       # erase what the player is typing. Only engine turn changes rebuild them.
       current <- state();language <- lang();v <- game_table_view(current$game,current$seat,language)
       table_render_controls(v,current$version,current$paused)
+    })
+    output$claim_control <- shiny::renderUI({
+      v <- view();current <- state()
+      if(v$game_type!="liar" || current$paused || !"claim" %in% v$legal$actions) return(NULL)
+      count <- length(selected())
+      rank_ready <- length(v$legal$ranks)==1L || isTRUE(input$rank %in% v$legal$ranks)
+      label <- if(count==1L) ui("Claim 1 card",v$language) else
+        if(count>1L) ui("Claim %s cards",v$language,count)
+      table_action_tag(v,"claim",current$version,label=label,disabled=count==0L || !rank_ready)
     })
     output$analysis_control <- shiny::renderUI({
       v <- view()

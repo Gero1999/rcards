@@ -177,7 +177,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
   justify-content: flex-start;
   gap: 8px;
 }
-.rc-table .rc-context-controls :is(.rc-action, .rc-analysis-button) {
+.rc-table :is(.rc-context-controls, .rc-claim-row) :is(.rc-action, .rc-analysis-button) {
   margin: 0;
   padding: 7px 11px;
   min-width: 44px;
@@ -216,7 +216,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
   border-color: var(--rc-gold);
   color: var(--rc-bg);
 }
-.rc-table .rc-context-controls :is(.rc-action, .rc-analysis-button, .form-control):focus-visible {
+.rc-table :is(.rc-context-controls, .rc-claim-row) :is(.rc-action, .rc-analysis-button, .form-control):focus-visible {
   outline: 3px solid var(--rc-gold);
   outline-offset: 3px;
 }
@@ -228,6 +228,36 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
   .rc-table .rc-context-controls .rc-actions, .rc-raise-editor { justify-content: center; }
   .rc-raise-editor .rc-raise-range { text-align: center; }
   .rc-raise-editor .rc-raise-amount { font-size: 16px; }
+}
+.rc-claim-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px auto 0;
+}
+.rc-claim-row > * { min-width: 0; max-width: 100%; }
+.rc-claim-row .shiny-input-container {
+  width: 156px;
+  margin: 0;
+  text-align: start;
+}
+.rc-claim-row .form-control { min-height: 44px; }
+.rc-claim-rank {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--rc-muted);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 650px) {
+  .rc-claim-row .form-control { font-size: 16px; }
+}
+@media (max-width: 360px) {
+  .rc-claim-row .shiny-input-container { width: 140px; }
+  .rc-claim-row .form-control, .rc-table .rc-claim-row .rc-action { padding-inline: 8px; }
 }
 .rc-odds-modal .modal-content {
   background: #182a36;
