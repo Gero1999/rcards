@@ -85,11 +85,17 @@ table_button_content <- function(label,icon) {
 }
 
 table_action_details <- function(game_type,action) {
-  if(game_type=="holdem") switch(action,
-    fold=c("xmark","Leave this hand."),
-    check=c("check","Stay in the hand without betting."),
-    call=c("equals","Match the current bet."),
-    raise=c("arrow-up","Set a new total for this betting round."))
+  switch(game_type,
+    holdem=switch(action,
+      fold=c("xmark","Leave this hand."),
+      check=c("check","Stay in the hand without betting."),
+      call=c("equals","Match the current bet."),
+      raise=c("arrow-up","Set a new total for this betting round.")),
+    blackjack=switch(action,
+      hit=c("plus","Draw another card."),
+      stand=c("hand","Keep your current total."),
+      double=c("arrow-up","Double the wager and draw one card."),
+      split=c("clone","Split the pair into two hands.")))
 }
 
 table_render_controls <- function(view,version,paused=FALSE) {
