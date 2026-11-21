@@ -189,9 +189,12 @@ table_app_server <- function(initial,initial_language) {
       v <- view()
       turn_controls <- shiny::tags$section(class="rc-controls",shiny::uiOutput("selection_feedback"),
         shiny::uiOutput("controls"),shiny::uiOutput("analysis_control"))
-      inline <- v$game_type %in% c("holdem","blackjack")
+      inline <- v$game_type %in% c("holdem","blackjack","liar")
+      by_pile <- v$game_type=="liar" && identical(v$phase,"response") && v$your_turn
       shiny::tagList(
-        table_render_view(v,state()$version,hand_controls=if(inline) turn_controls),
+        table_render_view(v,state()$version,
+          hand_controls=if(inline && !by_pile) turn_controls,
+          pile_controls=if(by_pile) turn_controls),
         shiny::uiOutput("session_history"),
         shiny::tags$section(class="rc-feedback",`aria-live`="polite",shiny::uiOutput("feedback")),
         if(!inline) turn_controls)
@@ -213,8 +216,12 @@ table_app_server <- function(initial,initial_language) {
     })
     output$selection_feedback <- shiny::renderUI({
       v <- view()
-      if(v$selection_limit>0 && v$your_turn) shiny::tags$p(role="status",`aria-live`="polite",
-        ui("Selected %s of %s cards",lang(),length(selected()),v$selection_limit))
+      if(v$selection_limit==0 || !v$your_turn) return(NULL)
+      count <- length(selected())
+      text <- if(v$game_type=="liar" && count==0)
+        ui("Select 1 to %s cards.",lang(),v$selection_limit) else
+        ui("Selected %s of %s cards",lang(),count,v$selection_limit)
+      shiny::tags$p(role="status",`aria-live`="polite",text)
     })
     output$controls <- shiny::renderUI({
       # Selection/capture changes must not reconstruct numeric/rank inputs and

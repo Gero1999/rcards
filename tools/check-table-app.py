@@ -250,16 +250,34 @@ def run(args):
         open_help("mus")
         close_help()
 
-        new_table("liar", 4, 7, "Mentiroso")
-        expect(page.locator('[data-rc-action="claim"]')).to_be_visible()
-        page.select_option("#rank", "1")
-        page.locator('[data-rc-card="1"][data-rc-zone="hand"]').click()
-        expect(page.locator('[data-rc-card="1"][data-rc-zone="hand"]')).to_have_attribute(
-            "aria-pressed", "true")
+        new_table("liar", 2, 7, "Mentiroso")
+        claim = action_control(own.locator('[data-rc-action="claim"]'), "claim")
+        rank = own.locator("#rank")
+        card = own.locator('[data-rc-card="1"][data-rc-zone="hand"]')
+        # A truthful claim ensures the other player leads the next claim.
+        card_count = own.locator(".rc-card").count()
+        rank_value = card.locator(".rc-rank").first.inner_text().strip()
+        rank.select_option(rank_value)
+        card.press("Space")
+        expect(card).to_have_attribute("aria-pressed", "true")
+        expect(card).to_be_focused()
+        expect(rank).to_have_value(rank_value)
         before = version()
-        page.locator('[data-rc-action="claim"]').click()
+        claim.click()
         expect_action_applied(before)
-        expect(page.locator(".rc-history")).to_contain_text("Claim: You | Rank: 1 | Cards: 1")
+        expect(page.locator(".rc-history")).to_contain_text(
+            f"Claim: You | Rank: {rank_value} | Cards: 1")
+        expect(own.locator(".rc-card")).to_have_count(card_count - 1)
+        center = page.locator(".rc-center")
+        challenge = action_control(center.locator('[data-rc-action="challenge"]'), "challenge")
+        action_control(center.locator('[data-rc-action="pass"]'), "pass")
+        expect(rank).to_have_count(0)
+        expect(own.locator("[data-rc-card]")).to_have_count(0)
+        before = version()
+        challenge.click()
+        expect_action_applied(before)
+        expect(page.locator(".rc-history")).to_contain_text("You / challenge")
+        expect(center.locator('[data-zone="reveal"] .rc-card').first).to_be_visible()
         open_help("liar")
         close_help()
 
@@ -286,7 +304,7 @@ def run(args):
         browser.close()
         if any(report.values()):
             raise AssertionError("Browser reported errors or attempted non-local traffic")
-        print("Passed: five games, Scopa move comparison, continued poker/Blackjack, logo, contextual Help, languages and mobile layout.")
+        print("Passed: five games, card-adjacent actions, three analysis dialogs, Mentiroso responses, continued poker/Blackjack, logo, contextual Help, languages and mobile layout.")
 
 
 if __name__ == "__main__":

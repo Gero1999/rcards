@@ -57,7 +57,7 @@ table_render_center_cards <- function(view,version,selected,capture) {
   lapply(view$center,table_render_zone,version=version,highlight=highlight,language=language)
 }
 
-table_render_view <- function(view,version,hand_controls=NULL) {
+table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL) {
   language <- view$language
   opponents <- view$seats[!vapply(view$seats,`[[`,logical(1),"viewer")]
   shiny::tags$section(class="rc-table",`aria-label`=ui("Card table",language),
@@ -70,6 +70,7 @@ table_render_view <- function(view,version,hand_controls=NULL) {
       shiny::tags$h1(class="rc-game-title",names(table_game_names())[match(view$game_type,table_game_names())],
         if(!is.null(view$phase)) shiny::tags$small(ui(toupper(view$phase),language))),lapply(view$status,function(line) shiny::tags$p(class="rc-status",line)),
       shiny::uiOutput("table_center_cards"),
+      pile_controls,
       if(length(view$history)) shiny::tags$details(class="rc-history",shiny::tags$summary(ui("Recent actions",language)),
         shiny::tags$ol(lapply(view$history,shiny::tags$li)))),
     shiny::tags$section(class="rc-own",shiny::tags$h2(paste0(view$seats[[view$viewer]]$name," / ",ui("Your cards",language))),
@@ -95,7 +96,11 @@ table_action_details <- function(game_type,action) {
       hit=c("plus","Draw another card."),
       stand=c("hand","Keep your current total."),
       double=c("arrow-up","Double the wager and draw one card."),
-      split=c("clone","Split the pair into two hands.")))
+      split=c("clone","Split the pair into two hands.")),
+    liar=switch(action,
+      claim=c("bullhorn","Play the selected cards face down and declare their rank."),
+      pass=c("forward-step","Decline to challenge this claim."),
+      challenge=c("magnifying-glass","Challenge the latest claim.")))
 }
 
 table_render_controls <- function(view,version,paused=FALSE) {
@@ -105,7 +110,8 @@ table_render_controls <- function(view,version,paused=FALSE) {
   if(!view$your_turn) return(shiny::tags$p(ui("Bots are playing",language)))
   legal <- view$legal
   shiny::tagList(
-    if(view$selection_limit>0) shiny::tags$p(ui("Select your cards, then choose an action.",language)),
+    if(view$selection_limit>0 && view$game_type!="liar")
+      shiny::tags$p(ui("Select your cards, then choose an action.",language)),
     if(any(c("raise","bet") %in% legal$actions)) {
       poker <- view$game_type=="holdem"
       minimum <- if(poker) legal$min_raise_to else legal$min_stake
@@ -118,8 +124,6 @@ table_render_controls <- function(view,version,paused=FALSE) {
       shiny::selectInput("rank",ui("Declared rank",language),choices=if(length(legal$ranks)>1L)
         c(stats::setNames("",ui("choose a rank",language)),stats::setNames(legal$ranks,legal$ranks)) else legal$ranks,
         selected=if(length(legal$ranks)==1L) legal$ranks else "",selectize=FALSE),
-    if(view$game_type=="liar" && "claim" %in% legal$actions)
-      shiny::tags$p(class="rc-help",ui("Select 1 to %s cards.",language,view$selection_limit)),
     if(view$game_type=="scopa") shiny::uiOutput("capture_controls"),
     shiny::tags$div(class="rc-actions",lapply(legal$actions,function(action) {
       label <- action_label(action,language)
