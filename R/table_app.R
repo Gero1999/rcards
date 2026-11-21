@@ -57,7 +57,8 @@ table_app_ui <- function(initial,language) {
   shiny::fluidPage(
     shiny::tags$head(shiny::tags$title("rcards | Card table"),
       shiny::includeCSS(file.path(assets,"table.css")),shiny::includeScript(file.path(assets,"table.js")),
-      shiny::includeScript(file.path(assets,"table_raise.js"))),
+      shiny::includeScript(file.path(assets,"table_raise.js")),
+      shiny::includeScript(file.path(assets,"table_events.js"))),
     shiny::tags$div(class="rc-app",
       shiny::tags$header(class="rc-header",table_brand_tag(),
         shiny::tags$div(class="rc-header-actions",shiny::uiOutput("help_control"),shiny::uiOutput("heading"))),
@@ -67,13 +68,15 @@ table_app_ui <- function(initial,language) {
         shiny::selectInput("language",ui("Language",language),language_names,selected=language,selectize=FALSE),
         shiny::uiOutput("new_control")),
       shiny::tags$main(shiny::uiOutput("table")),
-      shiny::tags$footer(class="rc-footer",shiny::uiOutput("footer"))))
+      shiny::tags$footer(class="rc-footer",shiny::uiOutput("footer")),
+      shiny::uiOutput("table_event",class="rc-event-layer",role="status",`aria-atomic`="true")))
 }
 
 table_app_server <- function(initial,initial_language) {
   function(input,output,session) {
     state <- shiny::reactiveVal(initial)
     selected <- shiny::reactiveVal(integer())
+    table_event <- shiny::reactiveVal(NULL)
     lang <- shiny::reactive(console_language(if(is.null(input$language)) initial_language else input$language))
     view <- shiny::reactive(game_table_view(state()$game,state()$seat,lang()))
     blackjack_wager <- shiny::reactive({
@@ -82,6 +85,14 @@ table_app_server <- function(initial,initial_language) {
       observation$hands[[observation$active_hand]]$bet
     })
     open_holdem_odds <- table_holdem_odds_server("holdem_odds",lang)
+    shiny::observeEvent(state(),{
+      current <- state()
+      event <- table_pot_event(current$game,current$seat)
+      if(!is.null(event) && !identical(event$key,table_event()$key)) {
+        table_event(list(key=event$key,tag=table_event_tag(event,lang())))
+      }
+    })
+    output$table_event <- shiny::renderUI(table_event()$tag)
     report_error <- function(error) {
       current <- shiny::isolate(state());current$error <- conditionMessage(error);state(current)
     }
@@ -128,7 +139,7 @@ table_app_server <- function(initial,initial_language) {
         game <- table_new_game(input$game_kind,input$players,seed)
         current <- table_session(game,1L,seed=seed,max_bot_actions=old$max_bot_actions)
         current$version <- old$version+1L
-        state(current);selected(integer())
+        table_event(NULL);state(current);selected(integer())
       },error=report_error)
     },ignoreInit=TRUE)
     shiny::observeEvent(input$pause_table,{
@@ -142,7 +153,8 @@ table_app_server <- function(initial,initial_language) {
         if(!is.list(event) || length(event$version)!=1L || is.na(event$version)) stop("The turn changed; choose again")
         if(inherits(state()$game,"blackjack_game") && is.null(event$wager))
           stop("Choose a positive wager within your bankroll")
-        state(table_next(state(),event$version,event$wager));selected(integer())
+        current <- table_next(state(),event$version,event$wager)
+        table_event(NULL);state(current);selected(integer())
       },error=report_error)
     },ignoreInit=TRUE)
     shiny::observeEvent(input$card_pick,{
@@ -193,6 +205,8 @@ table_app_server <- function(initial,initial_language) {
     })
     output$table <- shiny::renderUI({
       v <- view();current <- state();version <- current$version
+      if(v$game_type=="holdem" && v$hand_complete)
+        v$history <- c(v$history,table_result_text(current$game,v$language))
       contextual <- v$game_type %in% c("holdem","blackjack")
       inline <- v$game_type=="liar"
       by_pile <- v$game_type=="liar" && identical(v$phase,"response") && v$your_turn
@@ -245,9 +259,14 @@ table_app_server <- function(initial,initial_language) {
     })
     output$feedback <- shiny::renderUI({
       current <- state();v <- view()
+      result <- v$result
+      if(v$game_type=="holdem" && v$hand_complete) {
+        message <- table_continuation(current$game,current$seat)$message
+        result <- if(!is.null(message)) ui(message,lang())
+      }
       shiny::tagList(
         if(!is.null(current$error)) shiny::tags$p(class="rc-error",role="alert",console_error(current$error,lang())),
-        lapply(v$result,function(line) shiny::tags$p(class="rc-result",line)))
+        lapply(result,function(line) shiny::tags$p(class="rc-result",line)))
     })
     output$selection_feedback <- shiny::renderUI({
       v <- view()

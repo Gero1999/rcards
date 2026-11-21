@@ -101,6 +101,42 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
 }
 .rc-feedback{margin-top:12px}.rc-feedback:empty{display:none}.rc-error{padding:12px 16px;background:#4d2930;border:1px solid #a6656b;border-radius:10px;color:#ffe2dd}
 .rc-result{display:inline-block;margin:5px 7px 0 0;padding:10px 15px;background:#183c33;border:1px solid #497f68;border-radius:10px;color:#c6f2d7;font-size:13px}
+.rc-event-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1030;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  pointer-events: none;
+}
+.rc-event {
+  max-width: min(460px, 100%);
+  padding: clamp(16px, 4vw, 26px) clamp(20px, 6vw, 40px);
+  border: 1px solid #739a8b;
+  border-radius: 18px;
+  background: #173c36;
+  color: var(--rc-ink);
+  box-shadow: 0 16px 45px #04090988;
+  text-align: center;
+  overflow-wrap: anywhere;
+  opacity: 0;
+  transform: translateY(7px) scale(.98);
+  transition: opacity 180ms ease-out, transform 180ms ease-out;
+}
+.rc-event.rc-event-visible { opacity: 1; transform: none; }
+.rc-event.rc-event-leaving { opacity: 0; transform: translateY(-5px) scale(.99); }
+.rc-event-title { margin: 0; font: 700 clamp(24px, 4vw, 38px)/1.15 Georgia, serif; }
+.rc-event-detail { margin: 8px 0 0; color: var(--rc-muted); font-size: 14px; line-height: 1.45; }
+.rc-event-detail + .rc-event-detail { margin-top: 4px; }
+.rc-event-win {
+  border-color: var(--rc-gold);
+  background: radial-gradient(ellipse at top, #443821, #20332e 82%);
+}
+.rc-event-win .rc-event-title { color: var(--rc-gold); }
+@media (prefers-reduced-motion: reduce) {
+  .rc-event, .rc-event.rc-event-visible, .rc-event.rc-event-leaving { transform: none; transition: none; }
+}
 .rc-footer{display:flex;gap:12px;align-items:center;margin-top:18px;flex-wrap:wrap;color:var(--rc-muted);font-size:12px}.rc-footer span{flex:1}.rc-footer .btn{font-size:12px;padding:6px 13px;background:transparent}
 @media(max-width:650px){.rc-app{padding:16px 12px}.rc-header{margin-bottom:16px}.rc-brand{font-size:29px}.rc-brand span{display:none}.rc-setup{gap:10px}.rc-setup>.shiny-input-container{width:calc(50% - 10px)!important}.rc-table{padding:18px 10px;border-radius:20px}.rc-seat{min-width:90px;padding:7px}.rc-opponents{gap:7px}.rc-seat .rc-cards{max-width:130px}.rc-card{width:54px;height:80px;flex-basis:54px}.rc-suit{font-size:25px}.rc-rank{font-size:18px}.rc-controls{padding:17px}.rc-own-zones>.rc-zone{margin-left:5px;margin-right:5px}.rc-turn{font-size:11px;padding:7px 10px}}
 @media (max-width: 650px) {
