@@ -64,6 +64,12 @@ The button shows how many cards you selected. Once a rank is fixed, the row
 shows it as a label. **Challenge** and **Pass** sit next to the current claim
 and covered pile when it is your turn to respond.
 
+Brief announcements also mark Blackjack round outcomes, Scopa sweeps and
+match wins, Mus match wins, and Mentiroso's caught bluffs and deal winners.
+Scopa's stock and scores, Mus's scores and live stake, and Mentiroso's pile
+and current claim use compact readouts beside the table. **Table details**
+holds the longer round, deal, and claim information.
+
 During your Scopa turn, **Compare moves** ranks each legal card and capture
 combination by estimated point margin at the end of the current deal. It shows
 the chance that your side finishes the deal ahead. The panel keeps your hand,

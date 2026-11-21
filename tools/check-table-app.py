@@ -264,6 +264,7 @@ def run(args):
         screenshot(page, "table-holdem-next-hand.png")
 
         new_table("scopa", 3, 3, "Scopa")
+        expect(page.locator(".rc-table-metrics")).to_contain_text("Stock")
         expect(page.locator('[data-zone="table"] .rc-index')).to_have_count(4)
         open_help("scopa")
         close_help()
@@ -332,20 +333,23 @@ def run(args):
         expect_action_applied(before)
         page.set_viewport_size(viewport)
         expect(page.locator("#next_hand")).to_have_text("Next round")
+        expect(banner.locator(".rc-event-detail")).to_contain_text("chips this round")
         page.locator("#next_wager").fill("5")
         page.locator("#next_hand").click()
-        expect(page.locator(".rc-status").first).to_contain_text("Round 2 | Base wager 5")
+        expect(page.locator(".rc-table-details")).to_contain_text("Round 2 | Base wager 5")
         expect(page.locator(".rc-error")).to_have_count(0)
         open_help("blackjack")
         close_help()
 
         new_table("mus", 4, 1, "Mus")
+        expect(page.locator(".rc-table-metrics")).to_contain_text("Side 1")
         expect(page.locator('[data-rc-action="cut"]')).to_be_visible()
         expect(page.locator(".rc-seat .rc-back")).to_have_count(12)
         open_help("mus")
         close_help()
 
         new_table("liar", 2, 7, "Mentiroso")
+        expect(page.locator(".rc-table-metrics")).to_contain_text("Pile cards")
         claim_row = own.locator(".rc-claim-row")
         claim = action_control(claim_row.locator('[data-rc-action="claim"]'), "Claim")
         expect(claim).to_be_disabled()
@@ -388,6 +392,7 @@ def run(args):
         expect_action_applied(before)
         expect(page.locator(".rc-history")).to_contain_text("You / challenge")
         expect(center.locator('[data-zone="reveal"] .rc-card').first).to_be_visible()
+        screenshot(page, "table-mentiroso-reveal.png")
         page.set_viewport_size(viewport)
         open_help("liar")
         close_help()
@@ -415,7 +420,7 @@ def run(args):
         browser.close()
         if any(report.values()):
             raise AssertionError("Browser reported errors or attempted non-local traffic")
-        print("Passed: five games, board and hand action placement, Raise confirmation, three analysis dialogs, Mentiroso responses, continued poker/Blackjack, logo, contextual Help, languages and mobile layout.")
+        print("Passed: five games, card and pot animations, game announcements, action placement, analysis dialogs, languages and mobile layout.")
 
 
 if __name__ == "__main__":

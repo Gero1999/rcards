@@ -55,7 +55,9 @@ table_render_center_cards <- function(view,version,selected,capture) {
     if(!is.null(index) && index>=1 && index<=length(options)) highlight <- options[[index]]
   }
   zones <- view$center
-  if(view$game_type=="holdem") zones <- Filter(function(zone) length(zone$cards)>0L,zones)
+  if(view$game_type=="liar") zones[[1L]]$label <- ""
+  if(view$game_type %in% c("holdem","liar"))
+    zones <- Filter(function(zone) length(zone$cards)>0L,zones)
   lapply(zones,table_render_zone,version=version,highlight=highlight,language=language)
 }
 
@@ -95,14 +97,17 @@ table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL
       shiny::tags$h1(class="rc-game-title",names(table_game_names())[match(view$game_type,table_game_names())],
         if(!is.null(view$phase)) shiny::tags$small(ui(toupper(view$phase),language))),lapply(view$status,function(line) shiny::tags$p(class="rc-status",line)),
       if(!is.null(view$pot)) table_pot_tag(view$pot,language),
+      if(length(view$metrics)) shiny::tags$div(class="rc-table-metrics",view$metrics),
+      if(!is.null(view$metric_caption)) shiny::tags$p(class="rc-table-metric-caption",view$metric_caption),
       board_cards,
       pile_controls,
       if(length(view$table_details)) shiny::tags$details(class="rc-table-details",
-        shiny::tags$summary(ui("Table details",language)),shiny::tags$p(view$table_details)),
+        shiny::tags$summary(ui("Table details",language)),
+        lapply(view$table_details,shiny::tags$p)),
       if(length(view$history)) shiny::tags$details(class="rc-history",shiny::tags$summary(ui("Recent actions",language)),
         shiny::tags$ol(lapply(view$history,shiny::tags$li)))),
     shiny::tags$section(class="rc-own",`data-rc-seat`=view$viewer,
-      shiny::tags$h2(if(view$game_type=="holdem") own_name else paste0(own_name," / ",ui("Your cards",language)),
+      shiny::tags$h2(own_name,
         if(view$viewer %in% view$dealer) table_dealer_tag(language)),
       shiny::tags$p(class="rc-own-details",paste(view$seats[[view$viewer]]$details,collapse=" | ")),
       own_cards,

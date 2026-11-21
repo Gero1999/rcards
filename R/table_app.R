@@ -87,10 +87,14 @@ table_app_server <- function(initial,initial_language) {
       observation$hands[[observation$active_hand]]$bet
     })
     open_holdem_odds <- table_holdem_odds_server("holdem_odds",lang)
-    shiny::observeEvent(state(),{
+    public_event <- shiny::reactive({
       current <- state()
-      event <- table_pot_event(current$game,current$seat)
-      if(!is.null(event) && !identical(event$key,table_event()$key)) {
+      if(inherits(current$game,"holdem_hand")) table_pot_event(current$game,current$seat) else
+        table_other_event(current$game,current$seat)
+    })
+    shiny::observeEvent(public_event(),{
+      event <- public_event()
+      if(!identical(event$key,table_event()$key)) {
         table_event(list(key=event$key,tag=table_event_tag(event,lang())))
       }
     })
@@ -214,8 +218,9 @@ table_app_server <- function(initial,initial_language) {
         if(!v$hand_complete) v$pot <- observation$pot
         v$table_details <- v$status[1L]
         v$status <- character()
-        if(v$hand_complete) v$history <- c(v$history,table_result_text(current$game,v$language))
-      }
+      } else v <- table_scene_summary(v,game_observation(current$game,current$seat))
+      if(v$hand_complete && !is.null(public_event()))
+        v$history <- c(v$history,table_result_text(current$game,v$language))
       contextual <- v$game_type %in% c("holdem","blackjack")
       inline <- v$game_type=="liar"
       by_pile <- v$game_type=="liar" && identical(v$phase,"response") && v$your_turn
@@ -269,7 +274,7 @@ table_app_server <- function(initial,initial_language) {
     output$feedback <- shiny::renderUI({
       current <- state();v <- view()
       result <- v$result
-      if(v$game_type=="holdem" && v$hand_complete) {
+      if(v$hand_complete && !is.null(public_event())) {
         message <- table_continuation(current$game,current$seat)$message
         result <- if(!is.null(message)) ui(message,lang())
       }

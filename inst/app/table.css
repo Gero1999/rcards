@@ -178,6 +178,38 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
   background: #24483d;
   color: var(--rc-gold);
 }
+.rc-table-metrics {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 auto 10px;
+}
+.rc-table-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 4px 9px;
+  border: 1px solid #5f887b;
+  border-radius: 8px;
+  background: #113d34;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.rc-table-metric-icon { flex: none; color: var(--rc-gold); font-size: 11px; }
+.rc-table-metric-label { color: var(--rc-muted); font-size: 11px; }
+.rc-table-metric-value { color: var(--rc-ink); font-size: 14px; font-variant-numeric: tabular-nums; }
+.rc-table-metric-caption {
+  margin: 0 auto 10px;
+  color: var(--rc-muted);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 360px) {
+  .rc-table-metric { padding-inline: 6px; }
+}
 .rc-pot-display {
   display: inline-flex;
   align-items: center;
