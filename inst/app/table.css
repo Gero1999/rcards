@@ -19,7 +19,7 @@ body{background:var(--rc-bg);color:var(--rc-ink);font-family:system-ui,-apple-sy
 .rc-seat p{font-size:11px;color:var(--rc-muted);margin:0 0 8px}
 .rc-zone h3,.rc-stock h3{font-size:11px;color:var(--rc-muted);text-transform:uppercase;letter-spacing:1px;margin:0 0 10px}
 .rc-cards{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.rc-zone{margin:8px 0 15px}
-.rc-card{position:relative;flex:0 0 66px;width:66px;height:94px;background:#fff9ec;border:2px solid #f6ecd7;border-radius:9px;color:#192d32;box-shadow:0 3px 6px #0004;padding:6px;opacity:1!important;text-align:left;line-height:1}
+.rc-card{position:relative;flex:0 0 66px;width:66px;height:94px;background:#fff9ec;border:2px solid #f6ecd7;border-radius:9px;color:#192d32;box-shadow:0 3px 6px #0004;padding:6px;opacity:1;text-align:left;line-height:1}
 .rc-card:disabled{cursor:default}.rc-red{color:#b83343}
 .rc-rank{position:absolute;left:6px;top:6px;display:inline-flex;align-items:center;gap:2px;font:bold 20px/1 Georgia,serif}
 .rc-bottom{inset:auto 6px 6px auto;transform:rotate(180deg)}
@@ -202,6 +202,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
   flex: none;
   width: 26px;
   height: 17px;
+}
+.rc-chip-stack.rc-pot-flight {
+  position: fixed;
+  z-index: 1025;
+  pointer-events: none;
 }
 .rc-chip-stack::before, .rc-chip-stack::after {
   position: absolute;

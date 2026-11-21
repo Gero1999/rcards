@@ -78,6 +78,22 @@ def run(args):
         context.route("**/*", route_request)
         context.route_web_socket("**/*", route_websocket)
         page = context.new_page()
+        page.add_init_script("""
+            window.tableMotion = {dealt: 0, flights: 0};
+            new MutationObserver(records => {
+                for (const record of records) {
+                    if (record.type === 'attributes' && record.target.dataset.rcMotion === 'deal') {
+                        window.tableMotion.dealt += 1;
+                    }
+                    for (const el of record.addedNodes) {
+                        if (el.nodeType === 1 && el.classList.contains('rc-pot-flight')) {
+                            window.tableMotion.flights += 1;
+                        }
+                    }
+                }
+            }).observe(document, {childList: true, subtree: true, attributes: true,
+                                  attributeFilter: ['data-rc-motion']});
+        """)
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.on("console", lambda message: console_errors.append(message.text)
                 if message.type == "error" else None)
@@ -202,6 +218,13 @@ def run(args):
         expect(amount).not_to_be_visible()
         page.set_viewport_size(viewport)
 
+        # Calling on a fresh table eventually deals exactly three board cards.
+        page.reload(wait_until="networkidle")
+        board_controls.locator('[data-rc-action="call"]').click()
+        expect(page.locator('[data-zone="board"] .rc-card')).to_have_count(3)
+        page.wait_for_function("window.tableMotion.dealt === 3")
+        expect(page.locator('[data-rc-motion="deal"]')).to_have_count(0)
+
         # Reset the session so the independent Fold path starts from the same blinds.
         page.reload(wait_until="networkidle")
         before = version()
@@ -222,6 +245,8 @@ def run(args):
         expect(banner.locator(".rc-event-detail")).to_contain_text("Bot 1: 2 chips")
         expect(banner).to_have_css("opacity", "1")
         expect(page.locator("#next_hand")).to_be_enabled()
+        page.wait_for_function("window.tableMotion.flights === 1")
+        expect(page.locator(".rc-pot-flight")).to_have_count(0)
         screenshot(page, "table-holdem-pot.png")
         expect(banner).not_to_be_visible()
         page.locator("#pause_table").click()

@@ -26,7 +26,8 @@ table_pot_event <- function(game, seat) {
     list(key = "%s: %s chips", args = list(result$player_names[[i]], amount))
   })
   list(key = paste0("holdem-pot-", result$hand_number), title = title,
-    title_args = title_args, detail = detail, tone = if (viewer_won) "win" else "neutral")
+    title_args = title_args, detail = detail, tone = if (viewer_won) "win" else "neutral",
+    pot_winners = winners)
 }
 
 table_event_tag <- function(event, language = "en") {
@@ -35,6 +36,7 @@ table_event_tag <- function(event, language = "en") {
   classes <- if (identical(event$tone, "win")) "rc-event rc-event-win" else "rc-event"
   shiny::tags$div(class = classes,
     `data-rc-table-event` = event$key,
+    `data-rc-pot-winners` = if (length(event$pot_winners)) paste(event$pot_winners, collapse = ","),
     shiny::tags$div(class = "rc-event-title", event_text(event$title, event$title_args)),
     lapply(event$detail, function(line) {
       shiny::tags$div(class = "rc-event-detail", event_text(line$key, line$args))

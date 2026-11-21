@@ -83,7 +83,8 @@ table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL
   }
   opponents <- view$seats[!vapply(view$seats,`[[`,logical(1),"viewer")]
   own_name <- view$seats[[view$viewer]]$name
-  shiny::tags$section(class="rc-table",`aria-label`=ui("Card table",language),
+  shiny::tags$section(class="rc-table",`aria-label`=ui("Card table",language),`data-rc-hand`=view$motion_hand,
+    `data-rc-board-size`=if(!is.null(view$motion_hand)) length(view$center[[1L]]$cards),
     shiny::tags$div(class="rc-opponents",lapply(opponents,function(player) {
       shiny::tags$section(class=paste("rc-seat",if(player$active) "rc-active-seat"),`data-rc-seat`=player$seat,
         shiny::tags$h2(player$name,if(player$seat %in% view$dealer) table_dealer_tag(language)),

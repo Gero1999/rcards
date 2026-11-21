@@ -14,7 +14,9 @@
 
       window.requestAnimationFrame(function () {
         window.requestAnimationFrame(function () {
+          if (!banner.isConnected) return;
           banner.classList.add("rc-event-visible");
+          document.dispatchEvent(new CustomEvent("rc:table-event", {detail: banner}));
         });
       });
       window.setTimeout(function () {

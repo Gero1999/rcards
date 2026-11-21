@@ -58,7 +58,8 @@ table_app_ui <- function(initial,language) {
     shiny::tags$head(shiny::tags$title("rcards | Card table"),
       shiny::includeCSS(file.path(assets,"table.css")),shiny::includeScript(file.path(assets,"table.js")),
       shiny::includeScript(file.path(assets,"table_raise.js")),
-      shiny::includeScript(file.path(assets,"table_events.js"))),
+      shiny::includeScript(file.path(assets,"table_events.js")),
+      shiny::includeScript(file.path(assets,"table_motion.js"))),
     shiny::tags$div(class="rc-app",
       shiny::tags$header(class="rc-header",table_brand_tag(),
         shiny::tags$div(class="rc-header-actions",shiny::uiOutput("help_control"),shiny::uiOutput("heading"))),
@@ -77,6 +78,7 @@ table_app_server <- function(initial,initial_language) {
     state <- shiny::reactiveVal(initial)
     selected <- shiny::reactiveVal(integer())
     table_event <- shiny::reactiveVal(NULL)
+    table_start <- shiny::reactiveVal(0L)
     lang <- shiny::reactive(console_language(if(is.null(input$language)) initial_language else input$language))
     view <- shiny::reactive(game_table_view(state()$game,state()$seat,lang()))
     blackjack_wager <- shiny::reactive({
@@ -139,7 +141,7 @@ table_app_server <- function(initial,initial_language) {
         game <- table_new_game(input$game_kind,input$players,seed)
         current <- table_session(game,1L,seed=seed,max_bot_actions=old$max_bot_actions)
         current$version <- old$version+1L
-        table_event(NULL);state(current);selected(integer())
+        table_event(NULL);table_start(current$version);state(current);selected(integer())
       },error=report_error)
     },ignoreInit=TRUE)
     shiny::observeEvent(input$pause_table,{
@@ -207,6 +209,7 @@ table_app_server <- function(initial,initial_language) {
       v <- view();current <- state();version <- current$version
       if(v$game_type=="holdem") {
         observation <- game_observation(current$game,current$seat)
+        v$motion_hand <- paste(table_start(),observation$hand_number,sep="-")
         v$dealer <- observation$dealer
         if(!v$hand_complete) v$pot <- observation$pot
         v$table_details <- v$status[1L]
