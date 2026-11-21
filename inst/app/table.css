@@ -344,6 +344,84 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--rc-gold);outline-of
 .rc-board-layout + .rc-history { margin-top: 8px; }
 .rc-board-layout .rc-cards:not(:has(.rc-index)),
 .rc-hand-layout .rc-cards:not(:has(.rc-index)) { padding-bottom: 0; }
+.rc-scopa-board-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: center;
+  align-items: start;
+}
+.rc-scopa-board-layout:has(#capture) { gap: 8px 18px; }
+.rc-scopa-board-layout > * { min-width: 0; }
+@media (min-width: 761px) {
+  .rc-scopa-board-layout:has(#capture) {
+    grid-template-columns: minmax(0, max-content) minmax(0, 300px);
+  }
+}
+.rc-scopa-capture-panel:has(#capture) {
+  width: min(100%, 300px);
+  margin: 8px auto 10px;
+  padding: 10px;
+  border: 1px solid #54786e;
+  border-radius: 12px;
+  background: #0f342f;
+  text-align: start;
+}
+.rc-scopa-capture-panel #capture { width: 100%; max-width: 100%; margin: 0 0 8px; }
+.rc-scopa-capture-panel .radio { margin: 0; }
+.rc-scopa-capture-panel .radio + .radio { margin-top: 6px; }
+.rc-scopa-capture-panel .radio label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 7px 9px;
+  border: 1px solid #54786e;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.rc-scopa-capture-panel .radio label > span { min-width: 0; }
+.rc-scopa-capture-panel .radio input[type="radio"] {
+  position: static;
+  flex: none;
+  margin: 0;
+  accent-color: var(--rc-accent);
+}
+.rc-scopa-capture-panel .radio label:has(input:checked) {
+  border-color: var(--rc-accent);
+  background: #214b3f;
+}
+.rc-scopa-capture-panel .radio label:has(input:focus-visible) {
+  outline: 3px solid var(--rc-gold);
+  outline-offset: 2px;
+}
+.rc-capture-label { line-height: 1.8; }
+.rc-capture-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: #fff9ec;
+  color: #192d32;
+  font: bold 14px/1 Georgia, serif;
+  vertical-align: middle;
+}
+.rc-capture-card .rc-suit-mark { font-size: .8em; }
+.rc-scopa-capture-panel #scopa_play { text-align: center; }
+.rc-scopa-hand-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.rc-scopa-hand-controls p {
+  margin: 0;
+  color: var(--rc-muted);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.rc-table .rc-scopa-hand-controls .rc-analysis-button { margin: 0; }
 .rc-table .rc-context-controls .rc-actions {
   justify-content: flex-start;
   gap: 8px;

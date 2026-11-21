@@ -182,7 +182,8 @@ table_app_server <- function(initial,initial_language) {
         amount <- if("amount" %in% names(event)) event$amount else input$amount
         rank <- if("rank" %in% names(event)) event$rank else input$rank
         capture <- if("capture" %in% names(event)) event$capture else input$capture
-        decision <- table_decision(v,event$action,selected(),amount,rank,table_capture_index(capture,selected()))
+        capture_index <- table_capture_index(capture,selected(),current$version)
+        decision <- table_decision(v,event$action,selected(),amount,rank,capture_index)
         state(table_apply(current,decision,event$version));selected(integer())
       },error=report_error)
     },ignoreInit=TRUE)
@@ -240,6 +241,11 @@ table_app_server <- function(initial,initial_language) {
           hand_controls <- NULL
         }
         turn_controls <- NULL
+      } else if(v$game_type=="scopa" && v$your_turn && !current$paused) {
+        board_controls <- shiny::uiOutput("capture_controls",class="rc-scopa-capture-panel")
+        hand_controls <- shiny::tags$div(class="rc-scopa-hand-controls",
+          shiny::uiOutput("selection_feedback"),shiny::uiOutput("analysis_control"))
+        turn_controls <- NULL
       } else {
         claiming <- inline && !current$paused && "claim" %in% v$legal$actions
         turn_controls <- if(claiming) shiny::uiOutput("controls") else
@@ -256,7 +262,8 @@ table_app_server <- function(initial,initial_language) {
     })
     # Card highlights change independently of the numeric and rank inputs.
     output$table_center_cards <- shiny::renderUI({
-      table_render_center_cards(view(),state()$version,selected(),input$capture)
+      current <- state()
+      table_render_center_cards(view(),current$version,if(!current$paused) selected(),input$capture)
     })
     output$table_own_cards <- shiny::renderUI({
       v <- view();current <- state();version <- current$version
@@ -286,7 +293,9 @@ table_app_server <- function(initial,initial_language) {
       v <- view()
       if(v$selection_limit==0 || !v$your_turn) return(NULL)
       count <- length(selected())
-      text <- ui("Selected %s of %s cards",lang(),count,v$selection_limit)
+      if(v$game_type=="scopa" && (count>0L || state()$paused)) return(NULL)
+      text <- if(v$game_type=="scopa") ui("Select a card to see its captures.",lang()) else
+        ui("Selected %s of %s cards",lang(),count,v$selection_limit)
       shiny::tags$p(role="status",`aria-live`="polite",text)
     })
     output$controls <- shiny::renderUI({
@@ -318,14 +327,15 @@ table_app_server <- function(initial,initial_language) {
     })
     output$capture_controls <- shiny::renderUI({
       v <- view();indices <- selected()
-      if(v$game_type!="scopa" || !v$your_turn || length(indices)!=1L) return(NULL)
-      options <- v$legal$captures[[indices]]
-      labels <- vapply(seq_along(options),function(j) {
-        take <- options[[j]]
-        paste0(j,": ",if(length(take)) ui("Take table positions %s",lang(),paste(take,collapse=" + ")) else ui("leave on table",lang()))
-      },"")
-      shiny::radioButtons("capture",ui("Capture choice",lang()),choices=stats::setNames(paste0(indices,":",seq_along(options)),labels),
-        selected=if(length(options)==1L) paste0(indices,":1") else character())
+      if(v$game_type!="scopa" || !v$your_turn || state()$paused || length(indices)!=1L) return(NULL)
+      shiny::tagList(table_scopa_capture_picker(v,indices,state()$version,shiny::isolate(input$capture)),
+        shiny::uiOutput("scopa_play"))
+    })
+    output$scopa_play <- shiny::renderUI({
+      v <- view();current <- state();indices <- selected()
+      if(v$game_type!="scopa" || !v$your_turn || current$paused || length(indices)!=1L) return(NULL)
+      choice <- table_capture_choice(v$legal$captures[[indices]],input$capture,indices,current$version)
+      table_action_tag(v,"play",current$version,disabled=is.null(choice))
     })
     output$session_history <- shiny::renderUI(table_scoreboard(state(),lang()))
     output$footer <- shiny::renderUI(shiny::tagList(

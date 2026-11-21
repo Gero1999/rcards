@@ -51,8 +51,9 @@ table_render_zone <- function(zone,version,selected=integer(),highlight=integer(
 table_render_center_cards <- function(view,version,selected,capture) {
   language <- view$language;highlight <- integer()
   if(view$game_type=="scopa" && view$your_turn && length(selected)==1L) {
-    index <- table_capture_index(capture,selected);options<-view$legal$captures[[selected]]
-    if(!is.null(index) && index>=1 && index<=length(options)) highlight <- options[[index]]
+    options <- view$legal$captures[[selected]]
+    index <- table_capture_choice(options,capture,selected,version)
+    if(!is.null(index)) highlight <- options[[index]]
   }
   zones <- view$center
   if(view$game_type=="liar") zones[[1L]]$label <- ""
@@ -79,6 +80,8 @@ table_render_view <- function(view,version,hand_controls=NULL,pile_controls=NULL
       shiny::tags$div(class="rc-board-cards",stock,board_cards),
       board_controls)
   }
+  if(view$game_type=="scopa" && !is.null(board_controls))
+    board_cards <- shiny::tags$div(class="rc-scopa-board-layout",board_cards,board_controls)
   if(view$game_type=="holdem") {
     own_cards <- shiny::tags$div(class="rc-hand-layout",own_cards,hand_controls)
     hand_controls <- NULL
@@ -188,17 +191,22 @@ table_render_controls <- function(view,version,paused=FALSE) {
       shiny::tags$p(ui("Select your cards, then choose an action.",language)),
     if(any(c("raise","bet") %in% legal$actions))
       shiny::numericInput("amount",ui("Total stake",language),value=legal$min_stake,min=legal$min_stake,step=1),
-    if(view$game_type=="scopa") shiny::uiOutput("capture_controls"),
     shiny::tags$div(class="rc-actions",lapply(legal$actions,function(action) table_action_tag(view,action,version))))
 }
 
-# Bind capture values to their selected hand position so an old radio value
-# cannot silently choose an alternative for a newly selected card.
-table_capture_index <- function(value,selected) {
+# Bind a capture to the rendered turn and hand position.
+table_capture_index <- function(value,selected,version) {
   if(is.null(value) || length(value)!=1L || is.na(value) || length(selected)!=1L) return(NULL)
   parts <- strsplit(as.character(value),":",fixed=TRUE)[[1L]]
-  if(length(parts)!=2L) return(NULL)
+  if(length(parts)!=3L) return(NULL)
   numbers <- suppressWarnings(as.numeric(parts))
-  if(anyNA(numbers) || any(!is.finite(numbers)) || any(numbers!=floor(numbers)) || numbers[1]!=selected) return(NULL)
-  numbers[2]
+  if(anyNA(numbers) || any(!is.finite(numbers)) || any(numbers!=floor(numbers)) ||
+     numbers[1L]!=version || numbers[2L]!=selected) return(NULL)
+  numbers[3L]
+}
+
+table_capture_choice <- function(options,value,selected,version) {
+  if(length(options)==1L) return(1L)
+  index <- table_capture_index(value,selected,version)
+  if(!is.null(index) && index>=1L && index<=length(options)) index
 }

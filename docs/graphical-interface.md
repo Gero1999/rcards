@@ -26,7 +26,7 @@ active seat stays highlighted.
 | Texas Hold'em | 2–10 seats; retained stacks across hands | Fold/check/call/raise. Raise **TO** a total for the betting round, including chips already committed. Bounds and the call amount are shown. |
 | Mus | Four seats, two partnerships | Mus/cut, select any cards to discard, and legal lance/stake decisions. |
 | Blackjack | One human versus the dealer; retained bankroll | Hit/stand/double/split when allowed. Split hands show their totals and wagers; the active hand is highlighted. |
-| Scopa | Two or three individual players; four in teams | Select one own card, then a numbered capture option. Table positions and the chosen capture are highlighted. |
+| Scopa | Two or three individual players; four in teams | Select a hand card and preview a capture beside the table cards. Play confirms the highlighted capture. |
 | Mentiroso | 2–8 seats, Spanish pack | Select one or more own cards and a declared rank, or pass/challenge when allowed. Only a challenged batch is revealed. |
 
 During your Hold'em turn, **Call**, **Check**, and **Raise** sit beside the
@@ -80,6 +80,12 @@ the chance that your side finishes the deal ahead. The panel keeps your hand,
 the table, and public captures fixed, samples plausible opposing hands and
 stock, and uses baseline bots for the remaining moves. You return to the
 same table and selection when you close it.
+
+When you select a Scopa card, the choices beside the table show the exact
+ranks and suits each capture takes. Choosing an option highlights those
+cards. A single legal choice is selected automatically, and **Play** still
+confirms it. On a narrow screen, the choices sit directly below the table
+cards.
 
 Changing settings takes effect on **New table**, which starts a fresh game
 with the default rules and bots, seat one as the human, and fresh 100-chip

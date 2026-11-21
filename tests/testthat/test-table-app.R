@@ -33,7 +33,7 @@ test_that("card selection is limited to the viewer and Scopa moves reach the eng
     expect_length(selected(),0)
     session$setInputs(card_pick=list(index=1L,zone="hand",version=0))
     expect_equal(selected(),1L)
-    session$setInputs(capture="1:1",decision=list(action="play",version=0))
+    session$setInputs(capture="0:1:1",decision=list(action="play",version=0))
     expect_equal(state()$actions,1)
     expect_length(selected(),0)
     expect_equal(length(state()$game$players[[1]]$hand),2)
@@ -51,11 +51,12 @@ test_that("rendered cards escape labels and omit face data for backs", {
 })
 
 
-test_that("capture choices carry hand identity and table positions are labeled", {
+test_that("capture choices carry turn and hand identity and table positions are labeled", {
   skip_if_not_installed("shiny")
-  expect_equal(table_capture_index("2:3",2),3)
-  expect_null(table_capture_index("1:3",2))
-  expect_null(table_capture_index("broken",2))
+  expect_equal(table_capture_index("4:2:3",2,4),3)
+  expect_null(table_capture_index("4:1:3",2,4))
+  expect_null(table_capture_index("3:2:3",2,4))
+  expect_null(table_capture_index("broken",2,4))
   view <- game_table_view(scopa_game(seed=1))
   html <- as.character(table_render_zone(view$center[[1]],version=0))
   expect_match(html,"rc-index",fixed=TRUE)
@@ -70,10 +71,10 @@ test_that("a capture choice for another hand card cannot resolve ambiguity", {
   shiny::testServer(table_app_server(initial,"en"),{
     session$flushReact()
     session$setInputs(card_pick=list(index=2L,zone="hand",version=0))
-    session$setInputs(decision=list(action="play",version=0,capture="1:1"))
+    session$setInputs(decision=list(action="play",version=0,capture="0:1:1"))
     expect_identical(state()$game,g)
     expect_match(state()$error,"capture option")
-    session$setInputs(decision=list(action="play",version=0,capture="2:2"))
+    session$setInputs(decision=list(action="play",version=0,capture="0:2:2"))
     expect_equal(state()$actions,1)
     expect_equal(state()$game$captured[[1]][[2]]$suit,"Coppe")
   })
